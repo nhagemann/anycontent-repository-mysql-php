@@ -1,11 +1,11 @@
 <?php
 
-namespace AnyContent;
+namespace AnyContent\Repository;
 
 use Silex\Application;
-use AnyContent\Service\Config;
-use AnyContent\Service\Database;
-use AnyContent\Service\RepositoryManager;
+use AnyContent\Repository\Service\Config;
+use AnyContent\Repository\Service\Database;
+use AnyContent\Repository\Service\RepositoryManager;
 use AnyContent\Repository\Repository;
 
 class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
@@ -41,7 +41,7 @@ class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
 
         $contentTypes = $repo->getContentTypesList();
 
-        $this->assertInstanceOf('AnyContent\Entity\ContentTypeInfo', $contentTypes['example01']);
+        $this->assertInstanceOf('AnyContent\Repository\Entity\ContentTypeInfo', $contentTypes['example01']);
         $this->assertCount(3, $contentTypes);
     }
 

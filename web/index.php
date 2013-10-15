@@ -2,21 +2,21 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use AnyContent\Service\RepositoryManager;
-use AnyContent\Service\Config;
-use AnyContent\Service\Database;
+use AnyContent\Repository\Service\RepositoryManager;
+use AnyContent\Repository\Service\Config;
+use AnyContent\Repository\Service\Database;
 
 $app = new Silex\Application();
 $app['debug'] = true;
 
 
-$app->get('/1/{repositoryName}', 'AnyContent\Controller\RepositoryController::index');
-$app->get('/1/{repositoryName}/', 'AnyContent\Controller\RepositoryController::index');
+$app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::index');
+$app->get('/1/{repositoryName}/', 'AnyContent\Repository\Controller\RepositoryController::index');
 
-$app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Controller\RepositoryController::cmdl');
-$app->get('/1/{repositoryName}/cmdl/{contentTypeName}/', 'AnyContent\Controller\RepositoryController::cmdl');
+$app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl');
+$app->get('/1/{repositoryName}/cmdl/{contentTypeName}/', 'AnyContent\Repository\Controller\RepositoryController::cmdl');
 
-$app->get('/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Controller\AdminController::refresh');
+$app->get('/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh');
 
 
 $app['config'] = $app->share(function ($app) {

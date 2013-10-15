@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Service;
+namespace AnyContent\Repository\Service;
 
 use Silex\Application;
 
@@ -26,7 +26,7 @@ class Database
         $this->db->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        $this->db->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array( 'AnyContent\Service\Statement', array() ));
+        $this->db->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array( 'AnyContent\Repository\Service\Statement', array() ));
 
         $this->db->exec("SET NAMES utf8");
     }

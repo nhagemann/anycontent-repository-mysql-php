@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Entity;
+namespace AnyContent\Repository\Entity;
 
 class ContentTypeInfo
 {

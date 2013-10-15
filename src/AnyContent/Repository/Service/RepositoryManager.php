@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Service;
+namespace AnyContent\Repository\Service;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,7 +8,7 @@ use Silex\Application;
 
 use AnyContent\Repository\Repository;
 
-use AnyContent\Entity\ContentTypeInfo;
+use AnyContent\Repository\Entity\ContentTypeInfo;
 
 use CMDL\Parser;
 use CMDL\ParserException;

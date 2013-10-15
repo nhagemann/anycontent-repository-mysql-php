@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Controller;
+namespace AnyContent\Repository\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
