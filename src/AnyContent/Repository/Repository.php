@@ -25,8 +25,8 @@ class Repository
         return $this->app['repos']->getCMDL($this->name,$contentTypeName);
     }
 
-    public function getContentType($contentTypeName)
+    public function getContentTypeDefinition($contentTypeName)
     {
-        return $this->app['repos']->getContentType($this->name,$contentTypeName);
+        return $this->app['repos']->getContentTypeDefinition($this->name,$contentTypeName);
     }
 }

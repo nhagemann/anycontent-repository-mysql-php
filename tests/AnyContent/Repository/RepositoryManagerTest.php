@@ -8,6 +8,8 @@ use AnyContent\Repository\Service\Database;
 use AnyContent\Repository\Service\RepositoryManager;
 use AnyContent\Repository\Repository;
 
+use AnyContent\Client\Record;
+
 class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -64,7 +66,10 @@ class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
         /** @var $repo Repository */
         $repo = $this->app['repos']->get('example');
 
-        $contentType = $repo->getContentType('example01');
-        $this->app['db']->refreshContentTypeTableStructure('example', $contentType);
+        $contentTypeDefinition = $repo->getContentTypeDefinition('example01');
+        $this->app['db']->refreshContentTypeTableStructure('example', $contentTypeDefinition);
     }
+
+
+
 }

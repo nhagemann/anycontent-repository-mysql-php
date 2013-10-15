@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "3c7a12dfc771277bf6ce676369b27e18",
+    "hash": "1ed179f20a82b47afd89adf3cab92ed2",
     "packages": [
         {
             "name": "nhagemann/cmdl-parser-php",
@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nhagemann/cmdl-parser-php.git",
-                "reference": "8152320430333ff8fa1bc72639d0658dca88fc6d"
+                "reference": "025d43a16288facf777eee62cac60c740c1a82bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/8152320430333ff8fa1bc72639d0658dca88fc6d",
-                "reference": "8152320430333ff8fa1bc72639d0658dca88fc6d",
+                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/025d43a16288facf777eee62cac60c740c1a82bb",
+                "reference": "025d43a16288facf777eee62cac60c740c1a82bb",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                 }
             ],
             "homepage": "http://www.nilshagemann.de",
-            "time": "2013-10-14 09:18:43"
+            "time": "2013-10-15 16:20:38"
         },
         {
             "name": "pimple/pimple",

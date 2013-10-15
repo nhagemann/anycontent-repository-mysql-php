@@ -143,7 +143,7 @@ class RepositoryManager
     }
 
 
-    public function getContentType($repositoryName, $contentTypeName)
+    public function getContentTypeDefinition($repositoryName, $contentTypeName)
     {
         $cmdl = $this->getCMDL($repositoryName, $contentTypeName);
         if ($cmdl)
