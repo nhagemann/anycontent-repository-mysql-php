@@ -8,11 +8,8 @@ use Silex\Application;
 
 class Config
 {
-
     protected $app;
     protected $basepath = null;
-
-
 
     public function __construct(Application $app, $basepath = null)
     {
@@ -24,5 +21,22 @@ class Config
     public function getCMDLDirectory()
     {
         return $this->basepath.'cmdl';
+    }
+
+
+    public function getDSN()
+    {
+
+       return 'mysql:host=localhost;dbname=anycontent';
+    }
+
+    public function getDBUser()
+    {
+       return 'root';
+    }
+
+    public function getDBPassword()
+    {
+        return '';
     }
 }
