@@ -22,7 +22,7 @@ class BaseController
                 $message = sprintf('Unknown repository %s', $s1);
                 break;
             case self::UNKNOWN_CONTENTTYPE:
-                $message = sprintf('Unknown content type %s within repository %s', $s2,$s1);
+                $message = sprintf('Unknown content type %s within repository %s', $s2, $s1);
                 break;
             default:
                 $message = 'Unknown error';
@@ -31,5 +31,18 @@ class BaseController
         $error = array( 'error' => array( 'code' => $code, 'message' => $message ) );
 
         return $app->json($error, 404);
+    }
+
+
+    protected function badRequest($app, $message = null)
+    {
+        if (!$message)
+        {
+            $message = 'Bad request';
+        }
+
+        $error = array( 'error' => array( 'code' => 400, 'message' => $message ) );
+
+        return $app->json($error, 400);
     }
 }

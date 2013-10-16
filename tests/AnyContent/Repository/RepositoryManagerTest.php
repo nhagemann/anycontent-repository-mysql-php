@@ -8,7 +8,7 @@ use AnyContent\Repository\Service\Database;
 use AnyContent\Repository\Service\RepositoryManager;
 use AnyContent\Repository\Repository;
 
-use AnyContent\Client\Record;
+//use AnyContent\Client\Record;
 
 class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -68,7 +68,9 @@ class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
 
         $contentTypeDefinition = $repo->getContentTypeDefinition('example01');
         $this->app['db']->refreshContentTypeTableStructure('example', $contentTypeDefinition);
+
     }
+
 
 
 

@@ -60,6 +60,7 @@ CREATE TABLE `_info_` (
   `last_cmdl_change_timestamp` int(11) DEFAULT 0,
   `last_content_change_timestamp` int(11) DEFAULT 0,
   `last_position_change_timestamp` int(11) DEFAULT 0,
+  `last_cmdl_change_timestamp` int(11) DEFAULT 0,
   PRIMARY KEY (`repository`,`content_type`,`workspace`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 TEMPLATE_INFOTABLE;
@@ -195,6 +196,8 @@ TEMPLATE_CONTENTTABLE;
             $stmt->execute();
         }
 
+
+
         return true;
     }
 }
@@ -213,7 +216,7 @@ class Statement extends \PDOStatement
     protected $_token = "'";
 
 
-    public function execute($params = array())
+    public function execute($params = array(),$debug=false)
     {
         $this->_params = $params;
         try
@@ -222,13 +225,35 @@ class Statement extends \PDOStatement
         }
         catch (\PDOException $e)
         {
+            if ($debug)
+            {
+                echo $e->getMessage() ."\n".$this->debug();
+                die();
+            }
             throw $e;
         }
 
         return $t;
     }
 
+    public function dexecute($params=array())
+    {
+        return $this->execute($params,true);
+    }
 
+    public function dfetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
+    {
+        try
+        {
+           return parent::fetch($fetch_style,$cursor_orientation,$cursor_offset);
+        }
+        catch (\PDOException $e)
+        {
+            echo $e->getMessage() ."\n".$this->debug();
+            die();
+        }
+    }
+        /*
     public function bindValue($parameter, $value, $data_type = \PDO::PARAM_STR)
     {
 
@@ -240,7 +265,7 @@ class Statement extends \PDOStatement
 
         return parent::bindValue($parameter, $value, $data_type);
 
-    }
+    } */
 
 
     public function debug()

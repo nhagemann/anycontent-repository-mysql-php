@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nhagemann/cmdl-parser-php.git",
-                "reference": "025d43a16288facf777eee62cac60c740c1a82bb"
+                "reference": "bfe7ba4d7146525d99083cb3907675c9e3cc91e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/025d43a16288facf777eee62cac60c740c1a82bb",
-                "reference": "025d43a16288facf777eee62cac60c740c1a82bb",
+                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/bfe7ba4d7146525d99083cb3907675c9e3cc91e8",
+                "reference": "bfe7ba4d7146525d99083cb3907675c9e3cc91e8",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                 }
             ],
             "homepage": "http://www.nilshagemann.de",
-            "time": "2013-10-15 16:20:38"
+            "time": "2013-10-16 03:44:38"
         },
         {
             "name": "pimple/pimple",
