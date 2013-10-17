@@ -32,44 +32,58 @@ class RepositoryManager
 
     protected $lastname = null;
 
+
     public function __construct(Application $app)
     {
         $this->app = $app;
 
     }
 
-    public function setUserInfo($apiUser=null,$username=null,$firstname=null,$lastname=null)
+
+    public function setUserInfo($apiUser = null, $username = null, $firstname = null, $lastname = null)
     {
-        $this->apiUser = $apiUser;
-        $this->username = $username;
+        $this->apiUser   = $apiUser;
+        $this->username  = $username;
         $this->firstname = $firstname;
-        $this->lastname = $lastname;
+        $this->lastname  = $lastname;
     }
+
 
     public function getAPIUser()
     {
         return $this->apiUser;
     }
 
+
     public function getCurrentUserName()
     {
         return $this->username;
     }
+
 
     public function getCurrentUserFirstname()
     {
         return $this->firstname;
     }
 
+
     public function getCurrentUserLastname()
     {
         return $this->lastname;
     }
 
+
     public function getClientIp()
     {
-        return $this->app['request']->getClientIp();
+        // cannot determine client ip if repository class is used outside of request scope (i.e. tests)
+        if (isset($app['request']))
+        {
+            return $this->app['request']->getClientIp();
+        }
+
+        return null;
     }
+
 
     public function get($repositoryName)
     {

@@ -10,15 +10,18 @@ use AnyContent\Repository\Service\Database;
 $app          = new Silex\Application();
 $app['debug'] = true;
 
-$app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::index')->before('AnyContent\Repository\Middleware\ExtractUserInfo::execute');
+$before = 'AnyContent\Repository\Middleware\ExtractUserInfo::execute';
 
-$app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before('AnyContent\Repository\Middleware\ExtractUserInfo::execute');
+$app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before);
 
-$app->post('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Controller\ContentController::post')->before('AnyContent\Repository\Middleware\ExtractUserInfo::execute');
-$app->post('/1/{repositoryName}/content/{contentTypeName}/{clippingName}/{workspace}', 'AnyContent\Repository\Controller\ContentController::post')->before('AnyContent\Repository\Middleware\ExtractUserInfo::execute');
-$app->post('/1/{repositoryName}/content/{contentTypeName}/{clippingName}/{workspace}/{language}', 'AnyContent\Repository\Controller\ContentController::post')->before('AnyContent\Repository\Middleware\ExtractUserInfo::execute');
+$app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before);
 
-$app->get('/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh');
+$app->post('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Controller\ContentController::post')->before($before);
+$app->post('/1/{repositoryName}/content/{contentTypeName}/{clippingName}/{workspace}', 'AnyContent\Repository\Controller\ContentController::post')->before($before);
+$app->post('/1/{repositoryName}/content/{contentTypeName}/{clippingName}/{workspace}/{language}', 'AnyContent\Repository\Controller\ContentController::post')->before($before);
+
+$app->get('/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh')->before($before);
+$app->get('/admin/delete/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::delete')->before($before);
 
 
 $app['config'] = $app->share(function ($app)

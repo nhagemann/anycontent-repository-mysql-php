@@ -36,14 +36,14 @@ class ContentController extends BaseController
 
                 try
                 {
-                    $revision = $manager->saveRecord($record, $workspace, $clippingName, $language);
+                    $id = $manager->saveRecord($record, $workspace, $clippingName, $language);
                 }
                 catch (RepositoryException $e)
                 {
                     return self::badRequest($app, 'Bad Request - ' . $e->getMessage());
                 }
 
-                return $app->json($revision);
+                return $app->json($id);
             }
 
             return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);

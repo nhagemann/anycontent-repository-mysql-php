@@ -43,7 +43,7 @@ class ContentManager
     }
 
 
-    protected function getRecordTableRow($id, $clippingName = 'default', $workspace = 'default', $language = 'none', $timeshift = 0)
+    protected function getRecordTableRow($id, $workspace = 'default', $language = 'none', $timeshift = 0)
     {
 
         $repositoryName  = $this->repository->getName();
@@ -86,7 +86,6 @@ class ContentManager
         {
             throw new RepositoryException('Record not found.', RepositoryException::REPOSITORY_RECORD_NOT_FOUND);
         }
-
     }
 
 
@@ -144,11 +143,18 @@ class ContentManager
 
         $mode = 'insert';
 
+        // fix record array structure, if someone forgot the id
+        if (!isset($record['id']))
+        {
+            $record['id'] = 0;
+        }
+
         if ($record['id'] != 0)
         {
             try
             {
-                $row  = self::getRecordTableRow($record['id'], $clippingName, $workspace, $language);
+                $row = self::getRecordTableRow($record['id'], $workspace, $language);
+
                 $mode = 'update';
 
                 // transfer all properties, which are not set int the record to be saved
@@ -286,120 +292,5 @@ class ContentManager
 
         return $record['id'];
 
-        if ($mode == 'update')
-        {
-
-            $stmt = $dbh->prepare('UPDATE content SET validuntil_timestamp = ? WHERE record_id = ? AND content_type = ? AND workspace = ? AND repository = ? AND record_deleted = 0 AND validfrom_timestamp <=? AND validuntil_timestamp >?');
-
-            $stmt->bindValue(1, $timeshift_timestamp);
-            $stmt->bindValue(2, $record->id);
-            $stmt->bindValue(3, $record->content_type);
-            $stmt->bindValue(4, $record->workspace);
-            $stmt->bindValue(5, self::$current_repository);
-            $stmt->bindValue(6, $timeshift_timestamp);
-            $stmt->bindValue(7, $timeshift_timestamp);
-            $stmt->execute();
-
-            //$record->info['revision']=$record->info['revision']+1;
-            //error_log($stmt->errorCode());
-            //echo $stmt->debug();
-
-            $sql = 'INSERT INTO content';
-            $sql .= ' (record_id, content_type, workspace, record_name, record_subtype, record_properties';
-            $sql .= ' ,record_revision, repository,  creation_timestamp,creation_user,lastchange_timestamp,lastchange_user';
-
-            $sql .= ' ,position_left, position_right, position_level,record_position';
-            $sql .= ' ,record_status,validfrom_timestamp, validuntil_timestamp)';
-            $sql .= ' VALUES';
-            $sql .= ' (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ';
-
-            $stmt = $dbh->prepare($sql);
-            $stmt->bindValue(1, $record->id);
-            $stmt->bindValue(2, $record->content_type);
-            $stmt->bindValue(3, $record->workspace);
-            $stmt->bindValue(4, $record->getProperty('name'));
-            $stmt->bindValue(5, $record->getProperty('subtype'));
-            $properties = $record->properties;
-            $stmt->bindValue(6, json_encode($properties));
-            $stmt->bindValue(7, $record->info['revision']);
-            $stmt->bindValue(8, self::$current_repository);
-
-            //$stmt->bindValue(9, $record->info['creation_timestamp']);
-            //$stmt->bindValue(10, $record->info['creation_user']);
-
-            $stmt->bindValue(9, self::$current_row['creation_timestamp']);
-            $stmt->bindValue(10, self::$current_row['creation_user']);
-            $stmt->bindValue(11, $timestamp);
-            $stmt->bindValue(12, $username);
-            $stmt->bindValue(13, self::$current_row['position_left']);
-            $stmt->bindValue(14, self::$current_row['position_right']);
-            $stmt->bindValue(15, self::$current_row['position_level']);
-            $stmt->bindValue(16, self::$current_row['record_position']);
-
-            $stmt->bindValue(17, $record->getProperty('status'));
-            $stmt->bindValue(18, $timeshift_timestamp);
-            $stmt->bindValue(19, Service_Helper::getMaxTimestamp());
-
-            $stmt->execute();
-        }
-
-        // @todo: next lines cannot be processed. Should maybe reused for a non archivable content type
-        /* if ($mode == 'update')
-          {
-          $stmt = $dbh->prepare('UPDATE content SET record_name =?, record_subtype=?, record_properties =?, record_revision=?, lastchange_timestamp=?, lastchange_user=?, record_status=? WHERE record_id = ? AND content_type = ? AND workspace = ? AND repository = ?');
-
-
-          $stmt->bindValue(1, $record->getProperty('name'));
-          $stmt->bindValue(2, $record->getProperty('subtype'));
-          $properties = $record->properties;
-          $stmt->bindValue(3, json_encode($properties));
-          $stmt->bindValue(4, $record->info['revision']);
-
-          $stmt->bindValue(5, $timestamp);
-          $stmt->bindValue(6, $username);
-          $stmt->bindValue(7, $record->getProperty('status'));
-
-          $stmt->bindValue(8, $record->id);
-          $stmt->bindValue(9, $record->content_type);
-          $stmt->bindValue(10, $record->workspace);
-          $stmt->bindValue(11, self::$current_repository);
-
-          $stmt->execute();
-
-          //error_log($stmt->errorCode());
-          } */
-
-        if (self::$current_repository == 'admin' AND $record->content_type == 'content_type')
-        {
-            Service_Admin::saveCMDL($record->getProperty('subtype'), $record->getProperty('name'), $record->getProperty('cmdl'));
-        }
-
-        self::_updateContentInfo($record->content_type, $record->workspace);
-
-        // Store Index Values
-
-        /*
-          $indexes = CMDLManager::getIndexDefinition($record->content_type);
-          $stmt = $dbh->prepare('DELETE FROM content_index WHERE repository = ? AND content_type = ? AND record_id = ?');
-          $stmt->bindValue(1, self::$current_repository);
-          $stmt->bindValue(2, $record->content_type);
-          $stmt->bindValue(3, $record->id);
-          $stmt->execute();
-          //error_log(print_r($index,true));
-
-          foreach ($indexes as $index)
-          {
-          error_log($property);
-          $stmt = $dbh->prepare("INSERT INTO content_index (repository, content_type, record_id, index_name, index_value) values (?,?,?, ?, ?)");
-          $stmt->bindValue(1, self::$current_repository);
-          $stmt->bindValue(2, $record->content_type);
-          $stmt->bindValue(3, $record->id);
-          $stmt->bindValue(4, $index['name']);
-          $stmt->bindValue(5, $record->getProperty($index['property']));
-          $stmt->execute();
-          }
-         */
-
-        return (int)$record->id;
     }
 }

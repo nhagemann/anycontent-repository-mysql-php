@@ -9,6 +9,7 @@ use Silex\Application;
 use AnyContent\Repository\Controller\BaseController;
 
 use AnyContent\Repository\Repository;
+use CMDL\Util;
 
 class AdminController extends BaseController
 {
@@ -30,5 +31,13 @@ class AdminController extends BaseController
         }
 
         return $app->json(false);
+    }
+
+
+    public static function delete(Application $app, Request $request, $repositoryName, $contentTypeName)
+    {
+
+        return $app->json($app['db']->deleteRepository($repositoryName, $contentTypeName));
+
     }
 }

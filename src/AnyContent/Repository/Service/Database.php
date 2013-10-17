@@ -200,6 +200,66 @@ TEMPLATE_CONTENTTABLE;
 
         return true;
     }
+
+
+    public function deleteRepository($repositoryName,$contentTypeName)
+    {
+        $tableName = $repositoryName . '_' . $contentTypeName;
+
+        if ($tableName != Util::generateValidIdentifier($repositoryName . '_' . $contentTypeName))
+        {
+            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+        }
+
+        $sql = 'DROP TABLE IF EXISTS ' . $tableName;
+        $dbh = $this->getConnection();
+
+        $stmt = $dbh->prepare($sql);
+
+        try
+        {
+            $stmt->dexecute();
+
+        }
+        catch (\PDOException $e)
+        {
+            return false;
+        }
+
+        $sql      = 'DELETE FROM _info_ WHERE repository = ? AND content_type = ?';
+        $stmt     = $dbh->prepare($sql);
+        $params   = array();
+        $params[] = $repositoryName;
+        $params[] = $contentTypeName;
+
+        try
+        {
+            $stmt->execute($params);
+
+        }
+        catch (\PDOException $e)
+        {
+            return false;
+        }
+
+        $sql      = 'DELETE FROM _counter_ WHERE repository = ? AND content_type = ?';
+        $stmt     = $dbh->prepare($sql);
+        $params   = array();
+        $params[] = $repositoryName;
+        $params[] = $contentTypeName;
+
+        try
+        {
+            $stmt->execute($params);
+
+        }
+        catch (\PDOException $e)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
 
 
