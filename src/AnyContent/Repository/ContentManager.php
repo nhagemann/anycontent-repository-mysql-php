@@ -91,7 +91,7 @@ class ContentManager
     }
 
 
-    public function getRecords($clippingName, $workspace, $language, $timeshift, $orderBy = 'id ASC', $limit, $page, $subset, $filter)
+    public function getRecords($clippingName, $workspace, $language, $timeshift, $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, $filter = null)
     {
         $records         = array();
         $repositoryName  = $this->repository->getName();
@@ -109,6 +109,12 @@ class ContentManager
         $timestamp = $this->repository->getTimeshiftTimestamp($timeshift);
 
         $sql      = 'SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ORDER BY ' . $orderBy;
+
+        if ($limit != null)
+        {
+            $sql .= ' LIMIT '.  (((int)$page - 1) * (int)$limit) . ',' . (int)$limit;
+        }
+
         $stmt     = $dbh->prepare($sql);
         $params   = array();
         $params[] = $workspace;
@@ -119,7 +125,6 @@ class ContentManager
         try
         {
             $stmt->execute($params);
-
 
             $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -378,5 +383,18 @@ class ContentManager
         $record['info']['level']    = $row['position_level'];
 
         return $record;
+    }
+
+
+    public function hasProperty($property, $clippingName = null)
+    {
+        $possibleProperties = $this->contentTypeDefinition->getProperties($clippingName);
+        if (in_array($property, $possibleProperties))
+        {
+            return true;
+        }
+
+        return false;
+
     }
 }

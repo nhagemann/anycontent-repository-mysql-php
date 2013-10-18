@@ -9,12 +9,15 @@ use Silex\Application;
 class BaseController
 {
 
-    const UNKNOWN_REPOSITORY  = 1;
-    const UNKNOWN_CONTENTTYPE = 2;
-    const RECORD_NOT_FOUND    = 3;
+    const BAD_REQUEST         = 1;
+    const UNKNOWN_REPOSITORY  = 2;
+    const UNKNOWN_CONTENTTYPE = 3;
+    const RECORD_NOT_FOUND    = 4;
+    const UNKNOWN_PROPERTY    = 5;
+    const UNKNOWN_ERROR       = 6;
 
 
-    protected function notFoundError($app, $code, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
+    protected function notFoundError($app, $code = self::UNKNOWN_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
     {
 
         switch ($code)
@@ -38,7 +41,26 @@ class BaseController
     }
 
 
-    protected function badRequest($app, $message = null)
+    protected function badRequest($app, $code = self::BAD_REQUEST, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
+    {
+
+        switch ($code)
+        {
+            case self::UNKNOWN_PROPERTY:
+
+                $message = sprintf('Unknown property %s for clipping %s of content type %s within repository %s.', $s4, $s3, $s2, $s1);
+                break;
+            default:
+                $message = 'Unknown error';
+                break;
+        }
+        $error = array( 'error' => array( 'code' => $code, 'message' => $message ) );
+
+        return $app->json($error, 404);
+    }
+
+    /*
+    protected function badRequest($app, $message)
     {
         if (!$message)
         {
@@ -49,4 +71,5 @@ class BaseController
 
         return $app->json($error, 400);
     }
+    */
 }

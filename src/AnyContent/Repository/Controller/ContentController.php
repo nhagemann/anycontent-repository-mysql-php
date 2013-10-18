@@ -11,6 +11,8 @@ use AnyContent\Repository\Controller\BaseController;
 use AnyContent\Repository\Repository;
 use AnyContent\Repository\RepositoryException;
 
+use CMDL\Util;
+
 class ContentController extends BaseController
 {
 
@@ -94,7 +96,7 @@ class ContentController extends BaseController
     }
 
 
-    public static function getMany(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'none', $timeshift = 0, $orderBy = 'id ASC', $property = null, $limit = null, $page = 1, $subset = null, $filter = null)
+    public static function getMany(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'none', $timeshift = 0, $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, $filter = null)
     {
         /** @var $repository Repository */
         $repository = $app['repos']->get($repositoryName);
@@ -114,6 +116,30 @@ class ContentController extends BaseController
 
                     if ($request->get('order') == 'property')
                     {
+                        $properties = explode(',', $request->get('properties'));
+
+                        $orderBy = '';
+                        foreach ($properties as $property)
+                        {
+
+                            if ($manager->hasProperty(Util::generateValidIdentifier($property), $clippingName))
+                            {
+
+                                if (substr(trim($property), -1) == '-')
+                                {
+                                    $orderBy .= 'property_' . Util::generateValidIdentifier($property) . ' DESC, ';
+                                }
+                                else
+                                {
+                                    $orderBy .= 'property_' . Util::generateValidIdentifier($property) . ' ASC, ';
+                                }
+                            }
+                            else
+                            {
+                                return self::badRequest($app, self::UNKNOWN_PROPERTY, $repositoryName, $contentTypeName, $clippingName, $property);
+                            }
+                        }
+                        $orderBy .= ' id ASC';
 
                     }
                     else
@@ -173,6 +199,16 @@ class ContentController extends BaseController
                                 break;
 
                         }
+                    }
+                }
+
+                if ($request->query->has('limit'))
+                {
+                    $limit = (int)$request->get('limit');
+
+                    if ($request->query->has('page'))
+                    {
+                        $page = (int)$request->get('page');
                     }
                 }
 

@@ -23,7 +23,7 @@ $app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryCon
 $app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before);
 
 
-// get records (additional query parameters: timeshift, language, order, property, limit, page, subset, filter)
+// get records (additional query parameters: timeshift, language, order, properties, limit, page, subset, filter)
 $app->get('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before);
 $app->get('/1/{repositoryName}/content/{contentTypeName}/{workspace}', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before);
 $app->get('/1/{repositoryName}/content/{contentTypeName}/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before);
@@ -42,8 +42,8 @@ $app->post('/1/{repositoryName}/content/{contentTypeName}/{workspace}/{clippingN
 
 
 // admin routes
-$app->get('/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh')->before($before);
-$app->get('/admin/delete/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::delete')->before($before);
+$app->get('/1/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh')->before($before);
+$app->get('/1/admin/delete/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::delete')->before($before);
 
 
 $app['config'] = $app->share(function ($app)
