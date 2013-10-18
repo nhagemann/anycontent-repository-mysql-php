@@ -91,11 +91,11 @@ TEMPLATE_COUNTERTABLE;
     }
 
 
-    public function refreshContentTypeTableStructure($repositoryName, ContentTypeDefinition $contentType)
+    public function refreshContentTypeTableStructure($repositoryName, ContentTypeDefinition $contentTypeDefinition)
     {
         $this->refreshInfoTablesStructure();
 
-        $contentTypeName = 'example01';
+        $contentTypeName = $contentTypeDefinition->getName();
 
         $tableName = $repositoryName . '_' . $contentTypeName;
 
@@ -120,11 +120,11 @@ TEMPLATE_COUNTERTABLE;
         CREATE TABLE %s (
           `id` int(11) unsigned NOT NULL,
           `hash` varchar(32) NOT NULL,
-          `name` varchar(255) DEFAULT NULL,
+          `property_name` varchar(255) DEFAULT NULL,
           `workspace` varchar(255) NOT NULL DEFAULT 'default',
           `language` varchar(255) NOT NULL DEFAULT 'none',
-          `subtype` varchar(255) DEFAULT NULL,
-          `status` varchar(255) DEFAULT '1',
+          `property_subtype` varchar(255) DEFAULT NULL,
+          `property_status` varchar(255) DEFAULT '1',
           `parent_id` int(11) DEFAULT NULL,
           `position` int(11) DEFAULT NULL,
           `position_left` int(11) DEFAULT NULL,
@@ -135,13 +135,13 @@ TEMPLATE_COUNTERTABLE;
           `creation_timestamp` int(11) DEFAULT NULL,
           `creation_apiuser` varchar(255) DEFAULT NULL,
           `creation_clientip` varchar(255) DEFAULT NULL,
-          `creation_user` varchar(255) DEFAULT NULL,
+          `creation_username` varchar(255) DEFAULT NULL,
           `creation_firstname` varchar(255) DEFAULT NULL,
           `creation_lastname` varchar(255) DEFAULT NULL,
           `lastchange_timestamp` int(11) DEFAULT NULL,
           `lastchange_apiuser` varchar(255) DEFAULT NULL,
           `lastchange_clientip` varchar(255) DEFAULT NULL,
-          `lastchange_user` varchar(255) DEFAULT NULL,
+          `lastchange_username` varchar(255) DEFAULT NULL,
           `lastchange_firstname` varchar(255) DEFAULT NULL,
           `lastchange_lastname` varchar(255) DEFAULT NULL,
           `validfrom_timestamp` varchar(16) DEFAULT NULL,
@@ -177,7 +177,7 @@ TEMPLATE_CONTENTTABLE;
 
         $properties = array();
 
-        foreach ($contentType->getProperties() as $property)
+        foreach ($contentTypeDefinition->getProperties() as $property)
         {
             $properties[] = 'property_' . $property;
         }
@@ -196,13 +196,11 @@ TEMPLATE_CONTENTTABLE;
             $stmt->execute();
         }
 
-
-
         return true;
     }
 
 
-    public function deleteRepository($repositoryName,$contentTypeName)
+    public function deleteRepository($repositoryName, $contentTypeName)
     {
         $tableName = $repositoryName . '_' . $contentTypeName;
 
@@ -276,7 +274,7 @@ class Statement extends \PDOStatement
     protected $_token = "'";
 
 
-    public function execute($params = array(),$debug=false)
+    public function execute($params = array(), $debug = false)
     {
         $this->_params = $params;
         try
@@ -287,7 +285,7 @@ class Statement extends \PDOStatement
         {
             if ($debug)
             {
-                echo $e->getMessage() ."\n".$this->debug();
+                echo $e->getMessage() . "\n" . $this->sdebug();
                 die();
             }
             throw $e;
@@ -296,39 +294,50 @@ class Statement extends \PDOStatement
         return $t;
     }
 
-    public function dexecute($params=array())
+
+    public function dexecute($params = array())
     {
-        return $this->execute($params,true);
+        return $this->execute($params, true);
     }
+
 
     public function dfetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
     {
         try
         {
-           return parent::fetch($fetch_style,$cursor_orientation,$cursor_offset);
+            return parent::fetch($fetch_style, $cursor_orientation, $cursor_offset);
         }
         catch (\PDOException $e)
         {
-            echo $e->getMessage() ."\n".$this->debug();
+            echo $e->getMessage() . "\n" . $this->sdebug();
             die();
         }
     }
-        /*
-    public function bindValue($parameter, $value, $data_type = \PDO::PARAM_STR)
+
+
+    /*
+public function bindValue($parameter, $value, $data_type = \PDO::PARAM_STR)
+{
+
+    if ($value == null)
     {
+        $data_type = \PDO::PARAM_INT;
+    }
+    $this->_params[] = $value;
 
-        if ($value == null)
-        {
-            $data_type = \PDO::PARAM_INT;
-        }
-        $this->_params[] = $value;
+    return parent::bindValue($parameter, $value, $data_type);
 
-        return parent::bindValue($parameter, $value, $data_type);
-
-    } */
-
+} */
 
     public function debug()
+    {
+        $q = $this->queryString;
+
+        echo preg_replace_callback('/\?/', array( $this, '_replace' ), $q);
+    }
+
+
+    public function sdebug()
     {
         $q = $this->queryString;
 

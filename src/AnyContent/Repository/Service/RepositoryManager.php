@@ -20,7 +20,7 @@ class RepositoryManager
 
     protected $repositories = null;
 
-    protected $contentTypes = null;
+    protected $contentTypeDefinitions = array();
 
     protected $cmdl = array();
 
@@ -229,6 +229,15 @@ class RepositoryManager
 
     public function getContentTypeDefinition($repositoryName, $contentTypeName)
     {
+        // check if definition already has been created
+        if (array_key_exists($repositoryName, $this->contentTypeDefinitions))
+        {
+            if (array_key_exists($contentTypeName, $this->contentTypeDefinitions[$repositoryName]))
+            {
+                return $this->contentTypeDefinitions[$repositoryName][$contentTypeName];
+            }
+        }
+
         $cmdl = $this->getCMDL($repositoryName, $contentTypeName);
         if ($cmdl)
         {
@@ -246,11 +255,13 @@ class RepositoryManager
                 $params[] = $repositoryName;
                 $params[] = $contentTypeName;
                 $stmt     = $dbh->prepare($sql);
-                $stmt->dexecute($params);
+                $stmt->execute($params);
                 $result = (int)$stmt->fetchColumn(0);
 
                 if ($result < $timestamp)
                 {
+
+
                     $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
 
                     $sql = 'INSERT INTO _info_ (repository,content_type,last_cmdl_change_timestamp) VALUES (? , ? ,?) ON DUPLICATE KEY UPDATE last_cmdl_change_timestamp=?;';
@@ -264,6 +275,8 @@ class RepositoryManager
                     $stmt->execute($params);
 
                 }
+
+                $this->contentTypeDefinitions[$repositoryName][$contentTypeName] = $contentTypeDefinition;
 
                 return $contentTypeDefinition;
             }

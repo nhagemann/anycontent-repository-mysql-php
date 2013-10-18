@@ -52,4 +52,142 @@ class ContentController extends BaseController
         return self::badRequest($app);
         //return $app->json('true');
     }
+
+
+    public static function getOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $clippingName = 'default', $language = 'none', $timeshift = 0)
+    {
+
+        /** @var $repository Repository */
+        $repository = $app['repos']->get($repositoryName);
+        if ($repository)
+        {
+
+            $manager = $repository->getContentManager($contentTypeName);
+
+            if ($manager)
+            {
+                try
+                {
+
+                    if ($request->query->has('timeshift'))
+                    {
+                        $timeshift = (int)$request->get('timeshift');
+                    }
+
+                    $record = $manager->getRecord($id, $clippingName, $workspace, $language, $timeshift);
+
+                    return $app->json($record);
+                }
+                catch (RepositoryException $e)
+                {
+                    return self::notFoundError($app, self::RECORD_NOT_FOUND, $repositoryName, $contentTypeName, $id);
+                }
+            }
+            else
+            {
+                return self::notFoundError($app, self::UNKNOWN_CONTENTTYPE, $repositoryName, $contentTypeName);
+            }
+
+        }
+
+        return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
+    }
+
+
+    public static function getMany(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'none', $timeshift = 0, $orderBy = 'id ASC', $property = null, $limit = null, $page = 1, $subset = null, $filter = null)
+    {
+        /** @var $repository Repository */
+        $repository = $app['repos']->get($repositoryName);
+        if ($repository)
+        {
+            $manager = $repository->getContentManager($contentTypeName);
+
+            if ($manager)
+            {
+                if ($request->query->has('timeshift'))
+                {
+                    $timeshift = (int)$request->get('timeshift');
+                }
+
+                if ($request->query->has('order'))
+                {
+
+                    if ($request->get('order') == 'property')
+                    {
+
+                    }
+                    else
+                    {
+
+                        switch ($request->get('order'))
+                        {
+                            case
+                                'id':
+                                $orderBy = 'id ASC';
+
+                                break;
+                            case
+                                'id-':
+                                $orderBy = 'id DESC';
+
+                                break;
+                            case
+                                'name':
+                                $orderBy = 'property_name ASC, id ASC';
+                                break;
+                            case
+                                'name-':
+                                $orderBy = 'property_name DESC, id ASC';
+                                break;
+                            case
+                                'pos':
+                                $orderBy = 'position ASC, id ASC';
+                                break;
+                            case
+                                'pos-':
+                                $orderBy = 'position DESC, id ASC';
+                                break;
+                            case
+                                'change':
+                                $orderBy = 'lastchange_timestamp ASC, id ASC';
+                                break;
+                            case
+                                'change-':
+                                $orderBy = 'lastchange_timestamp DESC, id DESC';
+                                break;
+                            case
+                                'creation':
+                                $orderBy = 'creation_timestamp ASC, id ASC';
+                                break;
+                            case
+                                'creation-':
+                                $orderBy = 'creation_timestamp DESC, id DESC';
+                                break;
+                            case
+                                'status':
+                                $orderBy = 'property_status ASC, id ASC';
+                                break;
+                            case
+                                'status-':
+                                $orderBy = 'property_status ASC, id ASC';
+                                break;
+
+                        }
+                    }
+                }
+
+                $records = $manager->getRecords($clippingName, $workspace, $language, $timeshift, $orderBy, $limit, $page, $subset, $filter);
+
+                return $app->json($records);
+            }
+            else
+            {
+                return self::notFoundError($app, self::UNKNOWN_CONTENTTYPE, $repositoryName, $contentTypeName);
+            }
+
+        }
+
+        return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
+    }
+
 }

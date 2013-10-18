@@ -59,12 +59,18 @@ class Repository
             return $this->manager[$contentTypeName];
         }
 
-        $manager = new ContentManager($this, $this->getContentTypeDefinition($contentTypeName));
+        $contentTypeDefinition = $this->getContentTypeDefinition($contentTypeName);
 
-        $this->manager[$contentTypeName] = $manager;
+        if ($contentTypeDefinition)
+        {
 
-        return $manager;
+            $manager = new ContentManager($this, $contentTypeDefinition);
 
+            $this->manager[$contentTypeName] = $manager;
+
+            return $manager;
+        }
+        return false;
     }
 
 
@@ -109,6 +115,7 @@ class Repository
     {
         return $this->app['repos']->getCurrentUserLastname();
     }
+
 
     public function getClientIp()
     {

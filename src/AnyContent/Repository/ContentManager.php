@@ -7,7 +7,7 @@ use Silex\Application;
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;
 
-use AnyContent\Repository\Util as RepositoryUtil;
+use AnyContent\Repository\Helper;
 use AnyContent\Repository\RepositoryException;
 
 class ContentManager
@@ -30,7 +30,7 @@ class ContentManager
     /**
      * @param $record
      *
-     * @return int
+     * @return array
      * @throws Exception
      */
     public function getRecord($id, $clippingName = 'default', $workspace = 'default', $language = 'none', $timeshift = 0)
@@ -38,7 +38,9 @@ class ContentManager
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
 
-        throw new RepositoryException('Record not found.', RepositoryException::REPOSITORY_RECORD_NOT_FOUND);
+        $row = $this->getRecordTableRow($id, $workspace, $language, $timeshift);
+
+        return $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName);
 
     }
 
@@ -86,6 +88,54 @@ class ContentManager
         {
             throw new RepositoryException('Record not found.', RepositoryException::REPOSITORY_RECORD_NOT_FOUND);
         }
+    }
+
+
+    public function getRecords($clippingName, $workspace, $language, $timeshift, $orderBy = 'id ASC', $limit, $page, $subset, $filter)
+    {
+        $records         = array();
+        $repositoryName  = $this->repository->getName();
+        $contentTypeName = $this->contentTypeDefinition->getName();
+
+        $tableName = $repositoryName . '_' . $contentTypeName;
+
+        if ($tableName != Util::generateValidIdentifier($repositoryName . '_' . $contentTypeName))
+        {
+            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+        }
+
+        $dbh = $this->repository->getDatabaseConnection();
+
+        $timestamp = $this->repository->getTimeshiftTimestamp($timeshift);
+
+        $sql      = 'SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ORDER BY ' . $orderBy;
+        $stmt     = $dbh->prepare($sql);
+        $params   = array();
+        $params[] = $workspace;
+        $params[] = $language;
+        $params[] = $timestamp;
+        $params[] = $timestamp;
+
+        try
+        {
+            $stmt->execute($params);
+
+
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($rows as $row)
+            {
+                $records[$row['id']] = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName);
+            }
+
+            return $records;
+
+        }
+        catch (\PDOException $e)
+        {
+            throw new RepositoryException('Record not found.', RepositoryException::REPOSITORY_RECORD_NOT_FOUND);
+        }
+
     }
 
 
@@ -161,7 +211,7 @@ class ContentManager
                 foreach ($row as $key => $value)
                 {
 
-                    if (RepositoryUtil::startsWith($key, 'property_'))
+                    if (Helper::startsWith($key, 'property_'))
                     {
                         $property = substr($key, 9);
 
@@ -226,23 +276,23 @@ class ContentManager
             $stmt->dexecute($params);
         }
 
-        $values              = array();
-        $values['id']        = $record['id'];
-        $values['hash']      = md5(serialize($record['properties']));
-        $values['name']      = @$record['properties']['name'];
+        $values         = array();
+        $values['id']   = $record['id'];
+        $values['hash'] = md5(serialize($record['properties']));
+        //$values['name']      = @$record['properties']['name'];
         $values['workspace'] = $workspace;
         $values['language']  = $language;
-        $values['subtype']   = @$record['properties']['subtype'];
-        $values['status']    = @$record['properties']['status'];
-        $values['revision']  = $record['revision'];
-        $values['deleted']   = 0;
+        //$values['subtype']   = @$record['properties']['subtype'];
+        //$values['status']    = @$record['properties']['status'];
+        $values['revision'] = $record['revision'];
+        $values['deleted']  = 0;
 
         if ($mode == 'insert')
         {
             $values['creation_timestamp'] = $timestamp;
             $values['creation_apiuser']   = $this->repository->getAPIUser();
             $values['creation_clientip']  = $this->repository->getClientIp();
-            $values['creation_user']      = $this->repository->getCurrentUserName();
+            $values['creation_username']  = $this->repository->getCurrentUserName();
             $values['creation_firstname'] = $this->repository->getCurrentUserFirstname();
             $values['creation_lastname']  = $this->repository->getCurrentUserLastname();
         }
@@ -251,7 +301,7 @@ class ContentManager
             $values['creation_timestamp'] = $row['creation_timestamp'];
             $values['creation_apiuser']   = $row['creation_apiuser'];
             $values['creation_clientip']  = $row['creation_clientip'];
-            $values['creation_user']      = $row['creation_user'];
+            $values['creation_username']  = $row['creation_username'];
             $values['creation_firstname'] = $row['creation_firstname'];
             $values['creation_lastname']  = $row['creation_lastname'];
         }
@@ -259,7 +309,7 @@ class ContentManager
         $values['lastchange_timestamp'] = $timestamp;
         $values['lastchange_apiuser']   = $this->repository->getAPIUser();
         $values['lastchange_clientip']  = $this->repository->getClientIp();
-        $values['lastchange_user']      = $this->repository->getCurrentUserName();
+        $values['lastchange_username']  = $this->repository->getCurrentUserName();
         $values['lastchange_firstname'] = $this->repository->getCurrentUserFirstname();
         $values['lastchange_lastname']  = $this->repository->getCurrentUserLastname();
 
@@ -292,5 +342,41 @@ class ContentManager
 
         return $record['id'];
 
+    }
+
+
+    protected function getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName)
+    {
+        $record                 = array();
+        $record['id']           = $row['id'];
+        $record['repository']   = $repositoryName;
+        $record['content_type'] = $contentTypeName;
+        $record['workspace']    = $row['workspace'];
+        $record['clipping']     = $clippingName;
+        $record['language']     = $row['language'];
+        $record['properties']   = array();
+
+        $properties = $this->contentTypeDefinition->getProperties($clippingName);
+        foreach ($properties as $property)
+        {
+            $record['properties'][$property] = $row['property_' . $property];
+        }
+        $record['info']             = array();
+        $record['info']['revision'] = $row['revision'];
+
+        $record['info']['creation']['timestamp'] = $row['creation_timestamp'];
+        $record['info']['creation']['username']  = $row['creation_username'];
+        $record['info']['creation']['firstname'] = $row['creation_firstname'];
+        $record['info']['creation']['lastname']  = $row['creation_lastname'];
+
+        $record['info']['lastchange']['timestamp'] = $row['lastchange_timestamp'];
+        $record['info']['lastchange']['username']  = $row['lastchange_username'];
+        $record['info']['lastchange']['firstname'] = $row['lastchange_firstname'];
+        $record['info']['lastchange']['lastname']  = $row['lastchange_lastname'];
+
+        $record['info']['position'] = $row['position'];
+        $record['info']['level']    = $row['position_level'];
+
+        return $record;
     }
 }

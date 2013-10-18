@@ -11,6 +11,7 @@ class BaseController
 
     const UNKNOWN_REPOSITORY  = 1;
     const UNKNOWN_CONTENTTYPE = 2;
+    const RECORD_NOT_FOUND    = 3;
 
 
     protected function notFoundError($app, $code, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
@@ -19,10 +20,13 @@ class BaseController
         switch ($code)
         {
             case self::UNKNOWN_REPOSITORY:
-                $message = sprintf('Unknown repository %s', $s1);
+                $message = sprintf('Unknown repository %s.', $s1);
                 break;
             case self::UNKNOWN_CONTENTTYPE:
-                $message = sprintf('Unknown content type %s within repository %s', $s2, $s1);
+                $message = sprintf('Unknown content type %s within repository %s.', $s2, $s1);
+                break;
+            case self::RECORD_NOT_FOUND:
+                $message = sprintf('Record with id %s not found for content type %s within repository %s.', $s3, $s2, $s1);
                 break;
             default:
                 $message = 'Unknown error';

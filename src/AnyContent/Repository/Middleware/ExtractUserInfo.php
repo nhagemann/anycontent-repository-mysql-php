@@ -11,7 +11,7 @@ use Silex\Application;
 class ExtractUserInfo
 {
 
-    public function execute(Request $request,Application $app)
+    public static function execute(Request $request,Application $app)
     {
 
         $username = null;
