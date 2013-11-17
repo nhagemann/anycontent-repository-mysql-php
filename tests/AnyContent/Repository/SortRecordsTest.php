@@ -116,25 +116,49 @@ class SortRecordsTest extends \PHPUnit_Framework_TestCase
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
         $this->assertCount(2,$records);
 
-        $subset  = '7,-1';
+        $subset  = '7,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
         $this->assertCount(3,$records);
 
-        $subset  = '8,-1';
+        $subset  = '8,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
         $this->assertCount(3,$records);
 
-        $subset  = '9,-1';
+        $subset  = '9,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
         $this->assertCount(3,$records);
 
-        $subset  = '3,-1';
+        $subset  = '3,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
         $this->assertCount(2,$records);
 
-        $subset  = '4,-1';
+        $subset  = '4,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
         $this->assertCount(1,$records);
+
+        $subset  = '5,0,-9';
+        $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
+        $this->assertCount(1,$records);
+
+        $subset  = '4,0,-9';
+        $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
+        $this->assertCount(0,$records);
+
+        $subset  = '8,0,-1';
+        $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
+        $this->assertCount(1,$records);
+
+        $subset  = '8,0,-2';
+        $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
+        $this->assertCount(2,$records);
+
+        $subset  = '8,1,-1';
+        $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
+        $this->assertCount(2,$records);
+
+        $subset  = '8,1,-2';
+        $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
+        $this->assertCount(3,$records);
     }
 
 }

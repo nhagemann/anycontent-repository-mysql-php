@@ -96,8 +96,15 @@ class ContentController extends BaseController
     }
 
 
-    public static function getMany(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'none', $timeshift = 0, $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, $filter = null)
+    public static function getMany(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'none')
     {
+        $timeshift = 0;
+        $orderBy = 'id ASC';
+        $limit = null;
+        $page = 1;
+        $subset = null;
+        $filter = null;
+
         /** @var $repository Repository */
         $repository = $app['repos']->get($repositoryName);
         if ($repository)
@@ -210,6 +217,11 @@ class ContentController extends BaseController
                     {
                         $page = (int)$request->get('page');
                     }
+                }
+
+                if ($request->query->has('subset'))
+                {
+                    $subset = $request->get('subset');
                 }
 
                 $records = $manager->getRecords($clippingName, $workspace, $orderBy, $limit, $page, $subset, $filter, $language, $timeshift);

@@ -135,21 +135,34 @@ class ContentManager
             {
                 try
                 {
-                    $row= $this->getRecordTableRow($parentRecordId, $workspace, $language, $timeshift);
+                    $row = $this->getRecordTableRow($parentRecordId, $workspace, $language, $timeshift);
 
-                    $maxlevel = (int)$row['position_level'] + $depth + 1;
-                    if ($includeParentRecord == 1)
+                    if ($depth < 0) // climb upwards
                     {
-                        $sqlSubset = ' AND (position_left >= ' . (int)$row['position_left'] . ' AND position_right <=' . (int)$row['position_right'] . ')';
-                    }
-                    elseif ($includeParentRecord == -1)
-                    {
-                        $sqlSubset = ' AND (position_left <= ' . (int)$row['position_left'] . ' AND position_right >=' . (int)$row['position_right'] . ')';
+                        if ($includeParentRecord == 1)
+                        {
+                            $sqlSubset = ' AND (position_left <= ' . (int)$row['position_left'] . ' AND position_right >=' . (int)$row['position_right'] . ')';
+                            $depth     = $depth - 1;
+                        }
+                        else
+                        {
+                            $sqlSubset = ' AND (position_left < ' . (int)$row['position_left'] . ' AND position_right >' . (int)$row['position_right'] . ')';
+                        }
+
                     }
                     else
                     {
-                        $sqlSubset = ' AND (position_left > ' . (int)$row['position_left'] . ' AND position_right <' . (int)$row['position_right'] . ')';
+                        $maxlevel = (int)$row['position_level'] + $depth + 1;
+                        if ($includeParentRecord == 1)
+                        {
+                            $sqlSubset = ' AND (position_left >= ' . (int)$row['position_left'] . ' AND position_right <=' . (int)$row['position_right'] . ')';
+                        }
+                        else
+                        {
+                            $sqlSubset = ' AND (position_left > ' . (int)$row['position_left'] . ' AND position_right <' . (int)$row['position_right'] . ')';
+                        }
                     }
+
                 }
                 catch (Exception $e)
                 {
@@ -163,7 +176,7 @@ class ContentManager
                 $maxlevel  = $depth + 1;
                 $sqlSubset = ' AND NOT record_position IS NULL';
             }
-            if ($depth != null)
+            if ($depth != null AND $depth > 0)
             {
                 $sqlSubset .= ' AND position_level <' . $maxlevel;
             }
@@ -171,7 +184,7 @@ class ContentManager
 
         $timestamp = $this->repository->getTimeshiftTimestamp($timeshift);
 
-        $sql = 'SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? '.$sqlSubset.' ORDER BY ' . $orderBy;
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ' . $sqlSubset . ' ORDER BY ' . $orderBy;
 
         if ($limit != null AND $subset == null)
         {
@@ -194,6 +207,13 @@ class ContentManager
             foreach ($rows as $row)
             {
                 $records[$row['id']] = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName);
+            }
+
+            if ($subset AND $depth < 0) // climb upwards
+            {
+
+                $records = array_slice($records, $depth);
+
             }
 
             return $records;
