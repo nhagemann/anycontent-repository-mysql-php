@@ -212,7 +212,7 @@ class ContentController extends BaseController
                     }
                 }
 
-                $records = $manager->getRecords($clippingName, $workspace, $language, $timeshift, $orderBy, $limit, $page, $subset, $filter);
+                $records = $manager->getRecords($clippingName, $workspace, $orderBy, $limit, $page, $subset, $filter, $language, $timeshift);
 
                 return $app->json($records);
             }

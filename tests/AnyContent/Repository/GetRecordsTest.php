@@ -6,7 +6,7 @@ use Silex\Application;
 use AnyContent\Repository\Service\Config;
 use AnyContent\Repository\Service\Database;
 use AnyContent\Repository\Service\RepositoryManager;
-use AnyContent\Repository\Service\ContentManager;
+use AnyContent\Repository\ContentManager;
 use AnyContent\Repository\Repository;
 
 //use AnyContent\Client\Record;
@@ -43,7 +43,7 @@ class GetRecordsTest extends \PHPUnit_Framework_TestCase
         $this->app['db']->deleteRepository('example', 'example03');
 
         /**
-         * @var ContentManager
+         * @var $manager ContentManager
          */
         $manager = $this->repository->getContentManager('example01');
 
@@ -55,12 +55,28 @@ class GetRecordsTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($i, $id);
         }
 
+        for ($i = 1; $i <= 3; $i++)
+        {
+            $record               = array();
+            $record['properties'] = array( 'name' => 'New Record ' . $i );
+            $manager->saveRecord($record, 'default', 'live');
+        }
 
         $records = $manager->getRecords();
+        $this->assertCount(5, $records);
+        $records = $manager->getRecords('default', 'live');
+        $this->assertCount(3, $records);
+        $records = $manager->getRecords('default', 'default');
+        $this->assertCount(5, $records);
 
-        var_dump($records);
+        $records = $manager->getRecords('default', 'default', 'property_name DESC, id ASC');
+        $record = array_shift($records);
+        $this->assertEquals(5, $record['id']);
+
+        $records = $manager->getRecords('default', 'default','id ASC',2,1);
+        $this->assertCount(2, $records);
+        $records = $manager->getRecords('default', 'default','id ASC',2,3);
+        $this->assertCount(1, $records);
     }
-
-
 
 }

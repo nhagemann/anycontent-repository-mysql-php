@@ -10,6 +10,8 @@ use CMDL\Util;
 use AnyContent\Repository\Helper;
 use AnyContent\Repository\RepositoryException;
 
+use AnyContent\Repository\Util\AdjacentList2NestedSet;
+
 class ContentManager
 {
 
@@ -53,7 +55,7 @@ class ContentManager
 
         $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName) .'$'. Util::generateValidIdentifier($contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
             throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
@@ -91,7 +93,7 @@ class ContentManager
     }
 
 
-    public function getRecords($clippingName, $workspace, $language, $timeshift, $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, $filter = null)
+    public function getRecords($clippingName = 'default', $workspace = 'default', $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, $filter = null, $language = 'none', $timeshift = 0)
     {
         $records         = array();
         $repositoryName  = $this->repository->getName();
@@ -99,20 +101,81 @@ class ContentManager
 
         $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName) .'$'. Util::generateValidIdentifier($contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
             throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
 
         $dbh = $this->repository->getDatabaseConnection();
 
+        $sqlSubset = '';
+        if ($subset != null)
+        {
+            $orderBy             = 'position ASC';
+            $parentRecordId      = 0;
+            $includeParentRecord = 1;
+            $depth               = null;
+
+            $subset = explode(',', $subset);
+
+            if (isset($subset[0]))
+            {
+                $parentRecordId = (int)$subset[0];
+            }
+            if (isset($subset[1]))
+            {
+                $includeParentRecord = (int)$subset[1];
+            }
+            if (isset($subset[2]))
+            {
+                $depth = (int)$subset[2];
+            }
+
+            if ($parentRecordId != 0)
+            {
+                try
+                {
+                    $row= $this->getRecordTableRow($parentRecordId, $workspace, $language, $timeshift);
+
+                    $maxlevel = (int)$row['position_level'] + $depth + 1;
+                    if ($includeParentRecord == 1)
+                    {
+                        $sqlSubset = ' AND (position_left >= ' . (int)$row['position_left'] . ' AND position_right <=' . (int)$row['position_right'] . ')';
+                    }
+                    elseif ($includeParentRecord == -1)
+                    {
+                        $sqlSubset = ' AND (position_left <= ' . (int)$row['position_left'] . ' AND position_right >=' . (int)$row['position_right'] . ')';
+                    }
+                    else
+                    {
+                        $sqlSubset = ' AND (position_left > ' . (int)$row['position_left'] . ' AND position_right <' . (int)$row['position_right'] . ')';
+                    }
+                }
+                catch (Exception $e)
+                {
+                    return $records;
+                }
+            }
+            else
+            {
+                // Take all records, that do have a sorting position
+
+                $maxlevel  = $depth + 1;
+                $sqlSubset = ' AND NOT record_position IS NULL';
+            }
+            if ($depth != null)
+            {
+                $sqlSubset .= ' AND position_level <' . $maxlevel;
+            }
+        }
+
         $timestamp = $this->repository->getTimeshiftTimestamp($timeshift);
 
-        $sql      = 'SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ORDER BY ' . $orderBy;
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? '.$sqlSubset.' ORDER BY ' . $orderBy;
 
-        if ($limit != null)
+        if ($limit != null AND $subset == null)
         {
-            $sql .= ' LIMIT '.  (((int)$page - 1) * (int)$limit) . ',' . (int)$limit;
+            $sql .= ' LIMIT ' . (((int)$page - 1) * (int)$limit) . ',' . (int)$limit;
         }
 
         $stmt     = $dbh->prepare($sql);
@@ -138,7 +201,10 @@ class ContentManager
         }
         catch (\PDOException $e)
         {
-            throw new RepositoryException('Record not found.', RepositoryException::REPOSITORY_RECORD_NOT_FOUND);
+            if ($e->getCode() == 42)
+            {
+                throw new RepositoryException('Could not execute your orderBy command.', RepositoryException::REPOSITORY_BAD_PARAMS);
+            }
         }
 
     }
@@ -157,7 +223,7 @@ class ContentManager
 
         $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName) .'$'. Util::generateValidIdentifier($contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
             throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
@@ -278,7 +344,7 @@ class ContentManager
             $params[] = $timeshiftTimestamp;
             $params[] = $timeshiftTimestamp;
             $stmt     = $dbh->prepare($sql);
-            $stmt->dexecute($params);
+            $stmt->execute($params);
         }
 
         $values         = array();
@@ -347,6 +413,94 @@ class ContentManager
 
         return $record['id'];
 
+    }
+
+
+    public function sortRecords($list, $workspace = 'default', $language = 'none')
+    {
+        $repositoryName  = $this->repository->getName();
+        $contentTypeName = $this->contentTypeDefinition->getName();
+
+        $tableName = $repositoryName . '$' . $contentTypeName;
+
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
+        {
+            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+        }
+
+        $dbh = $this->repository->getDatabaseConnection();
+
+        $tempTableName      = $tableName . '_' . uniqid(md5(microtime()), true);
+        $timeshiftTimestamp = $this->repository->getTimeshiftTimestamp();
+
+        $sql      = 'CREATE TEMPORARY TABLE ' . $tempTableName . ' SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND validfrom_timestamp <= ? AND validuntil_timestamp > ? AND deleted=0';
+        $params   = array();
+        $params[] = $workspace;
+        $params[] = $language;
+        $params[] = $timeshiftTimestamp;
+        $params[] = $timeshiftTimestamp;
+        $stmt     = $dbh->prepare($sql);
+        $stmt->execute($params);
+
+        $sql    = 'UPDATE ' . $tempTableName . ' SET parent_id = null, position=null, position_left = null, position_right = null, position_level = null';
+        $params = array();
+        $stmt   = $dbh->prepare($sql);
+        $stmt->execute($params);
+
+        $transform = new AdjacentList2NestedSet($list);
+
+        $transform->traverse(0);
+        $nestedSet = $transform->getNestedSet();
+
+        $pos = 0;
+        $ids = array();
+        foreach ($nestedSet as $id => $item)
+        {
+            $ids[] = $id;
+            $pos++;
+
+            $sql      = 'UPDATE ' . $tempTableName . ' SET parent_id = ?, position=?, position_left = ?, position_right = ?, position_level = ? WHERE id = ?';
+            $params   = array();
+            $params[] = $item['parent_id'];
+            $params[] = $pos;
+            $params[] = $item['left'];
+            $params[] = $item['right'];
+            $params[] = $item['level'];
+            $stmt     = $dbh->prepare($sql);
+            $params[] = $id;
+            $stmt->execute($params);
+        }
+
+        // end validity of all current records
+        $sql                = 'UPDATE ' . $tableName . ' SET validuntil_timestamp = ? WHERE workspace = ? AND language = ? AND validfrom_timestamp <= ? AND validuntil_timestamp > ? AND deleted=0';
+        $timeshiftTimestamp = $this->repository->getTimeshiftTimestamp();
+        $params             = array();
+        $params[]           = $timeshiftTimestamp;
+        $params[]           = $workspace;
+        $params[]           = $language;
+        $params[]           = $timeshiftTimestamp;
+        $params[]           = $timeshiftTimestamp;
+        $stmt               = $dbh->prepare($sql);
+        $stmt->execute($params);
+
+        // set validity of all new records
+
+        $sql      = 'UPDATE ' . $tempTableName . ' SET revision=revision+1, validfrom_timestamp = ?';
+        $params   = array();
+        $params[] = $timeshiftTimestamp;
+        $stmt     = $dbh->prepare($sql);
+        $stmt->execute($params);
+
+        // Merge back
+
+        $stmt = $dbh->prepare('INSERT INTO ' . $tableName . ' SELECT * FROM ' . $tempTableName);
+        $stmt->execute();
+        $stmt = $dbh->prepare('DROP TABLE ' . $tempTableName);
+        $stmt->execute();
+
+        //self::_updateContentInfo($content_type, $workspace);
+
+        return true;
     }
 
 
