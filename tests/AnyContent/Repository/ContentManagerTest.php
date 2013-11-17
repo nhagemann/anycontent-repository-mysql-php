@@ -37,6 +37,7 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveRecords()
     {
+
         $this->app['db']->deleteRepository('example', 'example01');
         $this->app['db']->deleteRepository('example', 'example02');
         $this->app['db']->deleteRepository('example', 'example03');
@@ -67,6 +68,7 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRecord()
     {
+
         /**
          * @var ContentManager
          */
@@ -95,4 +97,26 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
 
     }
 
+
+    public function testTimesShift()
+    {
+        // skip this test, since timeshifting unwanted delays test execution, remove if necessary
+        return;
+
+        /**
+         * @var ContentManager
+         */
+        $manager              = $this->repository->getContentManager('example01');
+        $record               = array();
+        $record['properties'] = array( 'name' => 'Timeshift Record' );
+        $id                   = $manager->saveRecord($record);
+        $record               = $manager->getRecord($id);
+        $this->assertEquals(1, $record['info']['revision']);
+        sleep(2);
+        $this->assertEquals($id, $manager->saveRecord($record));
+        $record = $manager->getRecord($id, 'default', 'default', 'none', 1);
+        $this->assertEquals(1, $record['info']['revision']);
+        $record = $manager->getRecord($id);
+        $this->assertEquals(2, $record['info']['revision']);
+    }
 }

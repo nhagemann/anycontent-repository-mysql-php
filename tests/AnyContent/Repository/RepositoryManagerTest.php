@@ -67,6 +67,7 @@ class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->app['repos']->get('example');
 
         $contentTypeDefinition = $repo->getContentTypeDefinition('example01');
+
         $this->app['db']->refreshContentTypeTableStructure('example', $contentTypeDefinition);
 
     }

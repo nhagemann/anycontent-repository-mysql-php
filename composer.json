@@ -14,7 +14,8 @@
     "require": {
         "php": ">=5.2",
         "silex/silex": "~1.1",
-        "nhagemann/cmdl-parser-php": "dev-master"
+        "nhagemann/cmdl-parser-php": "dev-master",
+        "monolog/monolog": ">=1.0.0"
     },
 
     "require-dev": {

@@ -51,9 +51,9 @@ class ContentManager
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
 
-        $tableName = $repositoryName . '_' . $contentTypeName;
+        $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName . '_' . $contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName) .'$'. Util::generateValidIdentifier($contentTypeName))
         {
             throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
@@ -97,9 +97,9 @@ class ContentManager
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
 
-        $tableName = $repositoryName . '_' . $contentTypeName;
+        $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName . '_' . $contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName) .'$'. Util::generateValidIdentifier($contentTypeName))
         {
             throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
@@ -155,9 +155,9 @@ class ContentManager
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
 
-        $tableName = $repositoryName . '_' . $contentTypeName;
+        $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName . '_' . $contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName) .'$'. Util::generateValidIdentifier($contentTypeName))
         {
             throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }

@@ -187,7 +187,7 @@ class RepositoryManager
     {
         if ($this->hasRepository($repositoryName))
         {
-            $token = $repositoryName . '_' . $contentTypeName;
+            $token = $repositoryName . '$' . $contentTypeName;
             if (array_key_exists($token, $this->cmdl))
             {
                 return $this->cmdl[$token]['cmdl'];
@@ -210,7 +210,7 @@ class RepositoryManager
 
     public function getAgeCMDL($repositoryName, $contentTypeName)
     {
-        $token = $repositoryName . '_' . $contentTypeName;
+        $token = $repositoryName . '$' . $contentTypeName;
         if (array_key_exists($token, $this->cmdl))
         {
             return $this->cmdl[$token]['timestamp'];
@@ -238,6 +238,7 @@ class RepositoryManager
             }
         }
 
+
         $cmdl = $this->getCMDL($repositoryName, $contentTypeName);
         if ($cmdl)
         {
@@ -260,7 +261,6 @@ class RepositoryManager
 
                 if ($result < $timestamp)
                 {
-
 
                     $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
 

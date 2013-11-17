@@ -97,11 +97,11 @@ TEMPLATE_COUNTERTABLE;
 
         $contentTypeName = $contentTypeDefinition->getName();
 
-        $tableName = $repositoryName . '_' . $contentTypeName;
+        $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName . '_' . $contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName).'$'.Util::generateValidIdentifier($contentTypeName))
         {
-            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+            throw new \Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
 
         /** @var PDO $db */
@@ -202,11 +202,11 @@ TEMPLATE_CONTENTTABLE;
 
     public function deleteRepository($repositoryName, $contentTypeName)
     {
-        $tableName = $repositoryName . '_' . $contentTypeName;
+        $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName . '_' . $contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName).'$'.Util::generateValidIdentifier($contentTypeName))
         {
-            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+            throw new \Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
 
         $sql = 'DROP TABLE IF EXISTS ' . $tableName;
