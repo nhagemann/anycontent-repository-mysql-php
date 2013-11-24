@@ -1,0 +1,20 @@
+- delete record (code + action)
+- action for sorting
+- action for storing more than one record
+- _info_ syncing after save and sort
+- filter search
+- user management
+
+
+      /*$file['name']                 = $fileinfo->getFilename();
+                    $file['path']                 = $fileinfo->getRelativePath();
+                    $file['type']                 = $fileinfo->getType();
+                    $file['mimetype']             = $fileinfo->getFilename();
+                    $file['width']                = $fileinfo->getFilename();
+                    $file['height']               = $fileinfo->getFilename();
+                    $file['size']                 = $fileinfo->getSize();
+                    $file['timestamp_creation']   = $fileinfo->getCTime();
+                    $file['timestamp_lastchange'] = $fileinfo->getMTime();
+                    $file['url_public']           = $fileinfo->getFilename();
+                    $file['url_private']          = $fileinfo->getFilename();
+                      */

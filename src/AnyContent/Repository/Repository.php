@@ -5,6 +5,7 @@ namespace AnyContent\Repository;
 use Silex\Application;
 
 use AnyContent\Repository\ContentManager;
+use AnyContent\Repository\FilesManager;
 
 class Repository
 {
@@ -12,8 +13,8 @@ class Repository
     protected $app;
     protected $name;
 
-    protected $manager = array();
-
+    protected $contentManager = array();
+    protected $filesManager = null;
 
     public function __construct(Application $app, $repositoryName)
     {
@@ -54,9 +55,9 @@ class Repository
 
     public function getContentManager($contentTypeName)
     {
-        if (array_key_exists($contentTypeName, $this->manager))
+        if (array_key_exists($contentTypeName, $this->contentManager))
         {
-            return $this->manager[$contentTypeName];
+            return $this->contentManager[$contentTypeName];
         }
 
         $contentTypeDefinition = $this->getContentTypeDefinition($contentTypeName);
@@ -66,7 +67,7 @@ class Repository
 
             $manager = new ContentManager($this, $contentTypeDefinition);
 
-            $this->manager[$contentTypeName] = $manager;
+            $this->contentManager[$contentTypeName] = $manager;
 
             return $manager;
         }
@@ -74,11 +75,28 @@ class Repository
     }
 
 
+    public function getFilesManager()
+    {
+        if ($this->filesManager !=null)
+        {
+            return $this->filesManager;
+        }
+        $manager = new FilesManager($this,$this->app['repos']->getFilesAdapterConfig($this->getName()));
+        $this->filesManager = $manager;
+        return $manager;
+    }
+
+
+
     public function getDatabaseConnection()
     {
         return $this->app['repos']->getDatabaseConnection();
     }
 
+   /* public function getFileSystem()
+    {
+        return $this->app['repos']->getFileSystem($this->getName());
+    }*/
 
     public function getMaxTimestamp()
     {

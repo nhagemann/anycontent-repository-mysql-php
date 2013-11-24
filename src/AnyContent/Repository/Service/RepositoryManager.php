@@ -13,6 +13,12 @@ use AnyContent\Repository\Entity\ContentTypeInfo;
 use CMDL\Parser;
 use CMDL\ParserException;
 
+use Gaufrette\Filesystem;
+use Gaufrette\Adapter\Local as LocalAdapter;
+use Gaufrette\Adapter\Ftp as FTPAdapter;
+use Gaufrette\Adapter\Dropbox as DropboxAdapter;
+use Gaufrette\Adapter\Cache as CacheAdapter;
+
 class RepositoryManager
 {
 
@@ -238,7 +244,6 @@ class RepositoryManager
             }
         }
 
-
         $cmdl = $this->getCMDL($repositoryName, $contentTypeName);
         if ($cmdl)
         {
@@ -295,6 +300,13 @@ class RepositoryManager
     {
         return $this->app['db']->getConnection();
     }
+
+
+    public function getFilesAdapterConfig($repositoryName)
+    {
+        return $this->app['config']->getFilesAdapterConfig($repositoryName);
+    }
+
 
 
     public static function getMaxTimestamp()

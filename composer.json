@@ -15,7 +15,10 @@
         "php": ">=5.2",
         "silex/silex": "~1.1",
         "nhagemann/cmdl-parser-php": "dev-master",
-        "monolog/monolog": ">=1.0.0"
+        "monolog/monolog": ">=1.0.0",
+        "knplabs/gaufrette": "0.2.*@dev",
+        "dropbox-php/dropbox-php": "*",
+        "symfony/yaml": "2.4.*@dev"
     },
 
     "require-dev": {

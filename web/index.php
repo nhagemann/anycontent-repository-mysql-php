@@ -35,13 +35,15 @@ $app->get('/1/{repositoryName}/content/{contentTypeName}/{id}', 'AnyContent\Repo
 $app->get('/1/{repositoryName}/content/{contentTypeName}/{id}/{workspace}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/content/{contentTypeName}/{id}/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
 
-
-
-
 // insert/update record (additional query parameters: language)
 $app->post('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
 $app->post('/1/{repositoryName}/content/{contentTypeName}/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
 
+
+// list files
+$app->get('/1/{repositoryName}/files/{workspace}/list', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/files/{workspace}/list/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/files/{workspace}/list/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
 
 // admin routes
 $app->get('/1/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh')->before($before1)->before($before2);
@@ -71,21 +73,6 @@ if ($app['debug'])
     ));
 }
 
-/*
-$app['cm'] = $app->share(function ($app)
-{
-    return new ContentManager($app);
-});
-*/
-
-//$app->before('AnyContent\Repository\Middleware\ExtractUserInfo::execute');
-// test, whether we can handle access via middleware, we can
-/*
-$app->before(function (Symfony\Component\HttpFoundation\Request $request)
-{
-    //var_dump ($request->get('_route'));
-    //var_dump ($request->get('repositoryName'));
-});   */
 
 $app->after($after);
 $app->run();
