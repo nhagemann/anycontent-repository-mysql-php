@@ -174,11 +174,17 @@ class RepositoryManager
                             $filestats       = stat($path . '/' . $result);
                             $contentTypeName = pathinfo($result, PATHINFO_FILENAME);
 
-                            $info = new ContentTypeInfo();
+                            $contentTypeDefinition = $this->getContentTypeDefinition($repositoryName, $contentTypeName);
 
-                            $info->setName($contentTypeName);
-                            $info->setAgeCmdl(@$filestats['mtime']);
-                            $contentTypes[$contentTypeName] = $info;
+                            if ($contentTypeDefinition)
+                            {
+                                $info = new ContentTypeInfo();
+                                $info->setName($contentTypeName);
+                                $info->setAgeCmdl(@$filestats['mtime']);
+                                $info->setTitle((string)$contentTypeDefinition->getTitle());
+                                $info->setDescription((string)$contentTypeDefinition->getDescription());
+                                $contentTypes[$contentTypeName] = $info;
+                            }
                         }
                     }
                 }
@@ -306,7 +312,6 @@ class RepositoryManager
     {
         return $this->app['config']->getFilesAdapterConfig($repositoryName);
     }
-
 
 
     public static function getMaxTimestamp()

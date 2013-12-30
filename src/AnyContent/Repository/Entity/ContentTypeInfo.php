@@ -7,9 +7,11 @@ class ContentTypeInfo
 
     protected $name;
 
+    public $title = '';
     public $age_content = 0;
     public $age_cmdl = 0;
     public $count = 0;
+    public $description ='';
 
 
     public function setName($name)
@@ -21,6 +23,18 @@ class ContentTypeInfo
     public function getName()
     {
         return $this->name;
+    }
+
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+
+    public function getTitle()
+    {
+        return $this->title;
     }
 
 
@@ -57,6 +71,18 @@ class ContentTypeInfo
     public function getCount()
     {
         return $this->count;
+    }
+
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+
+    public function getDescription()
+    {
+        return $this->description;
     }
 
 }

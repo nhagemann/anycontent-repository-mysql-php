@@ -8,3 +8,7 @@ Article = textarea
 Source
 
 @workspaces (default,live)
+
+
+@content-type-title "Example 01"
+@content-type-description  "Example Content Type"

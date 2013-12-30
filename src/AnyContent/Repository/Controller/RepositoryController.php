@@ -21,7 +21,9 @@ class RepositoryController extends BaseController
         if ($repository)
         {
 
-            return $app->json($repository->getContentTypesList());
+            $result = array('content'=>$repository->getContentTypesList(),'config'=>array());
+
+            return $app->json($result);
         }
 
         return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
