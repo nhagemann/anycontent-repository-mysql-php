@@ -8,9 +8,9 @@ class ContentTypeInfo
     protected $name;
 
     public $title = '';
-    public $age_content = 0;
-    public $age_cmdl = 0;
-    public $count = 0;
+    public $lastchange_content = 0;
+    public $lastchange_cmdl = 0;
+    public $count = null;
     public $description ='';
 
 
@@ -38,27 +38,27 @@ class ContentTypeInfo
     }
 
 
-    public function setAgeCmdl($age_cmdl)
+    public function setLastchangecmdl($age_cmdl)
     {
-        $this->age_cmdl = $age_cmdl;
+        $this->lastchange_cmdl = $age_cmdl;
     }
 
 
-    public function getAgeCmdl()
+    public function getLastchangecmdl()
     {
-        return $this->age_cmdl;
+        return $this->lastchange_cmdl;
     }
 
 
-    public function setAgeContent($age_content)
+    public function setLastchangeContent($age_content)
     {
-        $this->age_content = $age_content;
+        $this->lastchange_content = $age_content;
     }
 
 
-    public function getAgeContent()
+    public function getLastchangeContent()
     {
-        return $this->age_content;
+        return $this->lastchange_content;
     }
 
 

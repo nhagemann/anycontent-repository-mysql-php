@@ -180,7 +180,7 @@ class RepositoryManager
                             {
                                 $info = new ContentTypeInfo();
                                 $info->setName($contentTypeName);
-                                $info->setAgeCmdl(@$filestats['mtime']);
+                                $info->setLastchangecmdl(@$filestats['mtime']);
                                 $info->setTitle((string)$contentTypeDefinition->getTitle());
                                 $info->setDescription((string)$contentTypeDefinition->getDescription());
                                 $contentTypes[$contentTypeName] = $info;

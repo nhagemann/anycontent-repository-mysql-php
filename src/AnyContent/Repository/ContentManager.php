@@ -436,6 +436,50 @@ class ContentManager
     }
 
 
+    public function countRecords($workspace = 'default', $filter = null, $language = 'none', $timeshift = 0)
+    {
+        $repositoryName  = $this->repository->getName();
+        $contentTypeName = $this->contentTypeDefinition->getName();
+
+        $tableName = $repositoryName . '$' . $contentTypeName;
+
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
+        {
+            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+        }
+
+        $dbh = $this->repository->getDatabaseConnection();
+
+        $sql = 'SELECT COUNT(*) AS C FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ';
+
+        $timestamp = $this->repository->getTimeshiftTimestamp($timeshift);
+
+        $stmt     = $dbh->prepare($sql);
+        $params   = array();
+        $params[] = $workspace;
+        $params[] = $language;
+        $params[] = $timestamp;
+        $params[] = $timestamp;
+
+        $stmt->execute($params);
+
+        $count = $stmt->fetchColumn();
+
+        $sql  = 'SELECT MAX(lastchange_timestamp) AS T FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ';
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute($params);
+
+        $timestamp = $stmt->fetchColumn();
+        if (!$timestamp)
+        {
+            $timestamp = 0;
+        }
+
+        return array( 'count' => $count, 'lastchange' => $timestamp );
+
+    }
+
+
     public function sortRecords($list, $workspace = 'default', $language = 'none')
     {
         $repositoryName  = $this->repository->getName();

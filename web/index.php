@@ -18,8 +18,9 @@ $before2 = 'AnyContent\Repository\Middleware\RequestLogger::execute';
 // json formatter to make json human readable
 $after = 'AnyContent\Repository\Middleware\PrettyPrint::execute';
 
-// get repository status
+// get repository status (additional query parameters: timeshift, language)
 $app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/{workspace}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 
 // get cmdl for a content type
 $app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
