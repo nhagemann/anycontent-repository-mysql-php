@@ -86,79 +86,79 @@ class SortRecordsTest extends \PHPUnit_Framework_TestCase
 
         $subset  = '1';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(3,$records);
+        $this->assertCount(3,$records['records']);
 
         $subset  = '4';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(6,$records);
+        $this->assertCount(6,$records['records']);
 
         $subset  = '4,0';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(5,$records);
+        $this->assertCount(5,$records['records']);
 
         $subset  = '4,0,1';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(2,$records);
+        $this->assertCount(2,$records['records']);
 
         $subset  = '5,0';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(2,$records);
+        $this->assertCount(2,$records['records']);
 
         $subset  = '5,1';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(3,$records);
+        $this->assertCount(3,$records['records']);
 
         $subset  = '6,0';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(1,$records);
+        $this->assertCount(1,$records['records']);
 
         $subset  = '6,1';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(2,$records);
+        $this->assertCount(2,$records['records']);
 
         $subset  = '7,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(3,$records);
+        $this->assertCount(3,$records['records']);
 
         $subset  = '8,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(3,$records);
+        $this->assertCount(3,$records['records']);
 
         $subset  = '9,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(3,$records);
+        $this->assertCount(3,$records['records']);
 
         $subset  = '3,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(2,$records);
+        $this->assertCount(2,$records['records']);
 
         $subset  = '4,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(1,$records);
+        $this->assertCount(1,$records['records']);
 
         $subset  = '5,0,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(1,$records);
+        $this->assertCount(1,$records['records']);
 
         $subset  = '4,0,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(0,$records);
+        $this->assertCount(0,$records['records']);
 
         $subset  = '8,0,-1';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(1,$records);
+        $this->assertCount(1,$records['records']);
 
         $subset  = '8,0,-2';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(2,$records);
+        $this->assertCount(2,$records['records']);
 
         $subset  = '8,1,-1';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(2,$records);
+        $this->assertCount(2,$records['records']);
 
         $subset  = '8,1,-2';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(3,$records);
+        $this->assertCount(3,$records['records']);
     }
 
 }

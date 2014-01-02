@@ -74,13 +74,15 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
          */
         $manager = $this->repository->getContentManager('example01');
 
-        $record = $manager->getRecord(1);
+        $result = $manager->getRecord(1);
+        $record = $result['record'];
         $this->assertEquals(1, $record['id']);
         $this->assertEquals(5, $record['info']['revision']);
         $this->assertEquals('New Record 1 - Revision 5', $record['properties']['name']);
         $this->assertCount(6, $record['properties']);
 
-        $record = $manager->getRecord(2);
+        $result = $manager->getRecord(2);
+        $record = $result['record'];
         $this->assertEquals(2, $record['id']);
         $this->assertEquals(1, $record['info']['revision']);
         $this->assertEquals('New Record 2', $record['properties']['name']);
@@ -92,7 +94,8 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $id                   = $manager->saveRecord($record);
         $this->assertEquals(1, $id);
 
-        $record = $manager->getRecord(1);
+        $result = $manager->getRecord(1);
+        $record = $result['record'];
         $this->assertCount(8, $record['properties']);
 
     }
@@ -110,7 +113,8 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $record               = array();
         $record['properties'] = array( 'name' => 'Timeshift Record' );
         $id                   = $manager->saveRecord($record);
-        $record               = $manager->getRecord($id);
+        $result             = $manager->getRecord($id);
+        $record = $result['record'];
         $this->assertEquals(1, $record['info']['revision']);
         sleep(2);
         $this->assertEquals($id, $manager->saveRecord($record));
@@ -129,7 +133,7 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->repository->getContentManager('example01');
 
         $record = $manager->getRecord(1);
-        $this->assertEquals(1, $record['id']);
+        $this->assertEquals(1, $record['record']['id']);
 
         $manager->deleteRecord(1);
 
@@ -145,6 +149,6 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->repository->getContentManager('example01');
 
         $records = $manager->getRecords();
-        $this->assertCount(4, $records);
+        $this->assertCount(4, $records['records']);
     }
 }

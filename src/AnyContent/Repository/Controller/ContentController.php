@@ -2,6 +2,7 @@
 
 namespace AnyContent\Repository\Controller;
 
+use AnyContent\Repository\Entity\Filter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
@@ -229,6 +230,20 @@ class ContentController extends BaseController
                 if ($request->query->has('subset'))
                 {
                     $subset = $request->get('subset');
+                }
+
+                if ($request->query->has('filter'))
+                {
+                    $jsonFilter = $request->query->get('filter');
+                    $filter = new Filter();
+                    foreach ($jsonFilter AS $block)
+                    {
+                        $filter->nextConditionsBlock();
+                        foreach ($block as $condition)
+                        {
+                            $filter->addCondition($condition[0],$condition[1],$condition[2]);
+                        }
+                    }
                 }
 
                 $records = $manager->getRecords($clippingName, $workspace, $orderBy, $limit, $page, $subset, $filter, $language, $timeshift);

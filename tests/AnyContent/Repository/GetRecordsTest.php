@@ -63,20 +63,20 @@ class GetRecordsTest extends \PHPUnit_Framework_TestCase
         }
 
         $records = $manager->getRecords();
-        $this->assertCount(5, $records);
+        $this->assertCount(5, $records['records']);
         $records = $manager->getRecords('default', 'live');
-        $this->assertCount(3, $records);
+        $this->assertCount(3, $records['records']);
         $records = $manager->getRecords('default', 'default');
-        $this->assertCount(5, $records);
+        $this->assertCount(5, $records['records']);
 
         $records = $manager->getRecords('default', 'default', 'property_name DESC, id ASC');
-        $record = array_shift($records);
+        $record = array_shift($records['records']);
         $this->assertEquals(5, $record['id']);
 
         $records = $manager->getRecords('default', 'default','id ASC',2,1);
-        $this->assertCount(2, $records);
+        $this->assertCount(2, $records['records']);
         $records = $manager->getRecords('default', 'default','id ASC',2,3);
-        $this->assertCount(1, $records);
+        $this->assertCount(1, $records['records']);
     }
 
 }

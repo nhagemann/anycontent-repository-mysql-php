@@ -20,29 +20,30 @@ $after = 'AnyContent\Repository\Middleware\PrettyPrint::execute';
 
 // get repository status (additional query parameters: timeshift, language)
 $app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/{workspace}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/info', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/info/{workspace}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 
 // get cmdl for a content type
 $app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
 
 
-// get records (additional query parameters: timeshift, language, order, properties, limit, page, subset, filter)
-$app->get('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/content/{contentTypeName}/{workspace}', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/content/{contentTypeName}/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before1)->before($before2);
-
 // get distinct record (additional query parameters: timeshift, language)
-$app->get('/1/{repositoryName}/content/{contentTypeName}/{id}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/content/{contentTypeName}/{id}/{workspace}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/content/{contentTypeName}/{id}/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
+
+// get records (additional query parameters: timeshift, language, order, properties, limit, page, subset, filter)
+$app->get('/1/{repositoryName}/content/{contentTypeName}/records', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::getMany')->before($before1)->before($before2);
 
 // delete record (additional query parameter: language)
-$app->delete('/1/{repositoryName}/content/{contentTypeName}/{id}', 'AnyContent\Repository\Controller\ContentController::deleteOne')->before($before1)->before($before2);
-$app->delete('/1/{repositoryName}/content/{contentTypeName}/{id}/{workspace}', 'AnyContent\Repository\Controller\ContentController::deleteOne')->before($before1)->before($before2);
+$app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}', 'AnyContent\Repository\Controller\ContentController::deleteOne')->before($before1)->before($before2);
+$app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', 'AnyContent\Repository\Controller\ContentController::deleteOne')->before($before1)->before($before2);
 
 // insert/update record (additional query parameters: language)
-$app->post('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
-$app->post('/1/{repositoryName}/content/{contentTypeName}/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
+$app->post('/1/{repositoryName}/content/{contentTypeName}/records', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
+$app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
 
 
 // list files

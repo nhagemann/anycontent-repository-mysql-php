@@ -44,7 +44,15 @@ class ContentManager
 
         $row = $this->getRecordTableRow($id, $workspace, $language, $timeshift);
 
-        return $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName);
+        $record               = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName);
+        $info                 = array();
+        $info['repository']   = $repositoryName;
+        $info['content_type'] = $contentTypeName;
+        $info['workspace']    = $workspace;
+        $info['clipping']     = $clippingName;
+        $info['language']     = $language;
+
+        return array( 'info' => $info, 'record' => $record );
 
     }
 
@@ -233,7 +241,18 @@ class ContentManager
 
             }
 
-            return $records;
+            $info                 = array();
+            $info['repository']   = $repositoryName;
+            $info['content_type'] = $contentTypeName;
+            $info['workspace']    = $workspace;
+            $info['clipping']     = $clippingName;
+            $info['language']     = $language;
+
+            $count              = $this->countRecords($workspace, $filter, $language, $timeshift);
+            $info['count']      = $count['count'];
+            $info['lastchange'] = $count['lastchange'];
+
+            return array( 'info' => $info, 'records' => $records );
 
         }
         catch (\PDOException $e)
@@ -505,7 +524,18 @@ class ContentManager
 
         $dbh = $this->repository->getDatabaseConnection();
 
-        $sql = 'SELECT COUNT(*) AS C FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ';
+        $sqlSubset = '';
+        if ($filter)
+        {
+            $sqlFilter = $filter->getMySQLExpression();
+            if ($sqlFilter)
+            {
+                $sqlSubset = ' AND ' . $sqlFilter['sql'];
+            }
+
+        }
+
+        $sql = 'SELECT COUNT(*) AS C FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ' . $sqlSubset;
 
         $timestamp = $this->repository->getTimeshiftTimestamp($timeshift);
 
@@ -516,11 +546,16 @@ class ContentManager
         $params[] = $timestamp;
         $params[] = $timestamp;
 
+        if ($filter AND $sqlFilter)
+        {
+            $params = array_merge($params, $sqlFilter['params']);
+        }
+
         $stmt->execute($params);
 
         $count = $stmt->fetchColumn();
 
-        $sql  = 'SELECT MAX(lastchange_timestamp) AS T FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ';
+        $sql  = 'SELECT MAX(validfrom_timestamp) AS T FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ' . $sqlSubset;
         $stmt = $dbh->prepare($sql);
         $stmt->execute($params);
 
@@ -530,7 +565,7 @@ class ContentManager
             $timestamp = 0;
         }
 
-        return array( 'count' => $count, 'lastchange' => $timestamp );
+        return array( 'count' => $count, 'lastchange' => array_shift(explode('.', $timestamp)) );
 
     }
 
@@ -625,22 +660,19 @@ class ContentManager
 
     protected function getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName)
     {
-        $record                 = array();
-        $record['id']           = $row['id'];
-        $record['repository']   = $repositoryName;
-        $record['content_type'] = $contentTypeName;
-        $record['workspace']    = $row['workspace'];
-        $record['clipping']     = $clippingName;
-        $record['language']     = $row['language'];
-        $record['properties']   = array();
+        $record               = array();
+        $record['id']         = $row['id'];
+        $record['properties'] = array();
 
         $properties = $this->contentTypeDefinition->getProperties($clippingName);
         foreach ($properties as $property)
         {
             $record['properties'][$property] = $row['property_' . $property];
         }
-        $record['info']             = array();
-        $record['info']['revision'] = $row['revision'];
+        $record['info']                       = array();
+        $record['info']['revision']           = $row['revision'];
+        $record['info']['revision_timestamp'] = array_shift(explode('.', $row['validfrom_timestamp']));
+        $record['info']['hash']               = $row['hash'];
 
         $record['info']['creation']['timestamp'] = $row['creation_timestamp'];
         $record['info']['creation']['username']  = $row['creation_username'];
@@ -652,8 +684,9 @@ class ContentManager
         $record['info']['lastchange']['firstname'] = $row['lastchange_firstname'];
         $record['info']['lastchange']['lastname']  = $row['lastchange_lastname'];
 
-        $record['info']['position'] = $row['position'];
-        $record['info']['level']    = $row['position_level'];
+        $record['info']['position']  = $row['position'];
+        $record['info']['parent_id'] = $row['parent_id'];
+        $record['info']['level']     = $row['position_level'];
 
         return $record;
     }
