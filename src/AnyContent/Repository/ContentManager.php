@@ -7,6 +7,8 @@ use Silex\Application;
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;
 
+use AnyContent\Repository\Entity\Filter;
+
 use AnyContent\Repository\Helper;
 use AnyContent\Repository\RepositoryException;
 
@@ -57,7 +59,7 @@ class ContentManager
 
         if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
-            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+            throw new RepositoryException ('Invalid repository and/or content type name(s).');
         }
 
         $dbh = $this->repository->getDatabaseConnection();
@@ -93,7 +95,7 @@ class ContentManager
     }
 
 
-    public function getRecords($clippingName = 'default', $workspace = 'default', $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, $filter = null, $language = 'none', $timeshift = 0)
+    public function getRecords($clippingName = 'default', $workspace = 'default', $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, Filter $filter = null, $language = 'none', $timeshift = 0)
     {
         $records         = array();
         $repositoryName  = $this->repository->getName();
@@ -182,6 +184,16 @@ class ContentManager
             }
         }
 
+        if ($filter)
+        {
+            $sqlFilter = $filter->getMySQLExpression();
+            if ($sqlFilter)
+            {
+                $sqlSubset .= ' AND ' . $sqlFilter['sql'];
+            }
+
+        }
+
         $timestamp = $this->repository->getTimeshiftTimestamp($timeshift);
 
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ' . $sqlSubset . ' ORDER BY ' . $orderBy;
@@ -197,6 +209,11 @@ class ContentManager
         $params[] = $language;
         $params[] = $timestamp;
         $params[] = $timestamp;
+
+        if ($filter AND $sqlFilter)
+        {
+            $params = array_merge($params, $sqlFilter['params']);
+        }
 
         try
         {
@@ -433,6 +450,44 @@ class ContentManager
 
         return $record['id'];
 
+    }
+
+
+    public function deleteRecord($id, $workspace = 'default', $language = 'none')
+    {
+        $repositoryName  = $this->repository->getName();
+        $contentTypeName = $this->contentTypeDefinition->getName();
+
+        $tableName = $repositoryName . '$' . $contentTypeName;
+
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
+        {
+            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+        }
+
+        $dbh = $this->repository->getDatabaseConnection();
+
+        $sql = 'UPDATE ' . $tableName . ' SET deleted=1 WHERE workspace = ? AND language = ?  AND id = ? AND validfrom_timestamp <= ? AND validuntil_timestamp > ?';
+
+        $timestamp = $this->repository->getTimeshiftTimestamp();
+
+        $stmt     = $dbh->prepare($sql);
+        $params   = array();
+        $params[] = $workspace;
+        $params[] = $language;
+        $params[] = $id;
+        $params[] = $timestamp;
+        $params[] = $timestamp;
+
+        $stmt->execute($params);
+
+        if ($stmt->rowCount() == 1)
+        {
+
+            return true;
+        }
+
+        return false;
     }
 
 

@@ -119,4 +119,32 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $record = $manager->getRecord($id);
         $this->assertEquals(2, $record['info']['revision']);
     }
+
+
+    public function testDeleteRecord()
+    {
+        /**
+         * @var ContentManager
+         */
+        $manager = $this->repository->getContentManager('example01');
+
+        $record = $manager->getRecord(1);
+        $this->assertEquals(1, $record['id']);
+
+        $manager->deleteRecord(1);
+
+        $this->setExpectedException('AnyContent\Repository\RepositoryException');
+        $record = $manager->getRecord(1);
+    }
+
+    public function testCountAfterDeletion()
+    {
+        /**
+         * @var ContentManager
+         */
+        $manager = $this->repository->getContentManager('example01');
+
+        $records = $manager->getRecords();
+        $this->assertCount(4, $records);
+    }
 }

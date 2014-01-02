@@ -52,7 +52,6 @@ class ContentController extends BaseController
         }
 
         return self::badRequest($app);
-        //return $app->json('true');
     }
 
 
@@ -99,11 +98,11 @@ class ContentController extends BaseController
     public static function getMany(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'none')
     {
         $timeshift = 0;
-        $orderBy = 'id ASC';
-        $limit = null;
-        $page = 1;
-        $subset = null;
-        $filter = null;
+        $orderBy   = 'id ASC';
+        $limit     = null;
+        $page      = 1;
+        $subset    = null;
+        $filter    = null;
 
         /** @var $repository Repository */
         $repository = $app['repos']->get($repositoryName);
@@ -182,11 +181,12 @@ class ContentController extends BaseController
                                 break;
                             case
                                 'change':
-                                $orderBy = 'lastchange_timestamp ASC, id ASC';
+                                // reversed order for token "change", since usually you want to see the latest changes first
+                                $orderBy = 'lastchange_timestamp DESC, id ASC';
                                 break;
                             case
                                 'change-':
-                                $orderBy = 'lastchange_timestamp DESC, id DESC';
+                                $orderBy = 'lastchange_timestamp ASC, id DESC';
                                 break;
                             case
                                 'creation':
@@ -202,9 +202,16 @@ class ContentController extends BaseController
                                 break;
                             case
                                 'status-':
-                                $orderBy = 'property_status ASC, id ASC';
+                                $orderBy = 'property_status DESC, id ASC';
                                 break;
-
+                            case
+                                'subtype':
+                                $orderBy = 'property_subtype ASC, id ASC';
+                                break;
+                            case
+                                'subtype-':
+                                $orderBy = 'property_subtype DESC, id ASC';
+                                break;
                         }
                     }
                 }
@@ -227,6 +234,36 @@ class ContentController extends BaseController
                 $records = $manager->getRecords($clippingName, $workspace, $orderBy, $limit, $page, $subset, $filter, $language, $timeshift);
 
                 return $app->json($records);
+            }
+            else
+            {
+                return self::notFoundError($app, self::UNKNOWN_CONTENTTYPE, $repositoryName, $contentTypeName);
+            }
+
+        }
+
+        return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
+    }
+
+
+    public static function deleteOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $language = 'none')
+    {
+
+        /** @var $repository Repository */
+        $repository = $app['repos']->get($repositoryName);
+        if ($repository)
+        {
+
+            $manager = $repository->getContentManager($contentTypeName);
+
+            if ($manager)
+            {
+                if ($manager->deleteRecord($id, $workspace, $language))
+                {
+                    return $app->json(true);
+                }
+                return $app->json(false);
+
             }
             else
             {
