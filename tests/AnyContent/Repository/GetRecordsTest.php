@@ -79,4 +79,19 @@ class GetRecordsTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $records['records']);
     }
 
+    public function testDeleteRecords()
+    {
+        /**
+         * @var $manager ContentManager
+         */
+        $manager = $this->repository->getContentManager('example01');
+
+        $manager->deleteRecord(1);
+
+        $records = $manager->getRecords();
+        $this->assertCount(4, $records['records']);
+
+        $manager->deleteRecord(99);
+    }
+
 }

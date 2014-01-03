@@ -465,7 +465,7 @@ class ContentManager
         $sql .= str_repeat(' , ?', count($values) - 1);
         $sql .= ')';
         $stmt = $dbh->prepare($sql);
-        $stmt->dexecute(array_values($values));
+        $stmt->execute(array_values($values));
 
         return $record['id'];
 
@@ -484,7 +484,60 @@ class ContentManager
             throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
 
+        // get row of current revision
+
+        try{
+            $row = $this->getRecordTableRow($id, $workspace, $language);
+        }
+        catch (RepositoryException $e)
+        {
+            return false;
+        }
+
+
         $dbh = $this->repository->getDatabaseConnection();
+
+        // invalidate current revision
+
+        $timeshiftTimestamp = $this->repository->getTimeshiftTimestamp();
+
+        $sql                = 'UPDATE ' . $tableName . ' SET validuntil_timestamp = ? WHERE id = ? AND workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <=? AND validuntil_timestamp >?';
+        $params             = array();
+        $params[]           = $timeshiftTimestamp;
+        $params[]           = $id;
+        $params[]           = $workspace;
+        $params[]           = $language;
+        $params[]           = $timeshiftTimestamp;
+        $params[]           = $timeshiftTimestamp;
+        $stmt               = $dbh->prepare($sql);
+        $stmt->execute($params);
+
+
+        // copy last revision row and mark record as deleted
+
+        $row['revision']=$row['revision']+1;
+        $row['deleted']=1;
+        $row['lastchange_timestamp'] = $timeshiftTimestamp;
+        $row['lastchange_apiuser']   = $this->repository->getAPIUser();
+        $row['lastchange_clientip']  = $this->repository->getClientIp();
+        $row['lastchange_username']  = $this->repository->getCurrentUserName();
+        $row['lastchange_firstname'] = $this->repository->getCurrentUserFirstname();
+        $row['lastchange_lastname']  = $this->repository->getCurrentUserLastname();
+        $row['validfrom_timestamp']  = $timeshiftTimestamp;
+        $row['validuntil_timestamp'] = $this->repository->getMaxTimestamp();
+
+
+        $sql = 'INSERT INTO ' . $tableName;
+        $sql .= ' (' . join(',', array_keys($row)) . ')';
+        $sql .= ' VALUES ( ?';
+        $sql .= str_repeat(' , ?', count($row) - 1);
+        $sql .= ')';
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute(array_values($row));
+
+        return true;
+        /*
+        // mark new revision as deleted
 
         $sql = 'UPDATE ' . $tableName . ' SET deleted=1 WHERE workspace = ? AND language = ?  AND id = ? AND validfrom_timestamp <= ? AND validuntil_timestamp > ?';
 
@@ -507,6 +560,7 @@ class ContentManager
         }
 
         return false;
+        */
     }
 
 
@@ -555,7 +609,7 @@ class ContentManager
 
         $count = $stmt->fetchColumn();
 
-        $sql  = 'SELECT MAX(validfrom_timestamp) AS T FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ' . $sqlSubset;
+        $sql  = 'SELECT MAX(validfrom_timestamp) AS T FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ' . $sqlSubset;
         $stmt = $dbh->prepare($sql);
         $stmt->execute($params);
 
@@ -565,7 +619,8 @@ class ContentManager
             $timestamp = 0;
         }
 
-        return array( 'count' => $count, 'lastchange' => array_shift(explode('.', $timestamp)) );
+        return array( 'count' => $count, 'lastchange' => $timestamp );
+        //return array( 'count' => $count, 'lastchange' => array_shift(explode('.', $timestamp)) );
 
     }
 
