@@ -28,6 +28,11 @@ class ContentController extends BaseController
             $record = json_decode($record, true);
         }
 
+        if ($request->request->has('language'))
+        {
+            $language = $request->get('language');
+        }
+
         if ($record)
         {
 
@@ -35,11 +40,13 @@ class ContentController extends BaseController
             $repository = $app['repos']->get($repositoryName);
             if ($repository)
             {
+
                 $manager = $repository->getContentManager($contentTypeName);
 
                 try
                 {
-                    $id = $manager->saveRecord($record, $workspace, $clippingName, $language);
+                    $id = $manager->saveRecord($record, $clippingName, $workspace, $language);
+
                 }
                 catch (RepositoryException $e)
                 {
@@ -70,6 +77,10 @@ class ContentController extends BaseController
             {
                 try
                 {
+                    if ($request->query->has('language'))
+                    {
+                        $language = $request->get('language');
+                    }
 
                     if ($request->query->has('timeshift'))
                     {
@@ -116,6 +127,11 @@ class ContentController extends BaseController
                 if ($request->query->has('timeshift'))
                 {
                     $timeshift = (int)$request->get('timeshift');
+                }
+
+                if ($request->query->has('language'))
+                {
+                    $language = $request->get('language');
                 }
 
                 if ($request->query->has('order'))
@@ -235,13 +251,13 @@ class ContentController extends BaseController
                 if ($request->query->has('filter'))
                 {
                     $jsonFilter = $request->query->get('filter');
-                    $filter = new Filter();
+                    $filter     = new Filter();
                     foreach ($jsonFilter AS $block)
                     {
                         $filter->nextConditionsBlock();
                         foreach ($block as $condition)
                         {
-                            $filter->addCondition($condition[0],$condition[1],$condition[2]);
+                            $filter->addCondition($condition[0], $condition[1], $condition[2]);
                         }
                     }
                 }
@@ -273,10 +289,16 @@ class ContentController extends BaseController
 
             if ($manager)
             {
+                if ($request->query->has('language'))
+                {
+                    $language = $request->get('language');
+                }
+
                 if ($manager->deleteRecord($id, $workspace, $language))
                 {
                     return $app->json(true);
                 }
+
                 return $app->json(false);
 
             }

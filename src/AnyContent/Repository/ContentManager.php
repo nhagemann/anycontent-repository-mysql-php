@@ -281,12 +281,15 @@ class ContentManager
 
         if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
-            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+            throw new RepositoryException ('Invalid repository and/or content type name(s).',  RepositoryException::INVALID_NAMES);
         }
+
+
 
         $possibleProperties = $this->contentTypeDefinition->getProperties($clippingName);
 
         $notallowed = array_diff(array_keys($record['properties']), $possibleProperties);
+
 
         if (count($notallowed) != 0)
         {
@@ -294,6 +297,7 @@ class ContentManager
         }
 
         $mandatoryProperties = $this->contentTypeDefinition->getMandatoryProperties($clippingName);
+
 
         $missing = array();
         foreach ($mandatoryProperties as $property)
@@ -315,6 +319,7 @@ class ContentManager
         {
             throw new RepositoryException('Trying to store record, but missing mandatory properties: ' . join(',', $missing) . '.', RepositoryException::REPOSITORY_MISSING_MANDATORY_PROPERTIES);
         }
+
 
         $dbh = $this->repository->getDatabaseConnection();
 

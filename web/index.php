@@ -22,6 +22,7 @@ $after = 'AnyContent\Repository\Middleware\PrettyPrint::execute';
 $app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/info', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/info/{workspace}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/info/{workspace}/{language}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 
 // get cmdl for a content type
 $app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
