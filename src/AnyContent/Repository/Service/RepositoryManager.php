@@ -8,6 +8,7 @@ use Silex\Application;
 
 use AnyContent\Repository\Repository;
 
+use AnyContent\Repository\Entity\ConfigTypeInfo;
 use AnyContent\Repository\Entity\ContentTypeInfo;
 
 use CMDL\Parser;
@@ -27,6 +28,8 @@ class RepositoryManager
     protected $repositories = null;
 
     protected $contentTypeDefinitions = array();
+
+    protected $configTypeDefinitions = array();
 
     protected $cmdl = array();
 
@@ -195,6 +198,55 @@ class RepositoryManager
     }
 
 
+    public function getConfigTypesList($repositoryName)
+    {
+        $configTypes = array();
+        if ($this->hasRepository($repositoryName))
+        {
+            $path = $this->app['config']->getCMDLDirectory() . '/' . $repositoryName . '/config';
+            $path = realpath($path);
+            if (is_dir($path))
+            {
+                $results = scandir($path);
+
+                foreach ($results as $result)
+                {
+                    if ($result === '.' or $result === '..')
+                    {
+                        continue;
+                    }
+
+                    if (!is_dir($path . '/' . $result))
+                    {
+                        if (pathinfo($result, PATHINFO_EXTENSION) == 'cmdl')
+                        {
+                            $filestats      = stat($path . '/' . $result);
+                            $configTypeName = pathinfo($result, PATHINFO_FILENAME);
+
+                            //$contentTypeDefinition = $this->getContentTypeDefinition($repositoryName, $contentTypeName);
+
+                            $info = new ConfigTypeInfo();
+                            $info->setName($configTypeName);
+                            $info->setLastchangecmdl(@$filestats['mtime']);
+                            //$info->setTitle((string)$contentTypeDefinition->getTitle());
+                            //$info->setDescription((string)$contentTypeDefinition->getDescription());
+                            $configTypes[$configTypeName] = $info;
+
+                            /*
+                            if ($contentTypeDefinition)
+                            {
+
+                            } */
+                        }
+                    }
+                }
+            }
+        }
+
+        return $configTypes;
+    }
+
+
     public function getCMDL($repositoryName, $contentTypeName)
     {
         if ($this->hasRepository($repositoryName))
@@ -230,6 +282,50 @@ class RepositoryManager
         else
         {
             if ($this->getCMDL($repositoryName, $contentTypeName))
+            {
+                return $this->cmdl[$token]['timestamp'];
+            }
+        }
+
+        return 0;
+    }
+
+
+    public function getConfigCMDL($repositoryName, $configTypeName)
+    {
+        if ($this->hasRepository($repositoryName))
+        {
+            $token = 'config$' . $repositoryName . '$' . $configTypeName;
+            if (array_key_exists($token, $this->cmdl))
+            {
+                return $this->cmdl[$token]['cmdl'];
+            }
+            $filename = $this->app['config']->getCMDLDirectory() . '/' . $repositoryName . '/config/' . $configTypeName . '.cmdl';
+            $cmdl     = @file_get_contents($filename);
+            if ($cmdl)
+            {
+                $filestats                       = stat($filename);
+                $this->cmdl[$token]['cmdl']      = $cmdl;
+                $this->cmdl[$token]['timestamp'] = @$filestats['mtime'];
+
+                return $cmdl;
+            }
+        }
+
+        return false;
+    }
+
+
+    public function getAgeConfigCMDL($repositoryName, $configTypeName)
+    {
+        $token = 'config$' . $repositoryName . '$' . $configTypeName;
+        if (array_key_exists($token, $this->cmdl))
+        {
+            return $this->cmdl[$token]['timestamp'];
+        }
+        else
+        {
+            if ($this->getCMDL($repositoryName, $configTypeName))
             {
                 return $this->cmdl[$token]['timestamp'];
             }
@@ -302,6 +398,71 @@ class RepositoryManager
     }
 
 
+    public function getConfigTypeDefinition($repositoryName, $configTypeName)
+    {
+        // check if definition already has been created
+        if (array_key_exists($repositoryName, $this->configTypeDefinitions))
+        {
+            if (array_key_exists($configTypeName, $this->configTypeDefinitions[$repositoryName]))
+            {
+                return $this->configTypeDefinitions[$repositoryName][$configTypeName];
+            }
+        }
+
+        $cmdl = $this->getConfigCMDL($repositoryName, $configTypeName);
+        if ($cmdl)
+        {
+            try
+            {
+                $configTypeDefinition = Parser::parseCMDLString($cmdl);
+                $configTypeDefinition->setName($configTypeName);
+
+                // after generating the definition, check if the database is up to date
+                /*
+                $timestamp = $this->getAgeCMDL($repositoryName, $configTypeName);
+                $dbh       = $this->getDatabaseConnection();
+                $sql       = 'SELECT last_cmdl_change_timestamp FROM _info_ WHERE repository = ? AND content_type = ?';
+
+                $params   = array();
+                $params[] = $repositoryName;
+                $params[] = $configTypeName;
+                $stmt     = $dbh->prepare($sql);
+                $stmt->execute($params);
+                $result = (int)$stmt->fetchColumn(0);
+
+                if ($result < $timestamp)
+                {
+
+                    $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
+
+                    $sql = 'INSERT INTO _info_ (repository,content_type,last_cmdl_change_timestamp) VALUES (? , ? ,?) ON DUPLICATE KEY UPDATE last_cmdl_change_timestamp=?;';
+
+                    $params   = array();
+                    $params[] = $repositoryName;
+                    $params[] = $configTypeName;
+                    $params[] = $timestamp;
+                    $params[] = $timestamp;
+                    $stmt     = $dbh->prepare($sql);
+                    $stmt->execute($params);
+
+                }
+                */
+
+                $this->contentTypeDefinitions[$repositoryName][$configTypeName] = $configTypeDefinition;
+
+                return $configTypeDefinition;
+            }
+            catch (ParserException $e)
+            {
+
+            }
+        }
+
+        return false;
+
+    }
+
+
     public function getDatabaseConnection()
     {
         return $this->app['db']->getConnection();
@@ -321,9 +482,22 @@ class RepositoryManager
     }
 
 
+    public static function getMaxTimeshift()
+    {
+        // roundabout 10 years, equals to 1.1.1980
+
+        return number_format(315532800, 4, '.', '');
+    }
+
+
     public static function getTimeshiftTimestamp($timeshift = 0)
     {
-        return number_format(microtime(true) - $timeshift, 4, '.', '');
+        if ($timeshift < self::getMaxTimeshift())
+        {
+            return number_format(microtime(true) - $timeshift, 4, '.', '');
+        }
+
+        return $timeshift;
     }
 
 }

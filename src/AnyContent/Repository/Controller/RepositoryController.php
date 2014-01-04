@@ -35,14 +35,13 @@ class RepositoryController extends BaseController
                 $manager = $repository->getContentManager($contentTypeName);
                 if ($manager)
                 {
-                    $info = $manager->countRecords($workspace,null,$language,$timeshift);
+                    $info = $manager->countRecords($workspace, null, $language, $timeshift);
                     $contentTypeInfo->setCount($info['count']);
                     $contentTypeInfo->setLastchangeContent($info['lastchange']);
                 }
             }
 
-
-            $result = array( 'content' => $contentTypesList, 'config' => array() );
+            $result = array( 'content' => $contentTypesList, 'config' => array( $repository->getConfigTypesList() ), 'files' => true );
 
             return $app->json($result);
         }
@@ -51,7 +50,7 @@ class RepositoryController extends BaseController
     }
 
 
-    public static function cmdl(Application $app, Request $request, $repositoryName, $contentTypeName)
+    public static function cmdl(Application $app, Request $request, $repositoryName, $contentTypeName, $locale = null)
     {
 
         /** @var $repository Repository */

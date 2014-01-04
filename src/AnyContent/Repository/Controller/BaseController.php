@@ -13,8 +13,9 @@ class BaseController
     const UNKNOWN_REPOSITORY  = 2;
     const UNKNOWN_CONTENTTYPE = 3;
     const RECORD_NOT_FOUND    = 4;
-    const UNKNOWN_PROPERTY    = 5;
-    const UNKNOWN_ERROR       = 6;
+    const UNKNOWN_CONFIGTYPE  = 5;
+    const UNKNOWN_PROPERTY    = 6;
+    const UNKNOWN_ERROR       = 7;
 
 
     protected function notFoundError($app, $code = self::UNKNOWN_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
@@ -27,6 +28,9 @@ class BaseController
                 break;
             case self::UNKNOWN_CONTENTTYPE:
                 $message = sprintf('Unknown content type %s within repository %s.', $s2, $s1);
+                break;
+            case self::UNKNOWN_CONFIGTYPE:
+                $message = sprintf('Unknown config type %s within repository %s.', $s2, $s1);
                 break;
             case self::RECORD_NOT_FOUND:
                 $message = sprintf('Record with id %s not found for content type %s within repository %s.', $s3, $s2, $s1);

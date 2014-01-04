@@ -199,6 +199,77 @@ TEMPLATE_CONTENTTABLE;
         return true;
     }
 
+    public function refreshConfigTypesTableStructure($repositoryName, ContentTypeDefinition $configTypeDefinition)
+    {
+        $this->refreshInfoTablesStructure();
+
+        $configTypeName = $configTypeDefinition->getName();
+
+        $tableName = $repositoryName . '$$config';
+
+        if ($tableName != Util::generateValidIdentifier($repositoryName).'$$config')
+        {
+            throw new \Exception ('Invalid repository and/or config type name(s).', self::INVALID_NAMES);
+        }
+
+        /** @var PDO $db */
+        $dbh = $this->app['db']->getConnection();
+
+        $sql = 'Show Tables Like ?';
+
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute(array( $tableName ));
+
+        if ($stmt->rowCount() == 0)
+        {
+
+            $sql = <<< TEMPLATE_CONFIGTABLE
+
+        CREATE TABLE %s (
+          `id` varchar(32) NOT NULL,
+          `hash` varchar(32) NOT NULL,
+          `workspace` varchar(255) NOT NULL DEFAULT 'default',
+          `language` varchar(255) NOT NULL DEFAULT 'none',
+          `revision` int(11) DEFAULT NULL,
+          `properties` TEXT,
+          `creation_timestamp` int(11) DEFAULT NULL,
+          `creation_apiuser` varchar(255) DEFAULT NULL,
+          `creation_clientip` varchar(255) DEFAULT NULL,
+          `creation_username` varchar(255) DEFAULT NULL,
+          `creation_firstname` varchar(255) DEFAULT NULL,
+          `creation_lastname` varchar(255) DEFAULT NULL,
+          `lastchange_timestamp` int(11) DEFAULT NULL,
+          `lastchange_apiuser` varchar(255) DEFAULT NULL,
+          `lastchange_clientip` varchar(255) DEFAULT NULL,
+          `lastchange_username` varchar(255) DEFAULT NULL,
+          `lastchange_firstname` varchar(255) DEFAULT NULL,
+          `lastchange_lastname` varchar(255) DEFAULT NULL,
+          `validfrom_timestamp` varchar(16) DEFAULT NULL,
+          `validuntil_timestamp` varchar(16) DEFAULT NULL
+
+         ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TEMPLATE_CONFIGTABLE;
+
+            $sql  = sprintf($sql, $tableName);
+            $stmt = $dbh->prepare($sql);
+
+            try
+            {
+
+                $stmt->execute();
+
+            }
+            catch (\PDOException $e)
+            {
+
+                return false;
+            }
+
+        }
+
+        return true;
+    }
 
     public function deleteRepository($repositoryName, $contentTypeName)
     {

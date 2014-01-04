@@ -14,7 +14,9 @@ class Repository
     protected $name;
 
     protected $contentManager = array();
+    protected $configManager = null;
     protected $filesManager = null;
+
 
     public function __construct(Application $app, $repositoryName)
     {
@@ -53,6 +55,18 @@ class Repository
     }
 
 
+    public function getConfigTypesList()
+    {
+        return $this->app['repos']->getConfigTypesList($this->name);
+    }
+
+
+    public function getConfigTypeDefinition($configTypeName)
+    {
+        return $this->app['repos']->getConfigTypeDefinition($this->name, $configTypeName);
+    }
+
+
     public function getContentManager($contentTypeName)
     {
         if (array_key_exists($contentTypeName, $this->contentManager))
@@ -71,71 +85,98 @@ class Repository
 
             return $manager;
         }
+
         return false;
     }
 
 
-    public function getFilesManager()
+    public function getConfigManager()
     {
-        if ($this->filesManager !=null)
+        if ($this->configManager != null)
+        {
+            return $this->configManager;
+        }
+
+        $manager = new ConfigManager($this);
+
+        $this->configManager = $manager;
+
+        return $manager;
+
+    }
+
+
+    public
+    function getFilesManager()
+    {
+        if ($this->filesManager != null)
         {
             return $this->filesManager;
         }
-        $manager = new FilesManager($this,$this->app['repos']->getFilesAdapterConfig($this->getName()));
+        $manager            = new FilesManager($this, $this->app['repos']->getFilesAdapterConfig($this->getName()));
         $this->filesManager = $manager;
+
         return $manager;
     }
 
 
-
-    public function getDatabaseConnection()
+    public
+    function getDatabaseConnection()
     {
         return $this->app['repos']->getDatabaseConnection();
     }
 
-   /* public function getFileSystem()
-    {
-        return $this->app['repos']->getFileSystem($this->getName());
-    }*/
 
-    public function getMaxTimestamp()
+    /* public function getFileSystem()
+     {
+         return $this->app['repos']->getFileSystem($this->getName());
+     }*/
+
+    public
+    function getMaxTimestamp()
     {
         return $this->app['repos']->getMaxTimestamp();
     }
 
 
-    public function getTimeshiftTimestamp($timeshift = 0)
+    public
+    function getTimeshiftTimestamp($timeshift = 0)
     {
         return $this->app['repos']->getTimeshiftTimestamp($timeshift);
 
     }
 
 
-    public function getAPIUser()
+    public
+    function getAPIUser()
     {
         return $this->app['repos']->getAPIUser();
     }
 
 
-    public function getCurrentUserName()
+    public
+    function getCurrentUserName()
     {
         return $this->app['repos']->getCurrentUserName();
     }
 
 
-    public function getCurrentUserFirstname()
+    public
+    function getCurrentUserFirstname()
     {
         return $this->app['repos']->getCurrentUserFirstname();
     }
 
 
-    public function getCurrentUserLastname()
+    public
+    function getCurrentUserLastname()
     {
         return $this->app['repos']->getCurrentUserLastname();
     }
 
 
-    public function getClientIp()
+    public
+    function getClientIp()
     {
         return $this->app['repos']->getClientIp();
     }

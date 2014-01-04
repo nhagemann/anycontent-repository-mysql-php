@@ -25,6 +25,7 @@ $app->get('/1/{repositoryName}/info/{workspace}', 'AnyContent\Repository\Control
 
 // get cmdl for a content type
 $app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/cmdl/{contentTypeName}/{locale}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
 
 
 // get distinct record (additional query parameters: timeshift, language)
@@ -50,6 +51,16 @@ $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{c
 $app->get('/1/{repositoryName}/files/{workspace}/list', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/files/{workspace}/list/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/files/{workspace}/list/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
+
+
+
+// get config (additional query parameters: timeshift, language)
+$app->get('/1/{repositoryName}/config/{configTypeName}', 'AnyContent\Repository\Controller\ConfigController::getOne')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/config/{configTypeName}/{workspace}', 'AnyContent\Repository\Controller\ConfigController::getOne')->before($before1)->before($before2);
+
+// get cmdl for a config type
+$app->get('/1/{repositoryName}/config/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\ConfigController::cmdl')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/config/cmdl/{contentTypeName}/{locale}', 'AnyContent\Repository\Controller\ConfigController::cmdl')->before($before1)->before($before2);
 
 // admin routes
 $app->get('/1/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh')->before($before1)->before($before2);

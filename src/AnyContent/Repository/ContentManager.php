@@ -726,7 +726,7 @@ class ContentManager
         }
         $record['info']                       = array();
         $record['info']['revision']           = $row['revision'];
-        $record['info']['revision_timestamp'] = array_shift(explode('.', $row['validfrom_timestamp']));
+        $record['info']['revision_timestamp'] = $row['validfrom_timestamp'];
         $record['info']['hash']               = $row['hash'];
 
         $record['info']['creation']['timestamp'] = $row['creation_timestamp'];
