@@ -17,7 +17,7 @@ use CMDL\Util;
 class ContentController extends BaseController
 {
 
-    public static function post(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'none')
+    public static function post(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'default')
     {
 
         $record = false;
@@ -63,7 +63,7 @@ class ContentController extends BaseController
     }
 
 
-    public static function getOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $clippingName = 'default', $language = 'none', $timeshift = 0)
+    public static function getOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $clippingName = 'default', $language = 'default', $timeshift = 0)
     {
 
         /** @var $repository Repository */
@@ -107,7 +107,7 @@ class ContentController extends BaseController
     }
 
 
-    public static function getMany(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'none')
+    public static function getMany(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'default')
     {
         $timeshift = 0;
         $orderBy   = 'id ASC';
@@ -277,7 +277,7 @@ class ContentController extends BaseController
     }
 
 
-    public static function deleteOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $language = 'none')
+    public static function deleteOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $language = 'default')
     {
 
         /** @var $repository Repository */

@@ -9,7 +9,7 @@ Source
 
 @workspaces (default,live)
 
-@languages (none,en,es:Spanish)
+@languages (default,en,es:Spanish)
 
 @content-type-title "Example 01"
 @content-type-description  "Example Content Type"

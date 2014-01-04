@@ -14,7 +14,7 @@ use AnyContent\Repository\Entity\ContentTypeInfo;
 class RepositoryController extends BaseController
 {
 
-    public static function index(Application $app, Request $request, $repositoryName, $workspace = 'default', $language = 'none', $timeshift = 0)
+    public static function index(Application $app, Request $request, $repositoryName, $workspace = 'default', $language = 'default', $timeshift = 0)
     {
 
         if ($request->query->has('timeshift'))

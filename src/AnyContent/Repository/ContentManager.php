@@ -37,7 +37,7 @@ class ContentManager
      * @return array
      * @throws Exception
      */
-    public function getRecord($id, $clippingName = 'default', $workspace = 'default', $language = 'none', $timeshift = 0)
+    public function getRecord($id, $clippingName = 'default', $workspace = 'default', $language = 'default', $timeshift = 0)
     {
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
@@ -57,7 +57,7 @@ class ContentManager
     }
 
 
-    protected function getRecordTableRow($id, $workspace = 'default', $language = 'none', $timeshift = 0)
+    protected function getRecordTableRow($id, $workspace = 'default', $language = 'default', $timeshift = 0)
     {
 
         $repositoryName  = $this->repository->getName();
@@ -103,7 +103,7 @@ class ContentManager
     }
 
 
-    public function getRecords($clippingName = 'default', $workspace = 'default', $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, Filter $filter = null, $language = 'none', $timeshift = 0)
+    public function getRecords($clippingName = 'default', $workspace = 'default', $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, Filter $filter = null, $language = 'default', $timeshift = 0)
     {
         $records         = array();
         $repositoryName  = $this->repository->getName();
@@ -272,7 +272,7 @@ class ContentManager
      * @return int
      * @throws Exception
      */
-    public function saveRecord($record, $clippingName = 'default', $workspace = 'default', $language = 'none')
+    public function saveRecord($record, $clippingName = 'default', $workspace = 'default', $language = 'default')
     {
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
@@ -477,7 +477,7 @@ class ContentManager
     }
 
 
-    public function deleteRecord($id, $workspace = 'default', $language = 'none')
+    public function deleteRecord($id, $workspace = 'default', $language = 'default')
     {
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
@@ -569,7 +569,7 @@ class ContentManager
     }
 
 
-    public function countRecords($workspace = 'default', $filter = null, $language = 'none', $timeshift = 0)
+    public function countRecords($workspace = 'default', $filter = null, $language = 'default', $timeshift = 0)
     {
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
@@ -630,7 +630,7 @@ class ContentManager
     }
 
 
-    public function sortRecords($list, $workspace = 'default', $language = 'none')
+    public function sortRecords($list, $workspace = 'default', $language = 'default')
     {
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
