@@ -10,6 +10,11 @@ use AnyContent\Repository\Service\Database;
 $app          = new Silex\Application();
 $app['debug'] = true;
 
+// Detect environment (default: prod) by checking for the existence of $app_env
+if (isset($app_env) && in_array($app_env, array('prod','dev','test'))) { $app['env'] = $app_env; }else{$app['env'] = 'prod';}
+
+
+
 // extracting apiuser (authentifcation) and userinfo (query parameter userinfo)
 $before1 = 'AnyContent\Repository\Middleware\ExtractUserInfo::execute';
 
@@ -47,6 +52,10 @@ $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspa
 $app->post('/1/{repositoryName}/content/{contentTypeName}/records', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
 $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
 
+// sort records (additional query parameters: list, language)
+$app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records', 'AnyContent\Repository\Controller\ContentController::sort')->before($before1)->before($before2);
+$app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records/{workspace}', 'AnyContent\Repository\Controller\ContentController::sort')->before($before1)->before($before2);
+
 
 // list files
 $app->get('/1/{repositoryName}/files/{workspace}/list', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
@@ -70,7 +79,7 @@ $app->get('/1/admin/delete/{repositoryName}/{contentTypeName}', 'AnyContent\Repo
 
 $app['config'] = $app->share(function ($app)
 {
-    return new Config($app, '../');
+    return new Config($app, __DIR__.'/../');
 });
 
 $app['db'] = $app->share(function ($app)
@@ -93,4 +102,10 @@ if ($app['debug'])
 
 
 $app->after($after);
+
+if ($app['env']=='test')
+{
+    return $app;
+}
+
 $app->run();

@@ -184,7 +184,7 @@ class ContentManager
                 // Take all records, that do have a sorting position
 
                 $maxlevel  = $depth + 1;
-                $sqlSubset = ' AND NOT record_position IS NULL';
+                $sqlSubset = ' AND NOT position IS NULL';
             }
             if ($depth != null AND $depth > 0)
             {

@@ -17,52 +17,6 @@ use CMDL\Util;
 class ContentController extends BaseController
 {
 
-    public static function post(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'default')
-    {
-
-        $record = false;
-
-        if ($request->request->has('record'))
-        {
-            $record = $request->get('record');
-            $record = json_decode($record, true);
-        }
-
-        if ($request->request->has('language'))
-        {
-            $language = $request->get('language');
-        }
-
-        if ($record)
-        {
-
-            /** @var $repository Repository */
-            $repository = $app['repos']->get($repositoryName);
-            if ($repository)
-            {
-
-                $manager = $repository->getContentManager($contentTypeName);
-
-                try
-                {
-                    $id = $manager->saveRecord($record, $clippingName, $workspace, $language);
-
-                }
-                catch (RepositoryException $e)
-                {
-                    return self::badRequest($app, 'Bad Request - ' . $e->getMessage());
-                }
-
-                return $app->json($id);
-            }
-
-            return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
-        }
-
-        return self::badRequest($app);
-    }
-
-
     public static function getOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $clippingName = 'default', $language = 'default', $timeshift = 0)
     {
 
@@ -277,6 +231,52 @@ class ContentController extends BaseController
     }
 
 
+    public static function post(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'default')
+    {
+
+        $record = false;
+
+        if ($request->request->has('record'))
+        {
+            $record = $request->get('record');
+            $record = json_decode($record, true);
+        }
+
+        if ($request->request->has('language'))
+        {
+            $language = $request->get('language');
+        }
+
+        if ($record)
+        {
+
+            /** @var $repository Repository */
+            $repository = $app['repos']->get($repositoryName);
+            if ($repository)
+            {
+
+                $manager = $repository->getContentManager($contentTypeName);
+
+                try
+                {
+                    $id = $manager->saveRecord($record, $clippingName, $workspace, $language);
+
+                }
+                catch (RepositoryException $e)
+                {
+                    return self::badRequest($app, 'Bad Request - ' . $e->getMessage());
+                }
+
+                return $app->json($id);
+            }
+
+            return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
+        }
+
+        return self::badRequest($app);
+    }
+
+
     public static function deleteOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $language = 'default')
     {
 
@@ -295,6 +295,54 @@ class ContentController extends BaseController
                 }
 
                 if ($manager->deleteRecord($id, $workspace, $language))
+                {
+                    return $app->json(true);
+                }
+
+                return $app->json(false);
+
+            }
+            else
+            {
+                return self::notFoundError($app, self::UNKNOWN_CONTENTTYPE, $repositoryName, $contentTypeName);
+            }
+
+        }
+
+        return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
+    }
+
+
+    public static function sort(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $language = 'default')
+    {
+
+
+
+        /** @var $repository Repository */
+        $repository = $app['repos']->get($repositoryName);
+        if ($repository)
+        {
+
+            $manager = $repository->getContentManager($contentTypeName);
+
+            if ($manager)
+            {
+
+                if ($request->request->has('list'))
+                {
+                    $list = json_decode($request->get('list'),true);
+                }
+                else
+                {
+                    return self::badRequest($app);
+                }
+
+                if ($request->request->has('language'))
+                {
+                    $language = $request->get('language');
+                }
+
+                if ($manager->sortRecords($list, $language))
                 {
                     return $app->json(true);
                 }

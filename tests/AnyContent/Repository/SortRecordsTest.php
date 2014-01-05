@@ -84,6 +84,10 @@ class SortRecordsTest extends \PHPUnit_Framework_TestCase
 
         // subset = parent_id,include_parent_id(default=1),depth(default=null)
 
+        $subset  = '0';
+        $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
+        $this->assertCount(9,$records['records']);
+
         $subset  = '1';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
         $this->assertCount(3,$records['records']);
@@ -130,7 +134,7 @@ class SortRecordsTest extends \PHPUnit_Framework_TestCase
 
         $subset  = '3,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
-        $this->assertCount(2,$records['records']);
+        $this->assertCount(2,$records);
 
         $subset  = '4,1,-9';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
