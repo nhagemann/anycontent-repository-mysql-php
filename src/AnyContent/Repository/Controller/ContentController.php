@@ -315,9 +315,6 @@ class ContentController extends BaseController
 
     public static function sort(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $language = 'default')
     {
-
-
-
         /** @var $repository Repository */
         $repository = $app['repos']->get($repositoryName);
         if ($repository)

@@ -24,7 +24,7 @@ class RepositoryController extends BaseController
 
         if ($request->query->has('language'))
         {
-            $timeshift = $request->get('language');
+            $language = $request->get('language');
         }
 
         /** @var $repository Repository */
