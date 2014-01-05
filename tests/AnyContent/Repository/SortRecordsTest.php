@@ -55,6 +55,26 @@ class SortRecordsTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($i, $id);
         }
 
+        // add additional records with differing languages and workspaces, to make sure selection
+        // is effective within it's boundaries only
+
+        for ($i = 11; $i <= 13; $i++)
+        {
+            $record               = array();
+            $record['properties'] = array( 'name' => 'New Record ' . $i );
+            $id                   = $manager->saveRecord($record,'default','live','es');
+            $this->assertEquals($i, $id);
+        }
+
+        for ($i = 14; $i <= 17; $i++)
+        {
+            $record               = array();
+            $record['properties'] = array( 'name' => 'New Record ' . $i );
+            $id                   = $manager->saveRecord($record,'default','default','es');
+            $this->assertEquals($i, $id);
+        }
+
+
         //
         // sort records within following tree list
         //
@@ -163,6 +183,22 @@ class SortRecordsTest extends \PHPUnit_Framework_TestCase
         $subset  = '8,1,-2';
         $records = $manager->getRecords('default', 'default','id ASC', null, 1, $subset);
         $this->assertCount(3,$records['records']);
+
+
+        // some sorting within live/es
+
+        $list   = array();
+        $list[] = array( 'id' => 12, 'parent_id' => 0 );
+        $list[] = array( 'id' => 11, 'parent_id' => 0 );
+
+
+        /*$manager->sortRecords($list,'live','es');
+
+        $subset  = '0';
+        $records = $manager->getRecords('default', 'live','id ASC', null, 1, $subset,null,'es');
+        $this->assertCount(2,$records['records']);
+        */
+
     }
 
 }
