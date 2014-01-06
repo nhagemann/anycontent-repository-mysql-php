@@ -59,7 +59,14 @@ class Config
         if (isset($yml['files']['default_adapter']))
         {
             $config['default'] = $yml['files']['default_adapter'];
-            $config['default']['directory'] = '/'.trim($config['default']['directory'],'/').'/'.$repositoryName;
+
+            $directory = $config['default']['directory'];
+            if ($directory[0] != '/')
+            {
+                $directory = APPLICATION_PATH . '/' . $directory;
+            }
+
+            $config['default']['directory'] = '/' . trim($directory, '/') . '/' . $repositoryName;
         }
         if (isset($yml['files']['cache_adapter']))
         {
@@ -85,7 +92,7 @@ class Config
             return $this->yml;
         }
 
-        $configFile = file_get_contents('../config/config.yml');
+        $configFile = file_get_contents(APPLICATION_PATH.'/config/config.yml');
 
         $yamlParser = new Parser();
 

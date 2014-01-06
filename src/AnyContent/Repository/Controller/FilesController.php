@@ -16,10 +16,10 @@ use CMDL\Util;
 class FilesController extends BaseController
 {
 
-    public static function scan(Application $app, Request $request, $repositoryName, $workspace, $path = '')
+    public static function scan(Application $app, Request $request, $repositoryName, $path = '')
     {
 
-        $result = array();
+        $result = false;
 
         /** @var $repository Repository */
         $repository = $app['repos']->get($repositoryName);
@@ -29,9 +29,15 @@ class FilesController extends BaseController
             /** @var FilesManager $filesManager */
             $filesManager = $repository->getFilesManager();
 
-            $result['folders'] = $filesManager->getFolders($path);
+            $folders = $filesManager->getFolders($path);
 
-            $result['files'] = $filesManager->getFiles($path);
+            if ($folders!==false)
+            {
+                $result            = array();
+                $result['folders'] = $folders;
+
+                $result['files'] = $filesManager->getFiles($path);
+            }
 
         }
 

@@ -1,10 +1,7 @@
-- revision_timestamp
-- revision-matrix
-- delete record (code + action)
-- action for sorting
-- action for storing more than one record
+- cmdl routes harmonize
+
 - _info_ syncing after save and sort
-- filter search
+
 - user management
 
 - make sure filter comparison is a valid property for {} operators

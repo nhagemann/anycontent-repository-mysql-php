@@ -1,4 +1,8 @@
 <?php
+if (!defined('APPLICATION_PATH'))
+{
+    define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/..'));
+}
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -12,6 +16,7 @@ $app['debug'] = true;
 
 // Detect environment (default: prod) by checking for the existence of $app_env
 if (isset($app_env) && in_array($app_env, array('prod','dev','test'))) { $app['env'] = $app_env; }else{$app['env'] = 'prod';}
+
 
 
 
@@ -58,9 +63,9 @@ $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records/{workspac
 
 
 // list files
-$app->get('/1/{repositoryName}/files/{workspace}/list', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/files/{workspace}/list/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/files/{workspace}/list/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
+$app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
 
 
 

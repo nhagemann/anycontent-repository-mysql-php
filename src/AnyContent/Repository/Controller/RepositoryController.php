@@ -46,7 +46,7 @@ class RepositoryController extends BaseController
                 }
             }
 
-            $result = array( 'content' => $contentTypesList, 'config' => array( $repository->getConfigTypesList() ), 'files' => true );
+            $result = array( 'content' => $contentTypesList, 'config' => array( $repository->getConfigTypesList() ), 'files' => true, 'servertime'=>time() );
 
             return $app->json($result);
         }

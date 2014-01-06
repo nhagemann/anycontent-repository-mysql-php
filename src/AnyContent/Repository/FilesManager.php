@@ -63,7 +63,9 @@ class FilesManager
         switch ($config['type'])
         {
             case 'local':
+
                 $adapter = new LocalAdapter($config['directory'], true);
+
                 break;
             case
                 'ftp':
@@ -81,6 +83,12 @@ class FilesManager
         $path = trim($path, '/');
 
         $result = $this->filesystem->listKeys($path);
+
+
+        if (count($result['dirs'])==0)
+        {
+            return false;
+        }
 
         $folders = array();
         foreach ($result['dirs'] as $key)
@@ -109,6 +117,7 @@ class FilesManager
 
         }
 
+        $folders = array_values(array_unique($folders));
         return $folders;
     }
 
@@ -123,6 +132,7 @@ class FilesManager
         $files = array();
         foreach ($result['keys'] as $key)
         {
+
             $p = strrpos($key, '/');
             if ($p)
             {
@@ -135,39 +145,45 @@ class FilesManager
                 $filepath = '';
             }
 
-            if ($filepath == $path)
+            if ($filename != '.folder')
             {
-                $item         = array();
-                $item['id']   = $key;
-                $item['name'] = $filename;
-
-                if ($info)
+                if ($filepath == $path)
                 {
-                    try
+                    $item             = array();
+                    $item['id']       = $key;
+                    $item['name']     = $filename;
+                    $item['url_get']  = null;
+                    $item['url_href'] = null;
+
+                    if ($info)
                     {
-                        $file = $this->filesystem->get($key);
-
-                        $item['type'] = 'binary';
-                        $item['size'] = $file->getSize();
-
-                        $content = $file->getContent();
-
-                        $image = @imagecreatefromstring($content);
-                        if ($image)
+                        try
                         {
-                            $item['type']   = 'image';
-                            $item['width']  = imagesx($image);
-                            $item['heigth'] = imagesy($image);
+                            $file = $this->filesystem->get($key);
+
+                            $item['type'] = 'binary';
+                            $item['size'] = $file->getSize();
+
+                            $content = $file->getContent();
+
+                            $image = @imagecreatefromstring($content);
+                            if ($image)
+                            {
+                                $item['type']   = 'image';
+                                $item['width']  = imagesx($image);
+                                $item['height'] = imagesy($image);
+                            }
+
                         }
+                        catch (\Exception $e)
+                        {
 
+                        }
                     }
-                    catch (\Exception $e)
-                    {
+                    $item['timestamp_lastchange'] = $this->filesystem->getAdapter()->mtime($key);
 
-                    }
+                    $files[] = $item;
                 }
-                $item['timestamp_lastchange'] = $this->filesystem->getAdapter()->mtime($key);
-                $files[]                      = $item;
             }
         }
 
