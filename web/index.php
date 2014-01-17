@@ -68,6 +68,8 @@ $app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesC
 $app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
 
 
+// get file
+$app->get('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::binary')->before($before1)->before($before2);
 
 // get config (additional query parameters: timeshift, language)
 $app->get('/1/{repositoryName}/config/{configTypeName}', 'AnyContent\Repository\Controller\ConfigController::getOne')->before($before1)->before($before2);

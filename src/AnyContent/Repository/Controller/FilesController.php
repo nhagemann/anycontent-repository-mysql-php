@@ -31,7 +31,7 @@ class FilesController extends BaseController
 
             $folders = $filesManager->getFolders($path);
 
-            if ($folders!==false)
+            if ($folders !== false)
             {
                 $result            = array();
                 $result['folders'] = $folders;
@@ -43,5 +43,25 @@ class FilesController extends BaseController
 
         return $app->json($result);
 
+    }
+
+
+    public static function binary(Application $app, Request $request, $repositoryName, $path)
+    {
+
+        /** @var $repository Repository */
+        $repository = $app['repos']->get($repositoryName);
+        if ($repository)
+        {
+            /** @var FilesManager $filesManager */
+            $filesManager = $repository->getFilesManager();
+            $binary       = $filesManager->getFile($path);
+            if ($binary)
+            {
+                return $binary;
+            }
+        }
+
+        return self::notFoundError($app);
     }
 }

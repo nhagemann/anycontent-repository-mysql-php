@@ -84,8 +84,7 @@ class FilesManager
 
         $result = $this->filesystem->listKeys($path);
 
-
-        if (count($result['dirs'])==0)
+        if (count($result['dirs']) == 0)
         {
             return false;
         }
@@ -118,6 +117,7 @@ class FilesManager
         }
 
         $folders = array_values(array_unique($folders));
+
         return $folders;
     }
 
@@ -149,11 +149,10 @@ class FilesManager
             {
                 if ($filepath == $path)
                 {
-                    $item             = array();
-                    $item['id']       = $key;
-                    $item['name']     = $filename;
-                    $item['url_get']  = null;
-                    $item['url_href'] = null;
+                    $item         = array();
+                    $item['id']   = $key;
+                    $item['name'] = $filename;
+                    $item['urls'] = array();
 
                     if ($info)
                     {
@@ -188,6 +187,24 @@ class FilesManager
         }
 
         return $files;
+    }
+
+
+    public function getFile($id)
+    {
+        try
+        {
+            $file = $this->filesystem->get($id);
+
+            return $file->getContent();
+
+        }
+        catch (\Exception $e)
+        {
+
+        }
+
+        return false;
     }
 
 }
