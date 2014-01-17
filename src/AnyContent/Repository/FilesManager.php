@@ -84,7 +84,7 @@ class FilesManager
 
         $result = $this->filesystem->listKeys($path);
 
-        if (count($result['dirs']) == 0)
+        if (count($result['dirs']) == 0 AND $path != '')
         {
             return false;
         }
@@ -145,7 +145,7 @@ class FilesManager
                 $filepath = '';
             }
 
-            if ($filename != '.folder')
+            if ($filename[0] != '.')
             {
                 if ($filepath == $path)
                 {
