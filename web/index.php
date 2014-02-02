@@ -75,13 +75,18 @@ $app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\
 // list configs
 $app->get('/1/{repositoryName}/config', 'AnyContent\Repository\Controller\ConfigController::index')->before($before1)->before($before2);
 
-// get config (additional query parameters: timeshift, language)
-$app->get('/1/{repositoryName}/config/{configTypeName}/record', 'AnyContent\Repository\Controller\ConfigController::getConfig')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'AnyContent\Repository\Controller\ConfigController::getConfig')->before($before1)->before($before2);
-
 // get cmdl for a config type
 $app->get('/1/{repositoryName}/config/{configTypeName}/cmdl', 'AnyContent\Repository\Controller\ConfigController::cmdl')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/config/{configTypeName}/cmdl/{locale}', 'AnyContent\Repository\Controller\ConfigController::cmdl')->before($before1)->before($before2);
+
+// get config (additional query parameters: timeshift, language)
+$app->get('/1/{repositoryName}/config/{configTypeName}', 'AnyContent\Repository\Controller\ConfigController::getConfigShortCut')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/config/{configTypeName}/record', 'AnyContent\Repository\Controller\ConfigController::getConfig')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'AnyContent\Repository\Controller\ConfigController::getConfig')->before($before1)->before($before2);
+
+// insert/update config (additional query parameters: language)
+$app->post('/1/{repositoryName}/config/{configTypeName}/record', 'AnyContent\Repository\Controller\ConfigController::post')->before($before1)->before($before2);
+$app->post('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'AnyContent\Repository\Config\ContentController::post')->before($before1)->before($before2);
 
 // admin routes
 $app->get('/1/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh')->before($before1)->before($before2);

@@ -3,6 +3,7 @@
 namespace AnyContent\Repository\Controller;
 
 use AnyContent\Repository\Entity\Filter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
@@ -233,7 +234,6 @@ class ContentController extends BaseController
 
     public static function post(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'default')
     {
-
         $record = false;
 
         if ($request->request->has('record'))
