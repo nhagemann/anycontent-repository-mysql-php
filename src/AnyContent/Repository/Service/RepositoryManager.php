@@ -247,6 +247,7 @@ class RepositoryManager
     }
 
 
+    // todo rename
     public function getCMDL($repositoryName, $contentTypeName)
     {
         if ($this->hasRepository($repositoryName))
@@ -272,6 +273,7 @@ class RepositoryManager
     }
 
 
+    // todo rename
     public function getAgeCMDL($repositoryName, $contentTypeName)
     {
         $token = $repositoryName . '$' . $contentTypeName;
@@ -414,41 +416,14 @@ class RepositoryManager
         {
             try
             {
-                $configTypeDefinition = Parser::parseCMDLString($cmdl);
+                $configTypeDefinition = Parser::parseCMDLString($cmdl, $configTypeName, $configTypeName, 'config');
                 $configTypeDefinition->setName($configTypeName);
 
                 // after generating the definition, check if the database is up to date
-                /*
-                $timestamp = $this->getAgeCMDL($repositoryName, $configTypeName);
-                $dbh       = $this->getDatabaseConnection();
-                $sql       = 'SELECT last_cmdl_change_timestamp FROM _info_ WHERE repository = ? AND content_type = ?';
 
-                $params   = array();
-                $params[] = $repositoryName;
-                $params[] = $configTypeName;
-                $stmt     = $dbh->prepare($sql);
-                $stmt->execute($params);
-                $result = (int)$stmt->fetchColumn(0);
+                $this->app['db']->refreshConfigTypesTableStructure($repositoryName);
 
-                if ($result < $timestamp)
-                {
-
-                    $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
-
-                    $sql = 'INSERT INTO _info_ (repository,content_type,last_cmdl_change_timestamp) VALUES (? , ? ,?) ON DUPLICATE KEY UPDATE last_cmdl_change_timestamp=?;';
-
-                    $params   = array();
-                    $params[] = $repositoryName;
-                    $params[] = $configTypeName;
-                    $params[] = $timestamp;
-                    $params[] = $timestamp;
-                    $stmt     = $dbh->prepare($sql);
-                    $stmt->execute($params);
-
-                }
-                */
-
-                $this->contentTypeDefinitions[$repositoryName][$configTypeName] = $configTypeDefinition;
+                $this->configTypeDefinitions[$repositoryName][$configTypeName] = $configTypeDefinition;
 
                 return $configTypeDefinition;
             }

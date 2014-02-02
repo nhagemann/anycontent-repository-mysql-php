@@ -43,9 +43,16 @@ class Repository
     }
 
 
+    // todo rename
     public function getCMDL($contentTypeName)
     {
         return $this->app['repos']->getCMDL($this->name, $contentTypeName);
+    }
+
+
+    public function getConfigCMDL($configTypeName)
+    {
+        return $this->app['repos']->getConfigCMDL($this->name, $configTypeName);
     }
 
 
@@ -64,6 +71,17 @@ class Repository
     public function getConfigTypeDefinition($configTypeName)
     {
         return $this->app['repos']->getConfigTypeDefinition($this->name, $configTypeName);
+    }
+
+
+    public function hasConfigType($configTypeName)
+    {
+        if (array_key_exists($configTypeName, $this->getConfigTypesList()))
+        {
+            return true;
+        }
+
+        return false;
     }
 
 

@@ -469,7 +469,10 @@ class ContentManager
         $sql .= ' VALUES ( ?';
         $sql .= str_repeat(' , ?', count($values) - 1);
         $sql .= ')';
+
+
         $stmt = $dbh->prepare($sql);
+
         $stmt->execute(array_values($values));
 
         return $record['id'];

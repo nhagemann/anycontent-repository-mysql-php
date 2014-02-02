@@ -199,17 +199,15 @@ TEMPLATE_CONTENTTABLE;
         return true;
     }
 
-    public function refreshConfigTypesTableStructure($repositoryName, ContentTypeDefinition $configTypeDefinition)
+    public function refreshConfigTypesTableStructure($repositoryName)
     {
         $this->refreshInfoTablesStructure();
-
-        $configTypeName = $configTypeDefinition->getName();
 
         $tableName = $repositoryName . '$$config';
 
         if ($tableName != Util::generateValidIdentifier($repositoryName).'$$config')
         {
-            throw new \Exception ('Invalid repository and/or config type name(s).', self::INVALID_NAMES);
+            throw new \Exception ('Invalid repository.', self::INVALID_NAMES);
         }
 
         /** @var PDO $db */
@@ -226,18 +224,12 @@ TEMPLATE_CONTENTTABLE;
             $sql = <<< TEMPLATE_CONFIGTABLE
 
         CREATE TABLE %s (
-          `id` varchar(32) NOT NULL,
+          `id` varchar(255) NOT NULL,
           `hash` varchar(32) NOT NULL,
           `workspace` varchar(255) NOT NULL DEFAULT 'default',
           `language` varchar(255) NOT NULL DEFAULT 'default',
           `revision` int(11) DEFAULT NULL,
           `properties` TEXT,
-          `creation_timestamp` int(11) DEFAULT NULL,
-          `creation_apiuser` varchar(255) DEFAULT NULL,
-          `creation_clientip` varchar(255) DEFAULT NULL,
-          `creation_username` varchar(255) DEFAULT NULL,
-          `creation_firstname` varchar(255) DEFAULT NULL,
-          `creation_lastname` varchar(255) DEFAULT NULL,
           `lastchange_timestamp` int(11) DEFAULT NULL,
           `lastchange_apiuser` varchar(255) DEFAULT NULL,
           `lastchange_clientip` varchar(255) DEFAULT NULL,
@@ -357,8 +349,10 @@ class Statement extends \PDOStatement
             if ($debug)
             {
                 echo $e->getMessage() . "\n" . $this->sdebug();
+                syslog (LOG_ERR,$e->getMessage() . ' - ' . $this->sdebug());
                 die();
             }
+
             throw $e;
         }
 
