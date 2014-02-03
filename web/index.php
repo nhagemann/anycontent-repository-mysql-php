@@ -86,7 +86,7 @@ $app->get('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'Any
 
 // insert/update config (additional query parameters: language)
 $app->post('/1/{repositoryName}/config/{configTypeName}/record', 'AnyContent\Repository\Controller\ConfigController::post')->before($before1)->before($before2);
-$app->post('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'AnyContent\Repository\Config\ContentController::post')->before($before1)->before($before2);
+$app->post('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'AnyContent\Repository\Controller\ConfigController::post')->before($before1)->before($before2);
 
 // admin routes
 $app->get('/1/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh')->before($before1)->before($before2);
