@@ -4,6 +4,7 @@ namespace AnyContent\Repository\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Silex\Application;
 
 use AnyContent\Repository\Controller\BaseController;
@@ -75,4 +76,11 @@ class RepositoryController extends BaseController
         return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
     }
 
+
+    public static function getInfoShortCut(Application $app, Request $request, $repositoryName)
+    {
+        $url = '/1/' . $repositoryName . '/info';
+
+        return new RedirectResponse($url, 303);
+    }
 }

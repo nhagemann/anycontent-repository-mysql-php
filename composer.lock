@@ -71,12 +71,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/Gaufrette.git",
-                "reference": "f69b4cc8eb3cdabe9b6f043931f86f9e188337c7"
+                "reference": "0e4d662853b59b60a818f8748558a124740e1d35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/Gaufrette/zipball/f69b4cc8eb3cdabe9b6f043931f86f9e188337c7",
-                "reference": "f69b4cc8eb3cdabe9b6f043931f86f9e188337c7",
+                "url": "https://api.github.com/repos/KnpLabs/Gaufrette/zipball/0e4d662853b59b60a818f8748558a124740e1d35",
+                "reference": "0e4d662853b59b60a818f8748558a124740e1d35",
                 "shasum": ""
             },
             "require": {
@@ -146,7 +146,7 @@
                 "filesystem",
                 "media"
             ],
-            "time": "2013-12-20 13:59:27"
+            "time": "2014-01-25 11:40:56"
         },
         {
             "name": "monolog/monolog",
@@ -221,12 +221,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nhagemann/cmdl-parser-php.git",
-                "reference": "b9ac65f4e5207c855dc50d2de3ad4d1d9052aa62"
+                "reference": "5c73e87a8d39dbab8aa9d2733eb8b9cf0215912a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/b9ac65f4e5207c855dc50d2de3ad4d1d9052aa62",
-                "reference": "b9ac65f4e5207c855dc50d2de3ad4d1d9052aa62",
+                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/5c73e87a8d39dbab8aa9d2733eb8b9cf0215912a",
+                "reference": "5c73e87a8d39dbab8aa9d2733eb8b9cf0215912a",
                 "shasum": ""
             },
             "require": {
@@ -253,7 +253,7 @@
                 }
             ],
             "homepage": "http://www.nilshagemann.de",
-            "time": "2014-01-14 08:15:38"
+            "time": "2014-01-25 18:01:36"
         },
         {
             "name": "pimple/pimple",

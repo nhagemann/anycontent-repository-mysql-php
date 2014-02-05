@@ -20,3 +20,7 @@
                     $file['url_public']           = $fileinfo->getFilename();
                     $file['url_private']          = $fileinfo->getFilename();
                       */
+
+
+- filter on record.xy
+- records must reappear if delete and saved again "in the past"

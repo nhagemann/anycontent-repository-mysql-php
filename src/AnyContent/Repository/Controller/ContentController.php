@@ -6,6 +6,7 @@ use AnyContent\Repository\Entity\Filter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Silex\Application;
 
 use AnyContent\Repository\Controller\BaseController;
@@ -17,6 +18,20 @@ use CMDL\Util;
 
 class ContentController extends BaseController
 {
+
+    public static function index(Application $app, Request $request, $repositoryName)
+    {
+
+        /** @var $repository Repository */
+        $repository = $app['repos']->get($repositoryName);
+        if ($repository)
+        {
+            return $app->json($repository->getContentTypesList());
+        }
+
+        return $app->json(false);
+    }
+
 
     public static function getOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $clippingName = 'default', $language = 'default', $timeshift = 0)
     {
@@ -355,6 +370,14 @@ class ContentController extends BaseController
         }
 
         return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
+    }
+
+
+    public static function getContentShortCut(Application $app, Request $request, $repositoryName, $contentTypeName)
+    {
+        $url = '/1/' . $repositoryName . '/content/' . $contentTypeName . '/records';
+
+        return new RedirectResponse($url, 303);
     }
 
 }

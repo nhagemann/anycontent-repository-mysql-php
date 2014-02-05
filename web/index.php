@@ -29,16 +29,12 @@ $before2 = 'AnyContent\Repository\Middleware\RequestLogger::execute';
 $after = 'AnyContent\Repository\Middleware\PrettyPrint::execute';
 
 // get repository status (additional query parameters: timeshift, language)
-$app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/info', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/info/{workspace}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/info/{workspace}/{language}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2);
 
-// get cmdl for a content type
-//TODO --> content/contentTypeName/cmdl
-$app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/cmdl/{contentTypeName}/{locale}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
-
+// list content
+$app->get('/1/{repositoryName}/content', 'AnyContent\Repository\Controller\ContentController::index')->before($before1)->before($before2);
 
 // get distinct record (additional query parameters: timeshift, language)
 $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
@@ -62,14 +58,12 @@ $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{c
 $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records', 'AnyContent\Repository\Controller\ContentController::sort')->before($before1)->before($before2);
 $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records/{workspace}', 'AnyContent\Repository\Controller\ContentController::sort')->before($before1)->before($before2);
 
-
-// get file
-$app->get('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::binary')->before($before1)->before($before2);
-
-// list files
-$app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
-$app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
+// get cmdl for a content type
+//TODO --> content/contentTypeName/cmdl
+//$app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
+//$app->get('/1/{repositoryName}/cmdl/{contentTypeName}/{locale}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/content/{contentTypeName}/cmdl', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/content/{contentTypeName}/cmdl/{locale}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
 
 
 // list configs
@@ -80,13 +74,27 @@ $app->get('/1/{repositoryName}/config/{configTypeName}/cmdl', 'AnyContent\Reposi
 $app->get('/1/{repositoryName}/config/{configTypeName}/cmdl/{locale}', 'AnyContent\Repository\Controller\ConfigController::cmdl')->before($before1)->before($before2);
 
 // get config (additional query parameters: timeshift, language)
-$app->get('/1/{repositoryName}/config/{configTypeName}', 'AnyContent\Repository\Controller\ConfigController::getConfigShortCut')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/config/{configTypeName}/record', 'AnyContent\Repository\Controller\ConfigController::getConfig')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'AnyContent\Repository\Controller\ConfigController::getConfig')->before($before1)->before($before2);
 
 // insert/update config (additional query parameters: language)
 $app->post('/1/{repositoryName}/config/{configTypeName}/record', 'AnyContent\Repository\Controller\ConfigController::post')->before($before1)->before($before2);
 $app->post('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'AnyContent\Repository\Controller\ConfigController::post')->before($before1)->before($before2);
+
+// get file
+$app->get('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::binary')->before($before1)->before($before2);
+
+// list files
+$app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
+
+
+// simplification routes, solely for human interaction with the api
+$app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::getInfoShortCut')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/config/{configTypeName}', 'AnyContent\Repository\Controller\ConfigController::getConfigShortCut')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Controller\ContentController::getContentShortCut')->before($before1)->before($before2);
+
 
 // admin routes
 $app->get('/1/admin/refresh/{repositoryName}/{contentTypeName}', 'AnyContent\Repository\Controller\AdminController::refresh')->before($before1)->before($before2);
