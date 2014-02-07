@@ -15,8 +15,9 @@ class BaseController
     const RECORD_NOT_FOUND    = 4;
     const UNKNOWN_CONFIGTYPE  = 5;
     const CONFIG_NOT_FOUND    = 6;
-    const UNKNOWN_PROPERTY    = 7;
-    const UNKNOWN_ERROR       = 8;
+    const FILE_NOT_FOUND      = 7;
+    const UNKNOWN_PROPERTY    = 8;
+    const UNKNOWN_ERROR       = 9;
 
 
     protected function notFoundError($app, $code = self::UNKNOWN_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
@@ -38,6 +39,9 @@ class BaseController
                 break;
             case self::CONFIG_NOT_FOUND:
                 $message = sprintf('No existing config with id %s within repository %s.', $s2, $s1);
+                break;
+            case self::FILE_NOT_FOUND:
+                $message = sprintf('File not found');
                 break;
             default:
                 $message = 'Unknown error';

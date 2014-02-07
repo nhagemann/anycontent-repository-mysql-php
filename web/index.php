@@ -59,9 +59,6 @@ $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records', 'AnyCon
 $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records/{workspace}', 'AnyContent\Repository\Controller\ContentController::sort')->before($before1)->before($before2);
 
 // get cmdl for a content type
-//TODO --> content/contentTypeName/cmdl
-//$app->get('/1/{repositoryName}/cmdl/{contentTypeName}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
-//$app->get('/1/{repositoryName}/cmdl/{contentTypeName}/{locale}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/content/{contentTypeName}/cmdl', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/content/{contentTypeName}/cmdl/{locale}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
 
@@ -82,7 +79,7 @@ $app->post('/1/{repositoryName}/config/{configTypeName}/record', 'AnyContent\Rep
 $app->post('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'AnyContent\Repository\Controller\ConfigController::post')->before($before1)->before($before2);
 
 // get file
-$app->get('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::binary')->before($before1)->before($before2);
+$app->get('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::binary')->before($before1)->before($before2)->assert('path', '.+');
 
 // list files
 $app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);

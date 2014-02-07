@@ -49,19 +49,22 @@ class FilesController extends BaseController
     public static function binary(Application $app, Request $request, $repositoryName, $path)
     {
 
+
         /** @var $repository Repository */
         $repository = $app['repos']->get($repositoryName);
         if ($repository)
         {
             /** @var FilesManager $filesManager */
             $filesManager = $repository->getFilesManager();
+
+
             $binary       = $filesManager->getFile($path);
-            if ($binary)
+            if ($binary!==false)
             {
                 return $binary;
             }
         }
 
-        return self::notFoundError($app);
+        return self::notFoundError($app,self::FILE_NOT_FOUND);
     }
 }
