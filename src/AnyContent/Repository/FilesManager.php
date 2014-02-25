@@ -145,7 +145,7 @@ class FilesManager
                 $filepath = '';
             }
 
-            if ($filename[0] != '.')
+            if ($filename[0] != '.') // exclude system files including ".folder" which gets created for empty folders
             {
                 if ($filepath == $path)
                 {
@@ -192,11 +192,34 @@ class FilesManager
 
     public function getFile($id)
     {
+        $fileName = pathinfo($id, PATHINFO_FILENAME);
+
+        if ($fileName != '') // No access to .xxx-files
+        {
+            try
+            {
+                $file = $this->filesystem->get($id);
+
+                return $file->getContent();
+
+            }
+            catch (\Exception $e)
+            {
+
+            }
+        }
+
+        return false;
+    }
+
+
+    public function deleteFile($id)
+    {
         try
         {
-            $file = $this->filesystem->get($id);
+            $file = $this->filesystem->delete($id);
 
-            return $file->getContent();
+            return true;
 
         }
         catch (\Exception $e)
@@ -207,4 +230,84 @@ class FilesManager
         return false;
     }
 
+
+    public function deleteFolder($path)
+    {
+        try
+        {
+
+            $files = $this->filesystem->listKeys($path);
+
+            $error = false;
+
+            foreach ($files['keys'] as $id)
+            {
+                if ($this->deleteFile($id) == false)
+                {
+                    $error = true;
+                }
+
+            }
+
+            // remove duplicate dir entries (since every file has a dir entry in the array(
+            $dirs = array_unique($files['dirs']);
+
+            // sort to start with the most nested folder to delete
+            rsort($dirs);
+
+            foreach ($dirs as $id)
+            {
+                if ($this->deleteFile($id) == false)
+                {
+                    $error = true;
+                }
+
+            }
+
+            return !$error;
+
+        }
+        catch (\Exception $e)
+        {
+
+        }
+
+        return false;
+    }
+
+
+    public function saveFile($id, $binary)
+    {
+        try
+        {
+            $this->filesystem->write($id, $binary, true);
+
+            $dirName    = pathinfo($id, PATHINFO_DIRNAME);
+            $subFolders = explode('/', $dirName);
+            for ($i = count($subFolders); $i > 0; $i--)
+            {
+                $subFolder = join('/', array_slice($subFolders, 0, $i));
+
+                $hiddenFolderMarkerFile = $subFolder . '/.folder';
+                if ($this->filesystem->has($hiddenFolderMarkerFile))
+                {
+                    break;
+                }
+                else
+                {
+                    $this->filesystem->write($hiddenFolderMarkerFile, '', true);
+                }
+
+            }
+
+            return true;
+
+        }
+        catch (\Exception $e)
+        {
+
+        }
+
+        return false;
+    }
 }
