@@ -137,7 +137,7 @@ class FilesManager
                     }
                     $item['timestamp_lastchange'] = $this->filesystem->getAdapter()->mtime($key);
 
-                    $files[] = $item;
+                    $files[$filename] = $item;
                 }
             }
         }
@@ -200,10 +200,9 @@ class FilesManager
     {
         try
         {
-            $file = $this->filesystem->delete($id);
+            $this->filesystem->delete($id);
 
             return true;
-
         }
         catch (\Exception $e)
         {
@@ -327,7 +326,5 @@ class FilesManager
 
         return false;
     }
-
-
 
 }

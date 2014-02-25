@@ -50,7 +50,7 @@ $app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{cl
 $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}', 'AnyContent\Repository\Controller\ContentController::deleteOne')->before($before1)->before($before2);
 $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', 'AnyContent\Repository\Controller\ContentController::deleteOne')->before($before1)->before($before2);
 
-// insert/update record (additional query parameters: language)
+// insert/update record (additional query parameters: record, language)
 $app->post('/1/{repositoryName}/content/{contentTypeName}/records', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
 $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::post')->before($before1)->before($before2);
 
@@ -86,6 +86,19 @@ $app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesCo
 $app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
 
+// save file (additional query parameters: binary)
+$app->post('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::postFile')->before($before1)->before($before2)->assert('path', '.+');
+
+// create folder
+$app->post('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::createFolder')->before($before1)->before($before2)->assert('path', '.+');
+
+// delete file
+$app->delete('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::deleteFile')->before($before1)->before($before2)->assert('path', '.+');
+
+// delete files
+$app->delete('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::deleteFiles')->before($before1)->before($before2)->assert('path', '.+');
+$app->delete('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesController::deleteFiles')->before($before1)->before($before2);
+$app->delete('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::deleteFiles')->before($before1)->before($before2);
 
 // simplification routes, solely for human interaction with the api
 $app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::getInfoShortCut')->before($before1)->before($before2);
