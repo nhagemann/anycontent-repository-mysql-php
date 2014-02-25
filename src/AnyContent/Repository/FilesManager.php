@@ -78,50 +78,6 @@ class FilesManager
     }
 
 
-    public function getFolders($path)
-    {
-        $path = trim($path, '/');
-
-        $result = $this->filesystem->listKeys($path);
-
-        if (count($result['dirs']) == 0 AND $path != '')
-        {
-            return false;
-        }
-
-        $folders = array();
-        foreach ($result['dirs'] as $key)
-        {
-            if ($path == '')
-            {
-                $p = strrpos($key, '/');
-                if (!$p)
-                {
-                    $folders[] = $key;
-                }
-
-            }
-            else
-            {
-                if (substr($key, 0, strlen($path) + 1) == $path . '/')
-                {
-                    $foldername = substr($key, strlen($path) + 1);
-                    if (strpos($foldername, '/') === false)
-                    {
-                        $folders[] = $foldername;
-                    }
-                }
-
-            }
-
-        }
-
-        $folders = array_values(array_unique($folders));
-
-        return $folders;
-    }
-
-
     public function getFiles($path, $info = true)
     {
 
@@ -213,6 +169,33 @@ class FilesManager
     }
 
 
+    public function saveFile($id, $binary)
+    {
+        $fileName = pathinfo($id, PATHINFO_FILENAME);
+
+        if ($fileName != '') // No writing of .xxx-files
+        {
+            try
+            {
+                $this->filesystem->write($id, $binary, true);
+
+                $dirName = pathinfo($id, PATHINFO_DIRNAME);
+
+                $this->createFolder($dirName);
+
+                return true;
+
+            }
+            catch (\Exception $e)
+            {
+
+            }
+        }
+
+        return false;
+    }
+
+
     public function deleteFile($id)
     {
         try
@@ -228,6 +211,76 @@ class FilesManager
         }
 
         return false;
+    }
+
+
+    public function getFolders($path)
+    {
+        $path = trim($path, '/');
+
+        $result = $this->filesystem->listKeys($path);
+
+        if (count($result['dirs']) == 0 AND $path != '')
+        {
+            return false;
+        }
+
+        $folders = array();
+        foreach ($result['dirs'] as $key)
+        {
+            if ($path == '')
+            {
+                $p = strrpos($key, '/');
+                if (!$p)
+                {
+                    $folders[] = $key;
+                }
+
+            }
+            else
+            {
+                if (substr($key, 0, strlen($path) + 1) == $path . '/')
+                {
+                    $foldername = substr($key, strlen($path) + 1);
+                    if (strpos($foldername, '/') === false)
+                    {
+                        $folders[] = $foldername;
+                    }
+                }
+
+            }
+
+        }
+
+        $folders = array_values(array_unique($folders));
+
+        return $folders;
+    }
+
+
+    /**
+     * Adds hidden .folder files to every subfolder in path if necessary
+     *
+     * @param $path
+     */
+    public function createFolder($path)
+    {
+        $subFolders = explode('/', $path);
+        for ($i = count($subFolders); $i > 0; $i--)
+        {
+            $subFolder = join('/', array_slice($subFolders, 0, $i));
+
+            $hiddenFolderMarkerFile = $subFolder . '/.folder';
+            if ($this->filesystem->has($hiddenFolderMarkerFile))
+            {
+                break;
+            }
+            else
+            {
+                $this->filesystem->write($hiddenFolderMarkerFile, '', true);
+            }
+
+        }
     }
 
 
@@ -276,38 +329,5 @@ class FilesManager
     }
 
 
-    public function saveFile($id, $binary)
-    {
-        try
-        {
-            $this->filesystem->write($id, $binary, true);
 
-            $dirName    = pathinfo($id, PATHINFO_DIRNAME);
-            $subFolders = explode('/', $dirName);
-            for ($i = count($subFolders); $i > 0; $i--)
-            {
-                $subFolder = join('/', array_slice($subFolders, 0, $i));
-
-                $hiddenFolderMarkerFile = $subFolder . '/.folder';
-                if ($this->filesystem->has($hiddenFolderMarkerFile))
-                {
-                    break;
-                }
-                else
-                {
-                    $this->filesystem->write($hiddenFolderMarkerFile, '', true);
-                }
-
-            }
-
-            return true;
-
-        }
-        catch (\Exception $e)
-        {
-
-        }
-
-        return false;
-    }
 }
