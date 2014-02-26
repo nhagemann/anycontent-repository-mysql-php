@@ -86,7 +86,7 @@ $app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesCo
 $app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');;
 
-// save file (additional query parameters: binary)
+// save file (post body contains binary)
 $app->post('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::postFile')->before($before1)->before($before2)->assert('path', '.+');
 
 // create folder

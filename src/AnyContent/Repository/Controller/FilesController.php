@@ -73,22 +73,16 @@ class FilesController extends BaseController
     public static function postFile(Application $app, Request $request, $repositoryName, $path)
     {
 
+
         /** @var $repository Repository */
         $repository = $app['repos']->get($repositoryName);
         if ($repository)
         {
 
-            $binary = false;
+            $binary = $request->getContent();
 
-            if ($request->request->has('binary'))
+            if ($binary !='')
             {
-                $binary = $request->get('binary');
-
-            }
-
-            if ($binary)
-            {
-
                 /** @var FilesManager $filesManager */
                 $filesManager = $repository->getFilesManager();
 
@@ -97,6 +91,25 @@ class FilesController extends BaseController
                     return $app->json(true);
                 }
             }
+            /*
+            if ($request->request->has('binary'))
+            {
+                $binary = $request->get('binary');
+
+                return $app->json('binary');
+
+            }
+
+            return $app->json(strlen($request->getContent()));
+
+            return $app->json('nobinary');
+
+            if ($binary)
+            {
+
+
+
+            }   */
 
             return $app->json(false);
 
