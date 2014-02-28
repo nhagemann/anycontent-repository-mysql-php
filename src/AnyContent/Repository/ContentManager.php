@@ -647,10 +647,11 @@ class ContentManager
 
         $dbh = $this->repository->getDatabaseConnection();
 
-        $tempTableName      = $tableName . '_' . uniqid(md5(microtime()), true);
+        $tempTableName      = $tableName . '_' . substr(md5 (uniqid(microtime(), true)),0,8);
         $timeshiftTimestamp = $this->repository->getTimeshiftTimestamp();
 
         $sql      = 'CREATE TEMPORARY TABLE ' . $tempTableName . ' SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND validfrom_timestamp <= ? AND validuntil_timestamp > ? AND deleted=0';
+
         $params   = array();
         $params[] = $workspace;
         $params[] = $language;
@@ -658,6 +659,8 @@ class ContentManager
         $params[] = $timeshiftTimestamp;
         $stmt     = $dbh->prepare($sql);
         $stmt->execute($params);
+
+
 
         $sql    = 'UPDATE ' . $tempTableName . ' SET parent_id = null, position=null, position_left = null, position_right = null, position_level = null';
         $params = array();

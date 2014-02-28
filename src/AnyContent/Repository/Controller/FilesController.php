@@ -73,7 +73,6 @@ class FilesController extends BaseController
     public static function postFile(Application $app, Request $request, $repositoryName, $path)
     {
 
-
         /** @var $repository Repository */
         $repository = $app['repos']->get($repositoryName);
         if ($repository)
@@ -81,45 +80,25 @@ class FilesController extends BaseController
 
             $binary = $request->getContent();
 
-            if ($binary !='')
-            {
-                /** @var FilesManager $filesManager */
-                $filesManager = $repository->getFilesManager();
+            /** @var FilesManager $filesManager */
+            $filesManager = $repository->getFilesManager();
 
-                if ($filesManager->saveFile($path, $binary))
-                {
-                    return $app->json(true);
-                }
+            if ($filesManager->saveFile($path, $binary))
+            {
+                return $app->json(true);
             }
-            /*
-            if ($request->request->has('binary'))
-            {
-                $binary = $request->get('binary');
-
-                return $app->json('binary');
-
-            }
-
-            return $app->json(strlen($request->getContent()));
-
-            return $app->json('nobinary');
-
-            if ($binary)
-            {
-
-
-
-            }   */
 
             return $app->json(false);
-
         }
+
+
 
         return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
     }
 
 
-    public static function createFolder(Application $app, Request $request, $repositoryName, $path)
+    public
+    static function createFolder(Application $app, Request $request, $repositoryName, $path)
     {
 
         /** @var $repository Repository */

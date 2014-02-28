@@ -354,6 +354,7 @@ class ContentController extends BaseController
                     $language = $request->get('language');
                 }
 
+
                 if ($manager->sortRecords($list, $workspace, $language))
                 {
                     return $app->json(true);
