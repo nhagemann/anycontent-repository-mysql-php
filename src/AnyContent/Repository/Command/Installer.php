@@ -7,6 +7,6 @@ class Installer
 
     public static function postInstall()
     {
-        echo 'test';
+        echo 'test!';
     }
 }
