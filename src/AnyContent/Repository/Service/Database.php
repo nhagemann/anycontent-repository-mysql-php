@@ -60,7 +60,6 @@ CREATE TABLE `_info_` (
   `last_cmdl_change_timestamp` int(11) DEFAULT 0,
   `last_content_change_timestamp` int(11) DEFAULT 0,
   `last_position_change_timestamp` int(11) DEFAULT 0,
-  `last_cmdl_change_timestamp` int(11) DEFAULT 0,
   PRIMARY KEY (`repository`,`content_type`,`workspace`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 TEMPLATE_INFOTABLE;

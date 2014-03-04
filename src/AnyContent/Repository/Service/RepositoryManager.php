@@ -353,6 +353,8 @@ class RepositoryManager
         {
             try
             {
+                $this->app['db']->refreshInfoTablesStructure();
+
                 $contentTypeDefinition = Parser::parseCMDLString($cmdl);
                 $contentTypeDefinition->setName($contentTypeName);
 
