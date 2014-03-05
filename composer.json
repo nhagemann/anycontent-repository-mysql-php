@@ -18,7 +18,8 @@
         "monolog/monolog": ">=1.0.0",
         "knplabs/gaufrette": "0.2.*@dev",
         "dropbox-php/dropbox-php": "*",
-        "symfony/yaml": "2.4.*@dev"
+        "symfony/yaml": "2.4.*@dev",
+        "symfony/filesystem": "v2.4.2"
     },
 
     "require-dev": {

@@ -1,0 +1,4 @@
+files:
+  default_adapter:
+    type: local
+    directory:  files
