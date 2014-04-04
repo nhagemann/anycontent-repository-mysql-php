@@ -33,20 +33,44 @@ class Config
 
     public function getDSN()
     {
+        $yml = $this->getYML();
 
-        return 'mysql:host=localhost;dbname=anycontent';
+        if (!isset($yml['database']['host']) || !isset($yml['database']['name']))
+        {
+            throw new \Exception ('Missing or incomplete database configuration.');
+        }
+
+        $dsn = 'mysql:host='.$yml['database']['host'];
+        $dsn .=';dbname='.$yml['database']['name'];
+
+        return $dsn;
     }
 
 
     public function getDBUser()
     {
-        return 'root';
+        $yml = $this->getYML();
+
+        if (!isset($yml['database']['user']))
+        {
+            throw new \Exception ('Missing or incomplete database configuration.');
+        }
+
+        return  $yml['database']['user'];
+
     }
 
 
     public function getDBPassword()
     {
-        return '';
+        $yml = $this->getYML();
+
+        if (!isset($yml['database']['password']))
+        {
+            return '';
+        }
+
+        return  $yml['database']['password'];
     }
 
 
@@ -100,4 +124,7 @@ class Config
 
         return $this->yml;
     }
+
+
+
 }
