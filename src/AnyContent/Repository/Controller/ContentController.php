@@ -141,62 +141,62 @@ class ContentController extends BaseController
                         switch ($request->get('order'))
                         {
                             case
-                                'id':
+                            'id':
                                 $orderBy = 'id ASC';
 
                                 break;
                             case
-                                'id-':
+                            'id-':
                                 $orderBy = 'id DESC';
 
                                 break;
                             case
-                                'name':
+                            'name':
                                 $orderBy = 'property_name ASC, id ASC';
                                 break;
                             case
-                                'name-':
+                            'name-':
                                 $orderBy = 'property_name DESC, id ASC';
                                 break;
                             case
-                                'pos':
+                            'pos':
                                 $orderBy = 'position ASC, id ASC';
                                 break;
                             case
-                                'pos-':
+                            'pos-':
                                 $orderBy = 'position DESC, id ASC';
                                 break;
                             case
-                                'change':
+                            'change':
                                 // reversed order for token "change", since usually you want to see the latest changes first
                                 $orderBy = 'lastchange_timestamp DESC, id ASC';
                                 break;
                             case
-                                'change-':
+                            'change-':
                                 $orderBy = 'lastchange_timestamp ASC, id DESC';
                                 break;
                             case
-                                'creation':
+                            'creation':
                                 $orderBy = 'creation_timestamp ASC, id ASC';
                                 break;
                             case
-                                'creation-':
+                            'creation-':
                                 $orderBy = 'creation_timestamp DESC, id DESC';
                                 break;
                             case
-                                'status':
+                            'status':
                                 $orderBy = 'property_status ASC, id ASC';
                                 break;
                             case
-                                'status-':
+                            'status-':
                                 $orderBy = 'property_status DESC, id ASC';
                                 break;
                             case
-                                'subtype':
+                            'subtype':
                                 $orderBy = 'property_subtype ASC, id ASC';
                                 break;
                             case
-                                'subtype-':
+                            'subtype-':
                                 $orderBy = 'property_subtype DESC, id ASC';
                                 break;
                         }
@@ -342,7 +342,7 @@ class ContentController extends BaseController
 
                 if ($request->request->has('list'))
                 {
-                    $list = json_decode($request->get('list'),true);
+                    $list = json_decode($request->get('list'), true);
                 }
                 else
                 {
@@ -353,7 +353,6 @@ class ContentController extends BaseController
                 {
                     $language = $request->get('language');
                 }
-
 
                 if ($manager->sortRecords($list, $workspace, $language))
                 {

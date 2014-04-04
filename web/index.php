@@ -12,7 +12,7 @@ use AnyContent\Repository\Service\Config;
 use AnyContent\Repository\Service\Database;
 
 $app          = new Silex\Application();
-$app['debug'] = false;
+$app['debug'] = true;
 
 // Detect environment (default: prod) by checking for the existence of $app_env
 if (isset($app_env) && in_array($app_env, array('prod','dev','test'))) { $app['env'] = $app_env; }else{$app['env'] = 'prod';}
@@ -36,7 +36,7 @@ $app->get('/1/{repositoryName}/info/{workspace}/{language}', 'AnyContent\Reposit
 // list content
 $app->get('/1/{repositoryName}/content', 'AnyContent\Repository\Controller\ContentController::index')->before($before1)->before($before2);
 
-// get distinct record (additional query parameters: timeshift, language)
+// get record (additional query parameters: timeshift, language)
 $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}/{clippingName}', 'AnyContent\Repository\Controller\ContentController::getOne')->before($before1)->before($before2);
@@ -58,10 +58,16 @@ $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{c
 $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records', 'AnyContent\Repository\Controller\ContentController::sort')->before($before1)->before($before2);
 $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records/{workspace}', 'AnyContent\Repository\Controller\ContentController::sort')->before($before1)->before($before2);
 
+// copy record
+// $app->post('/1/{repositoryName}/content/{contentTypeName}/copy-record/{id}/{workspace}/{language}/{workspace}/{language}', 'AnyContent\Repository\Controller\ContentController::sort')->before($before1)->before($before2);
+
 // get cmdl for a content type
 $app->get('/1/{repositoryName}/content/{contentTypeName}/cmdl', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/content/{contentTypeName}/cmdl/{locale}', 'AnyContent\Repository\Controller\RepositoryController::cmdl')->before($before1)->before($before2);
 
+// get records status for a content type (additional query parameter: language)
+//$app->get('/1/{repositoryName}/content/{contentTypeName}/info', 'AnyContent\Repository\Controller\ContentController::info')->before($before1)->before($before2);
+//$app->get('/1/{repositoryName}/content/{contentTypeName}/info/{workspace}', 'AnyContent\Repository\Controller\ContentController::info')->before($before1)->before($before2);
 
 // list configs
 $app->get('/1/{repositoryName}/config', 'AnyContent\Repository\Controller\ConfigController::index')->before($before1)->before($before2);
