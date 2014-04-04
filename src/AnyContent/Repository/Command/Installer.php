@@ -24,6 +24,9 @@ class Installer
         $filesystem->mkdir($baseDir.'/cmdl');
         $filesystem->mkdir($baseDir.'/config');
         $filesystem->mkdir($baseDir.'/web');
+        $filesystem->mkdir($baseDir.'/log');
+
+        // All copy commands do not overwrite eventually existing files!
 
         $filesystem->copy(__DIR__.'/resources/config.example.yml',$baseDir.'/config/config.yml');
 
