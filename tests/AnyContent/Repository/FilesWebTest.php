@@ -41,7 +41,7 @@ class FilesWebTest extends WebTestCase
         $client->request('POST','/1/example/file/Test/test.txt');
         $response = $client->getResponse();
         $result = json_decode($response->getContent(), true);
-        $this->assertFalse($result);
+        $this->assertTrue($result);
 
         $client->request('POST','/1/example/file/Test/test.txt',array(),array(),array(),'test');
         $response = $client->getResponse();

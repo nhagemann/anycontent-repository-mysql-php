@@ -37,19 +37,19 @@ class ContentManager
      * @return array
      * @throws Exception
      */
-    public function getRecord($id, $clippingName = 'default', $workspace = 'default', $language = 'default', $timeshift = 0)
+    public function getRecord($id, $viewName = 'default', $workspace = 'default', $language = 'default', $timeshift = 0)
     {
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
 
         $row = $this->getRecordTableRow($id, $workspace, $language, $timeshift);
 
-        $record               = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName);
+        $record               = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $viewName);
         $info                 = array();
         $info['repository']   = $repositoryName;
         $info['content_type'] = $contentTypeName;
         $info['workspace']    = $workspace;
-        $info['clipping']     = $clippingName;
+        $info['view']         = $viewName;
         $info['language']     = $language;
 
         return array( 'info' => $info, 'record' => $record );
@@ -103,7 +103,7 @@ class ContentManager
     }
 
 
-    public function getRecords($clippingName = 'default', $workspace = 'default', $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, Filter $filter = null, $language = 'default', $timeshift = 0)
+    public function getRecords($viewName = 'default', $workspace = 'default', $orderBy = 'id ASC', $limit = null, $page = 1, $subset = null, Filter $filter = null, $language = 'default', $timeshift = 0)
     {
         $records         = array();
         $repositoryName  = $this->repository->getName();
@@ -231,7 +231,7 @@ class ContentManager
 
             foreach ($rows as $row)
             {
-                $records[$row['id']] = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName);
+                $records[$row['id']] = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $viewName);
             }
 
             if ($subset AND $depth < 0) // climb upwards
@@ -245,7 +245,7 @@ class ContentManager
             $info['repository']   = $repositoryName;
             $info['content_type'] = $contentTypeName;
             $info['workspace']    = $workspace;
-            $info['clipping']     = $clippingName;
+            $info['view']         = $viewName;
             $info['language']     = $language;
 
             $count              = $this->countRecords($workspace, $filter, $language, $timeshift);
@@ -272,7 +272,7 @@ class ContentManager
      * @return int
      * @throws Exception
      */
-    public function saveRecord($record, $clippingName = 'default', $workspace = 'default', $language = 'default')
+    public function saveRecord($record, $viewName = 'default', $workspace = 'default', $language = 'default')
     {
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
@@ -281,23 +281,19 @@ class ContentManager
 
         if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
-            throw new RepositoryException ('Invalid repository and/or content type name(s).',  RepositoryException::INVALID_NAMES);
+            throw new RepositoryException ('Invalid repository and/or content type name(s).', RepositoryException::INVALID_NAMES);
         }
 
-
-
-        $possibleProperties = $this->contentTypeDefinition->getProperties($clippingName);
+        $possibleProperties = $this->contentTypeDefinition->getProperties($viewName);
 
         $notallowed = array_diff(array_keys($record['properties']), $possibleProperties);
-
 
         if (count($notallowed) != 0)
         {
             throw new RepositoryException('Trying to store undefined properties: ' . join(',', $notallowed) . '.', RepositoryException::REPOSITORY_INVALID_PROPERTIES);
         }
 
-        $mandatoryProperties = $this->contentTypeDefinition->getMandatoryProperties($clippingName);
-
+        $mandatoryProperties = $this->contentTypeDefinition->getMandatoryProperties($viewName);
 
         $missing = array();
         foreach ($mandatoryProperties as $property)
@@ -319,7 +315,6 @@ class ContentManager
         {
             throw new RepositoryException('Trying to store record, but missing mandatory properties: ' . join(',', $missing) . '.', RepositoryException::REPOSITORY_MISSING_MANDATORY_PROPERTIES);
         }
-
 
         $dbh = $this->repository->getDatabaseConnection();
 
@@ -470,7 +465,6 @@ class ContentManager
         $sql .= str_repeat(' , ?', count($values) - 1);
         $sql .= ')';
 
-
         $stmt = $dbh->prepare($sql);
 
         $stmt->execute(array_values($values));
@@ -494,7 +488,8 @@ class ContentManager
 
         // get row of current revision
 
-        try{
+        try
+        {
             $row = $this->getRecordTableRow($id, $workspace, $language);
         }
         catch (RepositoryException $e)
@@ -502,29 +497,27 @@ class ContentManager
             return false;
         }
 
-
         $dbh = $this->repository->getDatabaseConnection();
 
         // invalidate current revision
 
         $timeshiftTimestamp = $this->repository->getTimeshiftTimestamp();
 
-        $sql                = 'UPDATE ' . $tableName . ' SET validuntil_timestamp = ? WHERE id = ? AND workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <=? AND validuntil_timestamp >?';
-        $params             = array();
-        $params[]           = $timeshiftTimestamp;
-        $params[]           = $id;
-        $params[]           = $workspace;
-        $params[]           = $language;
-        $params[]           = $timeshiftTimestamp;
-        $params[]           = $timeshiftTimestamp;
-        $stmt               = $dbh->prepare($sql);
+        $sql      = 'UPDATE ' . $tableName . ' SET validuntil_timestamp = ? WHERE id = ? AND workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <=? AND validuntil_timestamp >?';
+        $params   = array();
+        $params[] = $timeshiftTimestamp;
+        $params[] = $id;
+        $params[] = $workspace;
+        $params[] = $language;
+        $params[] = $timeshiftTimestamp;
+        $params[] = $timeshiftTimestamp;
+        $stmt     = $dbh->prepare($sql);
         $stmt->execute($params);
-
 
         // copy last revision row and mark record as deleted
 
-        $row['revision']=$row['revision']+1;
-        $row['deleted']=1;
+        $row['revision']             = $row['revision'] + 1;
+        $row['deleted']              = 1;
         $row['lastchange_timestamp'] = $timeshiftTimestamp;
         $row['lastchange_apiuser']   = $this->repository->getAPIUser();
         $row['lastchange_clientip']  = $this->repository->getClientIp();
@@ -533,7 +526,6 @@ class ContentManager
         $row['lastchange_lastname']  = $this->repository->getCurrentUserLastname();
         $row['validfrom_timestamp']  = $timeshiftTimestamp;
         $row['validuntil_timestamp'] = $this->repository->getMaxTimestamp();
-
 
         $sql = 'INSERT INTO ' . $tableName;
         $sql .= ' (' . join(',', array_keys($row)) . ')';
@@ -647,10 +639,10 @@ class ContentManager
 
         $dbh = $this->repository->getDatabaseConnection();
 
-        $tempTableName      = $tableName . '_' . substr(md5 (uniqid(microtime(), true)),0,8);
+        $tempTableName      = $tableName . '_' . substr(md5(uniqid(microtime(), true)), 0, 8);
         $timeshiftTimestamp = $this->repository->getTimeshiftTimestamp();
 
-        $sql      = 'CREATE TEMPORARY TABLE ' . $tempTableName . ' SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND validfrom_timestamp <= ? AND validuntil_timestamp > ? AND deleted=0';
+        $sql = 'CREATE TEMPORARY TABLE ' . $tempTableName . ' SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND validfrom_timestamp <= ? AND validuntil_timestamp > ? AND deleted=0';
 
         $params   = array();
         $params[] = $workspace;
@@ -659,8 +651,6 @@ class ContentManager
         $params[] = $timeshiftTimestamp;
         $stmt     = $dbh->prepare($sql);
         $stmt->execute($params);
-
-
 
         $sql    = 'UPDATE ' . $tempTableName . ' SET parent_id = null, position=null, position_left = null, position_right = null, position_level = null';
         $params = array();
@@ -724,13 +714,13 @@ class ContentManager
     }
 
 
-    protected function getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $clippingName)
+    protected function getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $viewName)
     {
         $record               = array();
         $record['id']         = $row['id'];
         $record['properties'] = array();
 
-        $properties = $this->contentTypeDefinition->getProperties($clippingName);
+        $properties = $this->contentTypeDefinition->getProperties($viewName);
         foreach ($properties as $property)
         {
             $record['properties'][$property] = $row['property_' . $property];
@@ -758,9 +748,9 @@ class ContentManager
     }
 
 
-    public function hasProperty($property, $clippingName = null)
+    public function hasProperty($property, $viewName = null)
     {
-        $possibleProperties = $this->contentTypeDefinition->getProperties($clippingName);
+        $possibleProperties = $this->contentTypeDefinition->getProperties($viewName);
         if (in_array($property, $possibleProperties))
         {
             return true;

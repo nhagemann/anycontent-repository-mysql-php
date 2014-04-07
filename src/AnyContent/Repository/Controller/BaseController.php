@@ -60,7 +60,7 @@ class BaseController
         {
             case self::UNKNOWN_PROPERTY:
 
-                $message = sprintf('Unknown property %s for clipping %s of content type %s within repository %s.', $s4, $s3, $s2, $s1);
+                $message = sprintf('Unknown property %s for view %s of content type %s within repository %s.', $s4, $s3, $s2, $s1);
                 break;
             default:
                 $message = 'Unknown error';

@@ -33,7 +33,7 @@ class ContentController extends BaseController
     }
 
 
-    public static function getOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $clippingName = 'default', $language = 'default', $timeshift = 0)
+    public static function getOne(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $viewName = 'default', $language = 'default', $timeshift = 0)
     {
 
         /** @var $repository Repository */
@@ -57,7 +57,7 @@ class ContentController extends BaseController
                         $timeshift = (int)$request->get('timeshift');
                     }
 
-                    $record = $manager->getRecord($id, $clippingName, $workspace, $language, $timeshift);
+                    $record = $manager->getRecord($id, $viewName, $workspace, $language, $timeshift);
 
                     return $app->json($record);
                 }

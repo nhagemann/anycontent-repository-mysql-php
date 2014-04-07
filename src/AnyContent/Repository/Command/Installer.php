@@ -25,6 +25,7 @@ class Installer
         $filesystem->mkdir($baseDir.'/config');
         $filesystem->mkdir($baseDir.'/web');
         $filesystem->mkdir($baseDir.'/log');
+        $filesystem->mkdir($baseDir.'/files');
 
         // All copy commands do not overwrite eventually existing files!
 
