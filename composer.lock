@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "42da5701669cf54d286867508c1365ee",
+    "hash": "18570d7bfa90d65e945bc2a2b9a798c2",
     "packages": [
         {
             "name": "dropbox-php/dropbox-php",
@@ -222,12 +222,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nhagemann/cmdl-parser-php.git",
-                "reference": "7f224fa67d1fd695dc1671485ea1701409b7939b"
+                "reference": "eff3e22d76a9f2d941c682d80e95369d177d21eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/7f224fa67d1fd695dc1671485ea1701409b7939b",
-                "reference": "7f224fa67d1fd695dc1671485ea1701409b7939b",
+                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/eff3e22d76a9f2d941c682d80e95369d177d21eb",
+                "reference": "eff3e22d76a9f2d941c682d80e95369d177d21eb",
                 "shasum": ""
             },
             "require": {
@@ -255,7 +255,7 @@
             ],
             "description": "Library to parse CMDL files into an object representation",
             "homepage": "http://www.nilshagemann.de",
-            "time": "2014-04-08 12:21:47"
+            "time": "2014-04-08 14:31:43"
         },
         {
             "name": "pimple/pimple",
@@ -789,7 +789,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "2.4.x-dev",
+            "version": "v2.4.3",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
@@ -1321,7 +1321,7 @@
     "aliases": [
 
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "nhagemann/cmdl-parser-php": 20,
         "knplabs/gaufrette": 20,

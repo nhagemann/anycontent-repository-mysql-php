@@ -30,5 +30,7 @@
         "psr-0": {
             "AnyContent": "src/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
