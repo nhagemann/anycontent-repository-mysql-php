@@ -275,7 +275,6 @@ class ContentController extends BaseController
                 try
                 {
                     $id = $manager->saveRecord($record, $clippingName, $workspace, $language);
-
                 }
                 catch (RepositoryException $e)
                 {

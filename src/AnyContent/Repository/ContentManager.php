@@ -23,6 +23,8 @@ class ContentManager
     protected $repository = null;
     protected $contentTypeDefinition = null;
 
+    protected $currentlySynchronizingProperties = false;
+
 
     public function __construct($repository, ContentTypeDefinition $contentTypeDefinition)
     {
@@ -469,8 +471,94 @@ class ContentManager
 
         $stmt->execute(array_values($values));
 
+        if ($this->contentTypeDefinition->hasSynchronizedProperties() AND $this->currentlySynchronizingProperties == false)
+        {
+            $this->synchronizeProperties($record, $viewName, $workspace, $language);
+        }
+
         return $record['id'];
 
+    }
+
+
+    protected function synchronizeProperties($sourceRecord, $viewName, $sourceWorkspace, $sourceLanguage)
+    {
+        $this->currentlySynchronizingProperties = true;
+        $synchronizedProperties                 = $this->contentTypeDefinition->getSynchronizedProperties();
+
+        $repositoryName  = $this->repository->getName();
+        $contentTypeName = $this->contentTypeDefinition->getName();
+
+        $tableName = $repositoryName . '$' . $contentTypeName;
+
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE id = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ';
+
+        $dbh = $this->repository->getDatabaseConnection();
+
+        // invalidate current revision
+
+        $timestamp = $this->repository->getTimeshiftTimestamp();
+
+        $stmt     = $dbh->prepare($sql);
+        $params   = array();
+        $params[] = $sourceRecord['id'];
+        $params[] = $timestamp;
+        $params[] = $timestamp;
+        $stmt->execute($params);
+
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($rows as $row)
+        {
+            $save            = false;
+            $targetRecord    = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $viewName);
+            $targetWorkspace = $row['workspace'];
+            $targetLanguage  = $row['language'];
+
+            foreach ($synchronizedProperties[ContentTypeDefinition::SCOPE_SYNCHRONIZED_PROPERTY_GLOBAL] as $property)
+            {
+                if ($targetRecord['properties'][$property] != $sourceRecord['properties'][$property])
+                {
+                    $save                                  = true;
+                    $targetRecord['properties'][$property] = $sourceRecord['properties'][$property];
+                }
+
+            }
+
+            if ($sourceLanguage == $targetLanguage)
+            {
+                foreach ($synchronizedProperties[ContentTypeDefinition::SCOPE_SYNCHRONIZED_PROPERTY_WORKSPACES] as $property)
+                {
+                    if ($targetRecord['properties'][$property] != $sourceRecord['properties'][$property])
+                    {
+                        $save                                  = true;
+                        $targetRecord['properties'][$property] = $sourceRecord['properties'][$property];
+                    }
+
+                }
+            }
+
+            if ($sourceWorkspace == $targetWorkspace)
+            {
+                foreach ($synchronizedProperties[ContentTypeDefinition::SCOPE_SYNCHRONIZED_PROPERTY_LANGUAGES] as $property)
+                {
+                    if ($targetRecord['properties'][$property] != $sourceRecord['properties'][$property])
+                    {
+                        $save                                  = true;
+                        $targetRecord['properties'][$property] = $sourceRecord['properties'][$property];
+                    }
+
+                }
+            }
+
+            if ($save == true)
+            {
+                $this->saveRecord($targetRecord, $viewName, $targetWorkspace, $targetLanguage);
+
+            }
+        }
+
+        $this->currentlySynchronizingProperties = false;
     }
 
 

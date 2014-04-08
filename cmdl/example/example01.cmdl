@@ -13,3 +13,4 @@ Source
 
 @title "Example 01"
 @description  "Example Content Type"
+@synchronized-properties (source)
