@@ -1,3 +1,11 @@
+!cmdl/examples
+cmdl/*
+
+!files/examples
+files/*
+
+config/config.yml
+
 # php storm files
 .idea/
 

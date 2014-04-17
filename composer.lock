@@ -222,12 +222,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nhagemann/cmdl-parser-php.git",
-                "reference": "eff3e22d76a9f2d941c682d80e95369d177d21eb"
+                "reference": "0c7a2f1ed360c4bc6ae321224dbf814dc70422d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/eff3e22d76a9f2d941c682d80e95369d177d21eb",
-                "reference": "eff3e22d76a9f2d941c682d80e95369d177d21eb",
+                "url": "https://api.github.com/repos/nhagemann/cmdl-parser-php/zipball/0c7a2f1ed360c4bc6ae321224dbf814dc70422d3",
+                "reference": "0c7a2f1ed360c4bc6ae321224dbf814dc70422d3",
                 "shasum": ""
             },
             "require": {
@@ -255,7 +255,7 @@
             ],
             "description": "Library to parse CMDL files into an object representation",
             "homepage": "http://www.nilshagemann.de",
-            "time": "2014-04-08 14:31:43"
+            "time": "2014-04-15 10:18:51"
         },
         {
             "name": "pimple/pimple",
