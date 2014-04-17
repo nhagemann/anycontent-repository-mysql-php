@@ -83,4 +83,19 @@ class RepositoryController extends BaseController
 
         return new RedirectResponse($url, 303);
     }
+
+
+    public static function welcome(Application $app)
+    {
+        $result =   'Welcome to AnyContent Repository Server. Please specify desired repository.';
+        return $app->json($result);
+    }
+
+    public static function welcomeShortCut(Application $app)
+    {
+        $url = '/1';
+
+        return new RedirectResponse($url, 303);
+    }
+
 }

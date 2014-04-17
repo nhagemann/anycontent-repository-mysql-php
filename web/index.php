@@ -107,6 +107,9 @@ $app->delete('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\File
 $app->delete('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::deleteFiles')->before($before1)->before($before2);
 
 // simplification routes, solely for human interaction with the api
+$app->get('/', 'AnyContent\Repository\Controller\RepositoryController::welcomeShortCut')->before($before1)->before($before2);
+$app->get('/1', 'AnyContent\Repository\Controller\RepositoryController::welcome')->before($before1)->before($before2);
+$app->get('/1/', 'AnyContent\Repository\Controller\RepositoryController::welcome')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}', 'AnyContent\Repository\Controller\RepositoryController::getInfoShortCut')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/config/{configTypeName}', 'AnyContent\Repository\Controller\ConfigController::getConfigShortCut')->before($before1)->before($before2);
 $app->get('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Controller\ContentController::getContentShortCut')->before($before1)->before($before2);
