@@ -473,7 +473,7 @@ class ContentManager
 
         if ($this->contentTypeDefinition->hasSynchronizedProperties() AND $this->currentlySynchronizingProperties == false)
         {
-            $this->synchronizeProperties($record, $viewName, $workspace, $language);
+           $this->synchronizeProperties($record, $viewName, $workspace, $language);
         }
 
         return $record['id'];

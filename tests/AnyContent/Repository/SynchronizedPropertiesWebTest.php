@@ -24,6 +24,7 @@ class SynchronizedPropertiesWebTest extends WebTestCase
 
     public function testSync()
     {
+
         $url    = '/1/example';
         $client = $this->createClient();
         $client->request('GET', $url);
@@ -32,7 +33,7 @@ class SynchronizedPropertiesWebTest extends WebTestCase
 
         $result = json_decode($response->getContent(), true);
 
-        $this->assertArrayHasKey('example01', $result['content']);
+        $this->assertArrayHasKey('example03', $result['content']);
 
         $record    = new Record();
         $languages = array( 'default', 'en', 'es' );
@@ -44,7 +45,7 @@ class SynchronizedPropertiesWebTest extends WebTestCase
 
             $json = json_encode($record);
 
-            $client->request('POST', '/1/example/content/example01/records/default/default', array( 'record' => $json, 'language' => $language ));
+            $client->request('POST', '/1/example/content/example03/records/default/default', array( 'record' => $json, 'language' => $language ));
             $response = $client->getResponse();
 
             $id = json_decode($response->getContent(), true);
@@ -55,7 +56,7 @@ class SynchronizedPropertiesWebTest extends WebTestCase
         foreach ($languages as $language)
         {
 
-            $client->request('GET', '/1/example/content/example01/record/' . $id, array( 'language' => $language ));
+            $client->request('GET', '/1/example/content/example03/record/' . $id, array( 'language' => $language ));
             $response = $client->getResponse();
             $this->assertTrue($response->isOk());
             $result = json_decode($response->getContent(), true);
