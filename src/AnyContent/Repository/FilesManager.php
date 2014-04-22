@@ -68,7 +68,7 @@ class FilesManager
 
                 break;
             case
-                'ftp':
+            'ftp':
                 $adapter = new FtpAdapter($config['directory'], $config['host'], $config['options']);
                 break;
 
@@ -121,12 +121,15 @@ class FilesManager
 
                             $content = $file->getContent();
 
-                            $image = @imagecreatefromstring($content);
-                            if ($image)
+                            if (function_exists('imagecreatefromstring'))
                             {
-                                $item['type']   = 'image';
-                                $item['width']  = imagesx($image);
-                                $item['height'] = imagesy($image);
+                                $image = @imagecreatefromstring($content);
+                                if ($image)
+                                {
+                                    $item['type']   = 'image';
+                                    $item['width']  = imagesx($image);
+                                    $item['height'] = imagesy($image);
+                                }
                             }
 
                         }
