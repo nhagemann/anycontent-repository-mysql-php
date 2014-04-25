@@ -51,7 +51,7 @@ class LanguagesTest extends \PHPUnit_Framework_TestCase
         {
             $record               = array();
             $record['properties'] = array( 'name' => 'New Record ' . $i );
-            $id                   = $manager->saveRecord($record, 'default', 'default', 'none');
+            $id                   = $manager->saveRecord($record, 'default', 'default', 'default');
             $this->assertEquals($i, $id);
         }
 
@@ -71,7 +71,7 @@ class LanguagesTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals(10 + $i, $id);
         }
 
-        $records = $manager->getRecords('default', 'default', 'id ASC', null, 1, null, null, 'none');
+        $records = $manager->getRecords('default', 'default', 'id ASC', null, 1, null, null, 'default');
         $this->assertCount(5, $records['records']);
         $records = $manager->getRecords('default', 'default', 'id ASC', null, 1, null, null, 'en');
         $this->assertCount(5, $records['records']);
@@ -91,11 +91,11 @@ class LanguagesTest extends \PHPUnit_Framework_TestCase
 
         $record               = array();
         $record['properties'] = array( 'name' => 'New Record' );
-        $firstId              = $manager->saveRecord($record, 'default', 'default', 'none');
+        $firstId              = $manager->saveRecord($record, 'default', 'default', 'default');
 
         $record['id'] = $firstId;
 
-        $id           = $manager->saveRecord($record, 'default', 'default', 'none');
+        $id           = $manager->saveRecord($record, 'default', 'default', 'default');
         $this->assertEquals($firstId,$id);
 
         $id           = $manager->saveRecord($record, 'default', 'default', 'en');

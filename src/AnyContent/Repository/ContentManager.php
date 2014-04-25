@@ -283,7 +283,23 @@ class ContentManager
 
         if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
-            throw new RepositoryException ('Invalid repository and/or content type name(s).', RepositoryException::INVALID_NAMES);
+            throw new RepositoryException ('Invalid repository and/or content type name(s).', RepositoryException::REPOSITORY_INVALID_NAMES);
+        }
+
+        if ($language!='default' AND $this->contentTypeDefinition->hasLanguages())
+        {
+            if (!array_key_exists($language,$this->contentTypeDefinition->getLanguages()))
+            {
+                throw new RepositoryException ('Trying to store record, but invalid language '.$language.' has been provided', RepositoryException::REPOSITORY_INVALID_LANGUAGE);
+            }
+        }
+
+        if ($workspace!='default' AND $this->contentTypeDefinition->hasWorkspaces())
+        {
+            if (!array_key_exists($workspace,$this->contentTypeDefinition->getWorkspaces()))
+            {
+                throw new RepositoryException ('Trying to store record, but invalid workspace '.$language.' has been provided', RepositoryException::REPOSITORY_INVALID_WORKSPACE);
+            }
         }
 
         $possibleProperties = $this->contentTypeDefinition->getProperties($viewName);
@@ -474,7 +490,7 @@ class ContentManager
 
         if ($this->contentTypeDefinition->hasSynchronizedProperties() AND $this->currentlySynchronizingProperties == false)
         {
-           $this->synchronizeProperties($record, $viewName, $workspace, $language);
+            $this->synchronizeProperties($record, $viewName, $workspace, $language);
         }
 
         return $record['id'];
