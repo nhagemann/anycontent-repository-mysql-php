@@ -51,7 +51,7 @@ class LanguagesTest extends \PHPUnit_Framework_TestCase
         {
             $record               = array();
             $record['properties'] = array( 'name' => 'New Record ' . $i );
-            $id                   = $manager->saveRecord($record, 'default', 'default','none');
+            $id                   = $manager->saveRecord($record, 'default', 'default', 'none');
             $this->assertEquals($i, $id);
         }
 
@@ -59,7 +59,7 @@ class LanguagesTest extends \PHPUnit_Framework_TestCase
         {
             $record               = array();
             $record['properties'] = array( 'name' => 'New Record ' . $i );
-            $id                   = $manager->saveRecord($record, 'default', 'default','en');
+            $id                   = $manager->saveRecord($record, 'default', 'default', 'en');
             $this->assertEquals(5 + $i, $id);
         }
 
@@ -67,15 +67,41 @@ class LanguagesTest extends \PHPUnit_Framework_TestCase
         {
             $record               = array();
             $record['properties'] = array( 'name' => 'New Record ' . $i );
-            $id                   = $manager->saveRecord($record, 'default', 'live','en');
+            $id                   = $manager->saveRecord($record, 'default', 'live', 'en');
             $this->assertEquals(10 + $i, $id);
         }
 
-        $records = $manager->getRecords('default', 'default','id ASC',null,1,null,null,'none');
+        $records = $manager->getRecords('default', 'default', 'id ASC', null, 1, null, null, 'none');
         $this->assertCount(5, $records['records']);
-        $records = $manager->getRecords('default', 'default','id ASC',null,1,null,null,'en');
+        $records = $manager->getRecords('default', 'default', 'id ASC', null, 1, null, null, 'en');
         $this->assertCount(5, $records['records']);
-        $records = $manager->getRecords('default', 'live','id ASC',null,1,null,null,'en');
+        $records = $manager->getRecords('default', 'live', 'id ASC', null, 1, null, null, 'en');
         $this->assertCount(5, $records['records']);
+
+    }
+
+
+    public function testNextFreeId()
+    {
+
+        /**
+         * @var ContentManager
+         */
+        $manager = $this->repository->getContentManager('example01');
+
+        $record               = array();
+        $record['properties'] = array( 'name' => 'New Record' );
+        $firstId              = $manager->saveRecord($record, 'default', 'default', 'none');
+
+        $record['id'] = $firstId;
+
+        $id           = $manager->saveRecord($record, 'default', 'default', 'none');
+        $this->assertEquals($firstId,$id);
+
+        $id           = $manager->saveRecord($record, 'default', 'default', 'en');
+        $this->assertEquals($firstId,$id);
+
+        $id           = $manager->saveRecord($record, 'default', 'live', 'en');
+        $this->assertEquals($firstId,$id);
     }
 }

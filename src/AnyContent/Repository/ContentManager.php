@@ -321,11 +321,13 @@ class ContentManager
         $dbh = $this->repository->getDatabaseConnection();
 
         $mode = 'insert';
+        $record['revision'] = 1;
 
         // fix record array structure, if someone forgot the id
         if (!isset($record['id']))
         {
             $record['id'] = 0;
+
         }
 
         if ($record['id'] != 0)
@@ -362,7 +364,7 @@ class ContentManager
             }
         }
 
-        if ($mode == 'insert')
+        if ($mode == 'insert' AND $record['id']==0)
         {
             // update counter for new record
 
@@ -383,7 +385,6 @@ class ContentManager
             {
                 $record['id'] = $result;
             }
-            $record['revision'] = 1;
         }
 
         $timestamp          = time();
