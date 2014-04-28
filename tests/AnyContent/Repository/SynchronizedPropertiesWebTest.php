@@ -66,6 +66,52 @@ class SynchronizedPropertiesWebTest extends WebTestCase
 
         }
     }
+
+
+    public function testPropertiesNotSet()
+    {
+
+        $url    = '/1/example';
+        $client = $this->createClient();
+        $client->request('GET', $url);
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+        $record = new Record();
+
+        $json = json_encode($record);
+
+        $client->request('POST', '/1/example/content/example03/records/default/default', array( 'record' => $json, 'language' => 'default' ));
+
+        $response = $client->getResponse();
+
+        $id = json_decode($response->getContent(), true);
+
+        $record->id = 3;
+
+        $json = json_encode($record);
+
+        $client->request('POST', '/1/example/content/example03/records/default/default', array( 'record' => $json, 'language' => 'default' ));
+
+        $response = $client->getResponse();
+
+        $nextId = json_decode($response->getContent(), true);
+
+        $this->assertEquals($id, $nextId);
+
+        $record->properties['article'] = 'test';
+
+        $json = json_encode($record);
+
+        $client->request('POST', '/1/example/content/example03/records/default/default', array( 'record' => $json, 'language' => 'default' ));
+
+        $response = $client->getResponse();
+
+        $nextId = json_decode($response->getContent(), true);
+
+        $this->assertEquals($id, $nextId);
+
+    }
 }
 
 
