@@ -42,6 +42,7 @@ class Config
 
         $dsn = 'mysql:host='.$yml['database']['host'];
         $dsn .=';dbname='.$yml['database']['name'];
+        $dsn .=';port='.$this->getDBPort();
 
         return $dsn;
     }
@@ -73,6 +74,11 @@ class Config
         return  $yml['database']['password'];
     }
 
+
+    public function getDBPort()
+    {
+        return '3306';
+    }
 
     public function getFilesAdapterConfig($repositoryName)
     {
