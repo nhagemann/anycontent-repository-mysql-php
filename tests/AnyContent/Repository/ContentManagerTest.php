@@ -113,8 +113,8 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $record               = array();
         $record['properties'] = array( 'name' => 'Timeshift Record' );
         $id                   = $manager->saveRecord($record);
-        $result             = $manager->getRecord($id);
-        $record = $result['record'];
+        $result               = $manager->getRecord($id);
+        $record               = $result['record'];
         $this->assertEquals(1, $record['info']['revision']);
         sleep(2);
         $this->assertEquals($id, $manager->saveRecord($record));
@@ -140,6 +140,7 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('AnyContent\Repository\RepositoryException');
         $record = $manager->getRecord(1);
     }
+
 
     public function testCountAfterDeletion()
     {

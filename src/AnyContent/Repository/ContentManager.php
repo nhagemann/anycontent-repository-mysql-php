@@ -286,19 +286,19 @@ class ContentManager
             throw new RepositoryException ('Invalid repository and/or content type name(s).', RepositoryException::REPOSITORY_INVALID_NAMES);
         }
 
-        if ($language!='default' AND $this->contentTypeDefinition->hasLanguages())
+        if ($language != 'default' AND $this->contentTypeDefinition->hasLanguages())
         {
-            if (!array_key_exists($language,$this->contentTypeDefinition->getLanguages()))
+            if (!array_key_exists($language, $this->contentTypeDefinition->getLanguages()))
             {
-                throw new RepositoryException ('Trying to store record, but invalid language '.$language.' has been provided', RepositoryException::REPOSITORY_INVALID_LANGUAGE);
+                throw new RepositoryException ('Trying to store record, but invalid language ' . $language . ' has been provided', RepositoryException::REPOSITORY_INVALID_LANGUAGE);
             }
         }
 
-        if ($workspace!='default' AND $this->contentTypeDefinition->hasWorkspaces())
+        if ($workspace != 'default' AND $this->contentTypeDefinition->hasWorkspaces())
         {
-            if (!array_key_exists($workspace,$this->contentTypeDefinition->getWorkspaces()))
+            if (!array_key_exists($workspace, $this->contentTypeDefinition->getWorkspaces()))
             {
-                throw new RepositoryException ('Trying to store record, but invalid workspace '.$language.' has been provided', RepositoryException::REPOSITORY_INVALID_WORKSPACE);
+                throw new RepositoryException ('Trying to store record, but invalid workspace ' . $language . ' has been provided', RepositoryException::REPOSITORY_INVALID_WORKSPACE);
             }
         }
 
@@ -336,7 +336,7 @@ class ContentManager
 
         $dbh = $this->repository->getDatabaseConnection();
 
-        $mode = 'insert';
+        $mode               = 'insert';
         $record['revision'] = 1;
 
         // fix record array structure, if someone forgot the id
@@ -380,7 +380,7 @@ class ContentManager
             }
         }
 
-        if ($mode == 'insert' AND $record['id']==0)
+        if ($mode == 'insert' AND $record['id'] == 0)
         {
             // update counter for new record
 
@@ -534,6 +534,15 @@ class ContentManager
 
             foreach ($synchronizedProperties[ContentTypeDefinition::SCOPE_SYNCHRONIZED_PROPERTY_GLOBAL] as $property)
             {
+
+                if (!array_key_exists($property, $targetRecord['properties']))
+                {
+                    $targetRecord['properties'][$property] = null;
+                }
+                if (!array_key_exists($property, $sourceRecord['properties']))
+                {
+                    $sourceRecord['properties'][$property] = null;
+                }
                 if ($targetRecord['properties'][$property] != $sourceRecord['properties'][$property])
                 {
                     $save                                  = true;
@@ -546,6 +555,14 @@ class ContentManager
             {
                 foreach ($synchronizedProperties[ContentTypeDefinition::SCOPE_SYNCHRONIZED_PROPERTY_WORKSPACES] as $property)
                 {
+                    if (!array_key_exists($property, $targetRecord['properties']))
+                    {
+                        $targetRecord['properties'][$property] = null;
+                    }
+                    if (!array_key_exists($property, $sourceRecord['properties']))
+                    {
+                        $sourceRecord['properties'][$property] = null;
+                    }
                     if ($targetRecord['properties'][$property] != $sourceRecord['properties'][$property])
                     {
                         $save                                  = true;
@@ -559,6 +576,14 @@ class ContentManager
             {
                 foreach ($synchronizedProperties[ContentTypeDefinition::SCOPE_SYNCHRONIZED_PROPERTY_LANGUAGES] as $property)
                 {
+                    if (!array_key_exists($property, $targetRecord['properties']))
+                    {
+                        $targetRecord['properties'][$property] = null;
+                    }
+                    if (!array_key_exists($property, $sourceRecord['properties']))
+                    {
+                        $sourceRecord['properties'][$property] = null;
+                    }
                     if ($targetRecord['properties'][$property] != $sourceRecord['properties'][$property])
                     {
                         $save                                  = true;
