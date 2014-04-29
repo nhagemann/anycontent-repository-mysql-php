@@ -27,9 +27,9 @@ class Installer
         $filesystem->mkdir($baseDir.'/log');
         $filesystem->mkdir($baseDir.'/files');
 
-        // All copy commands do not overwrite eventually existing files!
+        // All copy commands should not overwrite eventually existing files! (the $override = false parameter doesn't always doe the job)
 
-        $filesystem->copy(__DIR__.'/resources/config.example.yml',$baseDir.'/config/config.yml');
+        //$filesystem->copy(__DIR__.'/resources/config.example.yml',$baseDir.'/config/config.yml');
 
         $filesystem->copy(__DIR__.'/../../../../web/index.php',$baseDir.'/web/index.php');
         $filesystem->copy(__DIR__.'/../../../../web/.htaccess',$baseDir.'/web/.htaccess');
