@@ -19,20 +19,17 @@ class Installer
         echo "Done.\n";
 
         $filesystem = new Filesystem();
-        $baseDir = realpath(__DIR__.'/../../../../../../../');
+        $baseDir    = realpath(__DIR__ . '/../../../../../../../');
 
-        $filesystem->mkdir($baseDir.'/cmdl');
-        $filesystem->mkdir($baseDir.'/config');
-        $filesystem->mkdir($baseDir.'/web');
-        $filesystem->mkdir($baseDir.'/log');
-        $filesystem->mkdir($baseDir.'/files');
+        $filesystem->mkdir($baseDir . '/cmdl');
+        $filesystem->mkdir($baseDir . '/config');
+        $filesystem->mkdir($baseDir . '/web');
+        $filesystem->mkdir($baseDir . '/log');
+        $filesystem->mkdir($baseDir . '/files');
 
-        // All copy commands should not overwrite eventually existing files! (the $override = false parameter doesn't always doe the job)
-
-        //$filesystem->copy(__DIR__.'/resources/config.example.yml',$baseDir.'/config/config.yml');
-
-        $filesystem->copy(__DIR__.'/../../../../web/index.php',$baseDir.'/web/index.php');
-        $filesystem->copy(__DIR__.'/../../../../web/.htaccess',$baseDir.'/web/.htaccess');
+        $filesystem->copy(__DIR__ . '/resources/config.example.yml', $baseDir . '/config/config.example.yml');
+        $filesystem->copy(__DIR__ . '/../../../../web/index.php', $baseDir . '/web/index.php');
+        $filesystem->copy(__DIR__ . '/../../../../web/.htaccess', $baseDir . '/web/.htaccess');
 
     }
 }
