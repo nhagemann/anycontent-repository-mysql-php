@@ -13,10 +13,12 @@ class PrettyPrint
 
     public static function execute(Request $request, Response $response)
     {
-
-        if ($response->headers->get('Content-Type') == 'application/json')
+        if ($request->getMethod() != 'CACHE')
         {
-            $response->setContent(Helper::prettyPrintJSON($response->getContent()));
+            if ($response->headers->get('Content-Type') == 'application/json')
+            {
+                $response->setContent(Helper::prettyPrintJSON($response->getContent()));
+            }
         }
 
     }

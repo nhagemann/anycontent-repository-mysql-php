@@ -24,6 +24,10 @@ class FilesTest extends \PHPUnit_Framework_TestCase
 
         $app           = new Application();
         $app['config'] = new Config($app);
+
+        $cacheDriver = new  \Doctrine\Common\Cache\ApcCache();
+        $app['cache'] = $cacheDriver;
+
         $app['repos']  = new RepositoryManager($app);
         $app['db']     = new Database($app);
 
