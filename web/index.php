@@ -12,7 +12,7 @@ use AnyContent\Repository\Service\Config;
 use AnyContent\Repository\Service\Database;
 
 $app          = new Silex\Application();
-$app['debug'] = true;
+$app['debug'] = false;
 
 // Detect environment (default: prod) by checking for the existence of $app_env
 if (isset($app_env) && in_array($app_env, array('prod','dev','test'))) { $app['env'] = $app_env; }else{$app['env'] = 'prod';}
@@ -136,13 +136,27 @@ $app['repos'] = $app->share(function ($app)
 });
 
 
-if ($app['debug'])
-{
+//if ($app['debug'])
+//{
     $app->register(new Silex\Provider\MonologServiceProvider(), array(
-        'monolog.logfile' => __DIR__.'/../log/debug.log', ',monolog.level'=>\Monolog\Logger::ERROR
+        'monolog.logfile' => __DIR__.'/../log/debug.log', 'monolog.level'=>\Monolog\Logger::INFO
     ));
+//}
+
+if (!function_exists('apc_exists'))
+{
+    function apc_exists($keys)
+    {
+        $result = null;
+        apc_fetch($keys, $result);
+
+        return $result;
+    }
 }
 
+//$cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
+$cacheDriver = new  \Doctrine\Common\Cache\ApcCache();
+$app['cache'] = $cacheDriver;
 
 $app->after($after);
 

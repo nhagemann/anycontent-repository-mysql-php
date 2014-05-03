@@ -41,11 +41,19 @@ class RepositoryManager
 
     protected $lastname = null;
 
+    protected $cache = null;
+
+
+    /**
+     * acrs_repositories
+     * acrs_
+     */
 
     public function __construct(Application $app)
     {
         $this->app = $app;
 
+        $this->cache = $app['cache'];
     }
 
 
@@ -121,10 +129,17 @@ class RepositoryManager
 
     public function getRepositories()
     {
-        $path = $this->app['config']->getCMDLDirectory();
 
         if (!$this->repositories)
         {
+            $cacheToken = 'acrs_repositories';
+
+            if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
+            {
+                return $this->cache->fetch($cacheToken);
+            }
+
+            $path = $this->app['config']->getCMDLDirectory();
 
             $repositories = array();
             $path         = realpath($path);
@@ -146,6 +161,11 @@ class RepositoryManager
                 }
             }
             $this->repositories = $repositories;
+
+            if ($this->app['debug'] == false)
+            {
+                $this->cache->save($cacheToken, $this->repositories, 600);
+            }
         }
 
         return $this->repositories;
@@ -155,8 +175,17 @@ class RepositoryManager
     public function getContentTypesList($repositoryName)
     {
         $contentTypes = array();
+
+        $cacheToken = 'acrs_repository_' . $repositoryName . '_content_types';
+
+        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
+        {
+            return $this->cache->fetch($cacheToken);
+        }
+
         if ($this->hasRepository($repositoryName))
         {
+
             $path = $this->app['config']->getCMDLDirectory() . '/' . $repositoryName;
             $path = realpath($path);
             if (is_dir($path))
@@ -194,6 +223,11 @@ class RepositoryManager
             }
         }
 
+        if ($this->app['debug'] == false)
+        {
+            $this->cache->save($cacheToken, $contentTypes, 600);
+        }
+
         return $contentTypes;
     }
 
@@ -201,8 +235,17 @@ class RepositoryManager
     public function getConfigTypesList($repositoryName)
     {
         $configTypes = array();
+
+        $cacheToken = 'acrs_repository_' . $repositoryName . '_config_types';
+
+        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
+        {
+            return $this->cache->fetch($cacheToken);
+        }
+
         if ($this->hasRepository($repositoryName))
         {
+
             $path = $this->app['config']->getCMDLDirectory() . '/' . $repositoryName . '/config';
             $path = realpath($path);
             if (is_dir($path))
@@ -243,6 +286,11 @@ class RepositoryManager
             }
         }
 
+        if ($this->app['debug'] == false)
+        {
+            $this->cache->save($cacheToken, $configTypes, 600);
+        }
+
         return $configTypes;
     }
 
@@ -250,9 +298,22 @@ class RepositoryManager
     // todo rename
     public function getCMDL($repositoryName, $contentTypeName)
     {
+        $token = $repositoryName . '$' . $contentTypeName;
+
+        $cacheToken = 'acrs_cmdl_' . md5($token);
+
+        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
+        {
+            $result                          = $this->cache->fetch($cacheToken);
+            $this->cmdl[$token]['cmdl']      = $result['cmdl'];
+            $this->cmdl[$token]['timestamp'] = $result['timestamp'];
+
+            return $result['cmdl'];
+        }
+
         if ($this->hasRepository($repositoryName))
         {
-            $token = $repositoryName . '$' . $contentTypeName;
+
             if (array_key_exists($token, $this->cmdl))
             {
                 return $this->cmdl[$token]['cmdl'];
@@ -265,8 +326,19 @@ class RepositoryManager
                 $this->cmdl[$token]['cmdl']      = $cmdl;
                 $this->cmdl[$token]['timestamp'] = @$filestats['mtime'];
 
+                if ($this->app['debug'] == false)
+                {
+                    $result = array( 'cmdl' => $this->cmdl[$token]['cmdl'], 'timestamp' => $this->cmdl[$token]['timestamp'] );
+                    $this->cache->save($cacheToken, $result, 15);
+                }
+
                 return $cmdl;
             }
+        }
+
+        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
+        {
+            $this->cache->save($cacheToken, false, 15);
         }
 
         return false;
@@ -339,6 +411,16 @@ class RepositoryManager
 
     public function getContentTypeDefinition($repositoryName, $contentTypeName)
     {
+        $cacheToken = 'acrs_definition_' . md5($repositoryName . $contentTypeName);
+
+        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
+        {
+
+            $result = $this->cache->fetch($cacheToken);
+            $this->contentTypeDefinitions[$repositoryName][$contentTypeName] = $result;
+            return $result;
+        }
+
         // check if definition already has been created
         if (array_key_exists($repositoryName, $this->contentTypeDefinitions))
         {
@@ -388,6 +470,11 @@ class RepositoryManager
                 }
 
                 $this->contentTypeDefinitions[$repositoryName][$contentTypeName] = $contentTypeDefinition;
+
+                if ($this->app['debug'] == false)
+                {
+                    $this->cache->save($cacheToken, $contentTypeDefinition, 600);
+                }
 
                 return $contentTypeDefinition;
             }
