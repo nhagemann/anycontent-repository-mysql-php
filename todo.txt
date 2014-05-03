@@ -23,4 +23,9 @@
 
 
 - filter on record.xy
-- records must reappear if delete and saved again "in the past"
+- check if servertime is used anyware, eventually delete or adapt caching
+- remove references to _info_
+- change _counter_ to $$counter
+- check $app['debug'] Verhalten for database table creation, should always work, debug not possible
+- add indices
+
