@@ -31,6 +31,7 @@ class ExtractUserInfo
         }
 
         $app['repos']->setUserInfo($request->getUser(),$username,$firstname,$lastname);
+
     }
 
 }

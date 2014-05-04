@@ -157,6 +157,7 @@ if (!function_exists('apc_exists'))
     }
 }
 
+
 //$cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
 $cacheDriver = new  \Doctrine\Common\Cache\ApcCache();
 $app['cache'] = $cacheDriver;
