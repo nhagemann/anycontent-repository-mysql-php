@@ -11,6 +11,16 @@ class ResponseCache
 
     public static function before(Request $request, Application $app)
     {
+        if ($app['debug'] == true)
+        {
+            $routes = array( 'GET_1_repositoryName_info','GET_1_repositoryName_info_workspace','GET_1_repositoryName_content_contentTypeName_cmdl','GET_1_repositoryName_content_contentTypeName_cmdl_locale', 'GET_1_repositoryName_config_configTypeName_cmdl','GET_1_repositoryName_config_configTypeName_cmdl_locale');
+
+            if (in_array($request->get('_route'),$routes))
+            {
+                return;
+            }
+        }
+
         $token = self::getCacheToken($request, $app);
 
         if ($app['cache']->contains($token))
