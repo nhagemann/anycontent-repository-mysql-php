@@ -16,8 +16,11 @@ use CMDL\Util;
 class FilesController extends BaseController
 {
 
+
+
     public static function scan(Application $app, Request $request, $repositoryName, $path = '')
     {
+
 
         $result = false;
 

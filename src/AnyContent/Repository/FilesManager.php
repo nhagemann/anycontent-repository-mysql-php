@@ -9,19 +9,22 @@ use CMDL\Util;
 
 use AnyContent\Repository\Repository;
 
-use AnyContent\Repository\Helper;
-use AnyContent\Repository\RepositoryException;
+//use AnyContent\Repository\Helper;
+//use AnyContent\Repository\RepositoryException;
 
-use AnyContent\Repository\Util\AdjacentList2NestedSet;
+//use AnyContent\Repository\Util\AdjacentList2NestedSet;
 
-use Gaufrette\Filesystem;
-use Gaufrette\Adapter\Local as LocalAdapter;
-use Gaufrette\Adapter\Ftp as FTPAdapter;
-use Gaufrette\Adapter\Dropbox as DropboxAdapter;
-use Gaufrette\Adapter\Cache as CacheAdapter;
+//use Gaufrette\Filesystem;
+//use Gaufrette\Adapter\Local as LocalAdapter;
+//use Gaufrette\Adapter\Ftp as FTPAdapter;
+//use Gaufrette\Adapter\Dropbox as DropboxAdapter;
+//use Gaufrette\Adapter\Cache as CacheAdapter;
 
-use Gaufrette\Adapter\AwsS3 as AmazonAdapter;
+//use Gaufrette\Adapter\AwsS3 as AmazonAdapter;
 use Aws\S3\S3Client;
+
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 class FilesManager
 {
@@ -30,6 +33,8 @@ class FilesManager
      * @var Repository
      */
     protected $repository = null;
+
+    protected $scheme = null;
 
     /**
      * @var Filesystem null
@@ -42,43 +47,39 @@ class FilesManager
 
         $this->repository = $repository;
 
-        $originAdapter = $this->getAdapter($config['default']);
-        $localAdapter  = $this->getAdapter($config['cache']);
-
-
-
-        if ($localAdapter)
-        {
-            $cacheAdapter     = new CacheAdapter($originAdapter, $localAdapter, 3600);
-            $this->filesystem = new Filesystem($cacheAdapter);
-
-        }
-        else
-
-        {
-            $this->filesystem = new Filesystem($originAdapter);
-        }
-
-    }
-
-
-    protected function getAdapter($config)
-    {
-        $adapter = null;
+        $this->filesystem = new Filesystem();
 
         switch ($config['type'])
         {
             case 'directory':
 
-                $adapter = new LocalAdapter($config['directory'], true);
+                //$adapter = new LocalAdapter($config['directory'], true);
+
+                $directory = $config['directory'];
+                if ($directory[0] != '/')
+                {
+                    $directory = APPLICATION_PATH . '/' . $directory;
+                }
+
+                $this->scheme = 'file://' . $directory;
 
                 break;
             case 'ftp':
-                $adapter = new FtpAdapter($config['directory'], $config['host'], $config['options']);
+                die('FTP');
                 break;
             case 's3':
-                $service = S3Client::factory(array( 'key' => $config['key'], 'secret' => $config['secret'] ));
-                $adapter = new AmazonAdapter($service, $config['bucketname']);
+
+                // Create an Amazon S3 client object
+                $client = S3Client::factory(array( 'key' => $config['key'], 'secret' => $config['secret'] ));
+
+                //$client->deleteMatchingObjects('cxiorepo1','/example/Test');
+                $client->deleteObject(array('Bucket'=>'cxiorepo1','Key'=>'example/Test/'));
+                die();
+                // Register the stream wrapper from a client object
+                $client->registerStreamWrapper();
+
+                $this->scheme = 's3://' . $config['bucketname'];
+
                 break;
 
             case 'dropbox':
@@ -88,52 +89,55 @@ class FilesManager
 
         }
 
-        return $adapter;
+        if (file_exists($this->scheme))
+        {
+            $this->scheme .= '/' . $repository->getName();
+            if (!file_exists($this->scheme))
+            {
+                $this->filesystem->mkdir($this->scheme);
+            }
+        }
+        else
+        {
+            throw new \Exception ('Files base folder ' . $directory . ' missing.');
+        }
+
+        // var_dump($this->scheme);
+
     }
 
 
     public function getFiles($path, $info = true)
     {
-
         $path = trim($path, '/');
 
-        $result = $this->filesystem->listKeys($path);
+        $files  = array();
+        $finder = new Finder();
 
-        $files = array();
-        foreach ($result['keys'] as $key)
+        $finder->depth('==0');
+
+        try
         {
-
-            $p = strrpos($key, '/');
-            if ($p)
+            /* @var $file \SplFileInfo */
+            foreach ($finder->in($this->scheme . '/' . $path) as $file)
             {
-                $filename = substr($key, $p + 1);
-                $filepath = substr($key, 0, $p);
-            }
-            else
-            {
-                $filename = $key;
-                $filepath = '';
-            }
-
-            if ($filename[0] != '.') // exclude system files including ".folder" which gets created for empty folders
-            {
-                if ($filepath == $path)
+                if (!$file->isDir())
                 {
-                    $item         = array();
-                    $item['id']   = $key;
-                    $item['name'] = $filename;
-                    $item['urls'] = array();
+                    $item                         = array();
+                    $item['id']                   = trim($path . '/' . $file->getFilename(), '/');
+                    $item['name']                 = $file->getFilename();
+                    $item['urls']                 = array();
+                    $item['type']                 = 'binary';
+                    $item['size']                 = $file->getSize();
+                    $item['timestamp_lastchange'] = $file->getMTime();
 
-                    if ($info)
+                    if ($info == true)
                     {
-                        try
+                        $extension = strtolower($extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION)); // To be compatible with some older PHP 5.3 versions
+
+                        if (in_array($extension, array( 'gif', 'png', 'jpg', 'jpeg' )))
                         {
-                            $file = $this->filesystem->get($key);
-
-                            $item['type'] = 'binary';
-                            $item['size'] = $file->getSize();
-
-                            $content = $file->getContent();
+                            $content = $file->getContents();
 
                             if (function_exists('imagecreatefromstring'))
                             {
@@ -145,18 +149,18 @@ class FilesManager
                                     $item['height'] = imagesy($image);
                                 }
                             }
-
                         }
-                        catch (\Exception $e)
-                        {
 
-                        }
                     }
-                    $item['timestamp_lastchange'] = $this->filesystem->getAdapter()->mtime($key);
 
-                    $files[$filename] = $item;
+                    $files[] = $item;
                 }
+
             }
+        }
+        catch (\Exception $e)
+        {
+            return false;
         }
 
         return $files;
@@ -165,48 +169,35 @@ class FilesManager
 
     public function getFile($id)
     {
+
+        $id = trim($id, '/');
+
         $fileName = pathinfo($id, PATHINFO_FILENAME);
 
         if ($fileName != '') // No access to .xxx-files
         {
-            try
-            {
-                $file = $this->filesystem->get($id);
 
-                return $file->getContent();
+            return @file_get_contents($this->scheme . '/' . $id);
 
-            }
-            catch (\Exception $e)
-            {
-
-            }
         }
 
         return false;
+
     }
 
 
     public function saveFile($id, $binary)
     {
+        $id       = trim($id, '/');
         $fileName = pathinfo($id, PATHINFO_FILENAME);
 
         if ($fileName != '') // No writing of .xxx-files
         {
-            try
-            {
-                $this->filesystem->write($id, $binary, true);
 
-                $dirName = pathinfo($id, PATHINFO_DIRNAME);
+            return $this->filesystem->dumpFile($this->scheme . '/' . $id, $binary, null);
 
-                $this->createFolder($dirName);
+            //return file_put_contents($this->scheme . '/' . $id, $binary);
 
-                return true;
-
-            }
-            catch (\Exception $e)
-            {
-
-            }
         }
 
         return false;
@@ -232,47 +223,33 @@ class FilesManager
 
     public function getFolders($path)
     {
-        $path = trim($path, '/');
+        $path    = trim($path, '/');
+        $folders = array();
+        $finder  = new Finder();
 
-        $result = $this->filesystem->listKeys($path);
+        $finder->depth('==0');
 
-        var_dump ($result);
+        try
+        {
+            /* @var $file \SplFileInfo */
+            foreach ($finder->in($this->scheme . '/' . $path) as $file)
+            {
+                if ($file->isDir())
+                {
 
-        if (count($result['dirs']) == 0 AND $path != '')
+                    $folders[] = $file->getFilename();
+
+                }
+            }
+
+        }
+        catch (\Exception $e)
         {
             return false;
         }
 
-        $folders = array();
-        foreach ($result['dirs'] as $key)
-        {
-            if ($path == '')
-            {
-                $p = strrpos($key, '/');
-                if (!$p)
-                {
-                    $folders[] = $key;
-                }
-
-            }
-            else
-            {
-                if (substr($key, 0, strlen($path) + 1) == $path . '/')
-                {
-                    $foldername = substr($key, strlen($path) + 1);
-                    if (strpos($foldername, '/') === false)
-                    {
-                        $folders[] = $foldername;
-                    }
-                }
-
-            }
-
-        }
-
-        $folders = array_values(array_unique($folders));
-
         return $folders;
+
     }
 
 
@@ -283,6 +260,11 @@ class FilesManager
      */
     public function createFolder($path)
     {
+        $path = trim($path, '/');
+
+        return $this->filesystem->mkdir($this->scheme . '/' . $path . '/');
+
+        /*
         $subFolders = explode('/', $path);
         for ($i = count($subFolders); $i > 0; $i--)
         {
@@ -298,49 +280,77 @@ class FilesManager
                 $this->filesystem->write($hiddenFolderMarkerFile, '', true);
             }
 
-        }
+        } */
     }
 
 
     public function deleteFolder($path)
     {
+        $files = array();
+        $path = trim($path, '/');
+
+        $finder = new Finder();
+
+        $sort = function (\SplFileInfo $a, \SplFileInfo $b)
+        {
+            $n1 = substr_count($a->getPath(), '/');
+            $n2 = substr_count($b->getPath(), '/');
+
+            return strcmp($n1, $n2);
+        };
+
+        $finder->sort($sort);
+
+
+        var_dump($path);
         try
         {
-
-            $files = $this->filesystem->listKeys($path);
-
-            $error = false;
-
-            foreach ($files['keys'] as $id)
+            /* @var $file \SplFileInfo */
+            foreach ($finder->in($this->scheme . '/' . $path) as $file)
             {
-                if ($this->deleteFile($id) == false)
-                {
-                    $error = true;
-                }
+
+
+                    $files[] = $file->getFilename();
+
 
             }
-
-            // remove duplicate dir entries (since every file has a dir entry in the array(
-            $dirs = array_unique($files['dirs']);
-
-            // sort to start with the most nested folder to delete
-            rsort($dirs);
-
-            foreach ($dirs as $id)
-            {
-                if ($this->deleteFile($id) == false)
-                {
-                    $error = true;
-                }
-
-            }
-
-            return !$error;
 
         }
         catch (\Exception $e)
         {
 
+        }
+
+        if (count($files)==0)
+        {
+            rmdir($this->scheme . '/' . $path);
+        }
+        var_dump ($files);
+
+        return false;
+
+        $folder = $this->scheme . '/' . $path;
+
+        $info = parse_url($folder);
+        if ($info['scheme'] == 'file')
+        {
+
+            $folder = $info['path']; // Skip Stream Wrapper, since rmdir won't find the directory on some systems
+        }
+
+        try
+        {
+            if ($this->filesystem->exists($folder))
+            {
+                $this->filesystem->remove($folder);
+
+            }
+
+            return true;
+        }
+        catch (\Exception $e)
+        {
+            echo $e->getMessage();
         }
 
         return false;

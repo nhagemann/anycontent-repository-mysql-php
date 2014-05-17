@@ -20,7 +20,7 @@
         "aws/aws-sdk-php": "2.6.3",
         "dropbox-php/dropbox-php": "*",
         "symfony/yaml": "2.4.*@dev",
-        "symfony/filesystem": "v2.4.2",
+        "symfony/filesystem": "2.4.*",
         "symfony/finder":  "2.4.*",
         "doctrine/cache": "1.3.*"
     },

@@ -85,10 +85,12 @@ class Config
     {
         $yml = $this->getYML();
 
-        $config['default'] = null;
-        $config['cache']   = null;
+        //$config['default'] = null;
+        //$config['cache']   = null;
         if (isset($yml['files']['default_adapter']))
         {
+            return $yml['files']['default_adapter'];
+
             $config['default'] = $yml['files']['default_adapter'];
 
             if ($config['default']['type'] == 'directory')
@@ -102,10 +104,21 @@ class Config
                 $config['default']['directory'] = '/' . trim($directory, '/') . '/' . $repositoryName;
             }
         }
+        /*
         if (isset($yml['files']['cache_adapter']))
         {
             $config['cache'] = $yml['files']['cache_adapter'];
-        }
+            if ($config['default']['type'] == 'directory')
+            {
+                $directory = $config['default']['directory'];
+                if ($directory[0] != '/')
+                {
+                    $directory = APPLICATION_PATH . '/' . $directory;
+                }
+
+                $config['default']['directory'] = '/' . trim($directory, '/') . '/' . $repositoryName;
+            }
+        }  */
 
         /*  if (isset($yml['repositories'][$repositoryName]['files']['default_adapter']))
           {
@@ -116,7 +129,7 @@ class Config
               $config['cache'] = $yml['repositories'][$repositoryName]['files']['cache_adapter'];
           }*/
 
-        return $config;
+        return null;
     }
 
 

@@ -38,12 +38,15 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         /** @var FilesManager $filesManager */
         $filesManager = $this->repository->getFilesManager();
 
-        $filesManager->deleteFolder('Test');
+
+        $this->assertTrue($filesManager->deleteFolder('Test'));
+
     }
 
 
     public function testFoldersExtraction()
     {
+
         /** @var FilesManager $filesManager */
         $filesManager = $this->repository->getFilesManager();
 
@@ -51,7 +54,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $result);
 
         $result = $filesManager->getFolders('Music/');
-        $this->assertCount(2, $result);
+        $this->assertCount(3, $result);
 
         $result = $filesManager->getFolders('Music/Alternative');
         $this->assertCount(0, $result);
@@ -85,6 +88,8 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($binary, $file);
 
         $filesManager->deleteFolder('Test');
+
+
     }
 
 
