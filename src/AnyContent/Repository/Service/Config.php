@@ -2,9 +2,9 @@
 
 namespace AnyContent\Repository\Service;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
+
+use Symfony\Component\Finder\Finder;
 
 use Symfony\Component\Yaml\Parser;
 
@@ -40,9 +40,9 @@ class Config
             throw new \Exception ('Missing or incomplete database configuration.');
         }
 
-        $dsn = 'mysql:host='.$yml['database']['host'];
-        $dsn .=';dbname='.$yml['database']['name'];
-        $dsn .=';port='.$this->getDBPort();
+        $dsn = 'mysql:host=' . $yml['database']['host'];
+        $dsn .= ';dbname=' . $yml['database']['name'];
+        $dsn .= ';port=' . $this->getDBPort();
 
         return $dsn;
     }
@@ -57,7 +57,7 @@ class Config
             throw new \Exception ('Missing or incomplete database configuration.');
         }
 
-        return  $yml['database']['user'];
+        return $yml['database']['user'];
 
     }
 
@@ -71,7 +71,7 @@ class Config
             return '';
         }
 
-        return  $yml['database']['password'];
+        return $yml['database']['password'];
     }
 
 
@@ -79,6 +79,7 @@ class Config
     {
         return '3306';
     }
+
 
     public function getFilesAdapterConfig($repositoryName)
     {
@@ -90,26 +91,30 @@ class Config
         {
             $config['default'] = $yml['files']['default_adapter'];
 
-            $directory = $config['default']['directory'];
-            if ($directory[0] != '/')
+            if ($config['default']['type'] == 'directory')
             {
-                $directory = APPLICATION_PATH . '/' . $directory;
-            }
+                $directory = $config['default']['directory'];
+                if ($directory[0] != '/')
+                {
+                    $directory = APPLICATION_PATH . '/' . $directory;
+                }
 
-            $config['default']['directory'] = '/' . trim($directory, '/') . '/' . $repositoryName;
+                $config['default']['directory'] = '/' . trim($directory, '/') . '/' . $repositoryName;
+            }
         }
         if (isset($yml['files']['cache_adapter']))
         {
             $config['cache'] = $yml['files']['cache_adapter'];
         }
-        if (isset($yml['repositories'][$repositoryName]['files']['default_adapter']))
-        {
-            $config['default'] = $yml['repositories'][$repositoryName]['files']['default_adapter'];
-        }
-        if (isset($yml['repositories'][$repositoryName]['files']['cache_adapter']))
-        {
-            $config['cache'] = $yml['repositories'][$repositoryName]['files']['cache_adapter'];
-        }
+
+        /*  if (isset($yml['repositories'][$repositoryName]['files']['default_adapter']))
+          {
+              $config['default'] = $yml['repositories'][$repositoryName]['files']['default_adapter'];
+          }
+          if (isset($yml['repositories'][$repositoryName]['files']['cache_adapter']))
+          {
+              $config['cache'] = $yml['repositories'][$repositoryName]['files']['cache_adapter'];
+          }*/
 
         return $config;
     }
@@ -122,7 +127,7 @@ class Config
             return $this->yml;
         }
 
-        $configFile = file_get_contents(APPLICATION_PATH.'/config/config.yml');
+        $configFile = file_get_contents(APPLICATION_PATH . '/config/config.yml');
 
         $yamlParser = new Parser();
 
@@ -132,5 +137,24 @@ class Config
     }
 
 
+    public function getLastCMDLConfigChangeTimestamp()
+    {
+        $finder = new Finder();
+        $finder->files()->in($this->getCMDLDirectory());
+
+        $t = 0;
+
+        /* @var File file */
+        foreach ($finder as $file)
+        {
+            if ($file->getMTime() > $t)
+            {
+                $t = $file->getMTime();
+
+            }
+        }
+
+        return $t;
+    }
 
 }

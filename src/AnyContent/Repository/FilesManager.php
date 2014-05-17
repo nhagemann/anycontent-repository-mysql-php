@@ -20,6 +20,9 @@ use Gaufrette\Adapter\Ftp as FTPAdapter;
 use Gaufrette\Adapter\Dropbox as DropboxAdapter;
 use Gaufrette\Adapter\Cache as CacheAdapter;
 
+use Gaufrette\Adapter\AwsS3 as AmazonAdapter;
+use Aws\S3\S3Client;
+
 class FilesManager
 {
 
@@ -36,10 +39,13 @@ class FilesManager
 
     public function __construct(Repository $repository, $config)
     {
+
         $this->repository = $repository;
 
         $originAdapter = $this->getAdapter($config['default']);
         $localAdapter  = $this->getAdapter($config['cache']);
+
+
 
         if ($localAdapter)
         {
@@ -62,14 +68,22 @@ class FilesManager
 
         switch ($config['type'])
         {
-            case 'local':
+            case 'directory':
 
                 $adapter = new LocalAdapter($config['directory'], true);
 
                 break;
-            case
-            'ftp':
+            case 'ftp':
                 $adapter = new FtpAdapter($config['directory'], $config['host'], $config['options']);
+                break;
+            case 's3':
+                $service = S3Client::factory(array( 'key' => $config['key'], 'secret' => $config['secret'] ));
+                $adapter = new AmazonAdapter($service, $config['bucketname']);
+                break;
+
+            case 'dropbox':
+
+                die ('Dropbox');
                 break;
 
         }
@@ -221,6 +235,8 @@ class FilesManager
         $path = trim($path, '/');
 
         $result = $this->filesystem->listKeys($path);
+
+        var_dump ($result);
 
         if (count($result['dirs']) == 0 AND $path != '')
         {

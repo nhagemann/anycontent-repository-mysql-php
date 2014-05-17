@@ -18,9 +18,7 @@ $app['debug'] = true;
 if (isset($app_env) && in_array($app_env, array('prod','dev','test'))) { $app['env'] = $app_env; }else{$app['env'] = 'prod';}
 
 
-
-
-// extracting apiuser (authentifcation) and userinfo (query parameter userinfo)
+// extracting apiuser (authentification) and userinfo (query parameter userinfo)
 $before1 = 'AnyContent\Repository\Middleware\ExtractUserInfo::execute';
 
 $before2 = 'AnyContent\Repository\Middleware\RequestLogger::execute';
@@ -37,7 +35,6 @@ $afterJson = 'AnyContent\Repository\Middleware\PrettyPrint::execute';
 // get repository status (additional query parameters: timeshift, language)
 $app->get('/1/{repositoryName}/info', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2)->before($before3)->after($afterRead);
 $app->get('/1/{repositoryName}/info/{workspace}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2)->before($before3)->after($afterRead);
-$app->get('/1/{repositoryName}/info/{workspace}/{language}', 'AnyContent\Repository\Controller\RepositoryController::index')->before($before1)->before($before2)->before($before3)->after($afterRead);
 
 // list content
 $app->get('/1/{repositoryName}/content', 'AnyContent\Repository\Controller\ContentController::index')->before($before1)->before($before2)->before($before3)->after($afterRead);
@@ -91,9 +88,9 @@ $app->post('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', 'An
 $app->get('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::binary')->before($before1)->before($before2)->assert('path', '.+');
 
 // list files
-$app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->before($before3)->after($afterRead);
-$app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->before($before3)->after($afterRead);
-$app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+')->after($afterRead);
+$app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->before($before3);
+$app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->before($before3);
+$app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)->before($before2)->assert('path', '.+');
 
 // save file (post body contains binary)
 $app->post('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::postFile')->before($before1)->before($before2)->assert('path', '.+')->after($afterWrite);

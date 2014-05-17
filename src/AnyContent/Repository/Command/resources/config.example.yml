@@ -6,5 +6,5 @@ database:
 
 files:
   default_adapter:
-    type: local
+    type: directory
     directory:  files
