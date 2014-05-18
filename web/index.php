@@ -205,6 +205,7 @@ $app->after($afterJson, Silex\Application::EARLY_EVENT);
 
 $app->registerStorageAdapter('directory', 'AnyContent\Repository\Modules\StorageAdapter\Directory\DirectoryStorageAdapter');
 $app->registerStorageAdapter('s3', 'AnyContent\Repository\Modules\StorageAdapter\S3\S3StorageAdapter');
+$app->registerStorageAdapter('s3pp', 'AnyContent\Repository\Modules\StorageAdapter\S3\S3PPStorageAdapter');
 
 if ($app['env'] == 'test')
 {
