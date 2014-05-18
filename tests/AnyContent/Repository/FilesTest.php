@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository;
 
-use Silex\Application;
+use AnyContent\Repository\Application;
 use AnyContent\Repository\Service\Config;
 use AnyContent\Repository\Service\Database;
 use AnyContent\Repository\Service\RepositoryManager;
@@ -31,6 +31,10 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         $app['repos']  = new RepositoryManager($app);
         $app['db']     = new Database($app);
 
+
+        $app->registerStorageAdapter('directory', 'AnyContent\Repository\Modules\StorageAdapter\Directory\DirectoryStorageAdapter');
+        $app->registerStorageAdapter('s3', 'AnyContent\Repository\Modules\StorageAdapter\S3\S3StorageAdapter');
+
         $this->app = $app;
 
         $this->repository = $this->app['repos']->get('example');
@@ -39,7 +43,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         $filesManager = $this->repository->getFilesManager();
 
 
-        $this->assertTrue($filesManager->deleteFolder('Test'));
+       $filesManager->deleteFolder('Test');
 
     }
 
@@ -87,6 +91,11 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         $file = $filesManager->getFile('Test/test.jpg');
         $this->assertEquals($binary, $file);
 
+
+        $filesManager->deleteFile('Test/test.jpg');
+        $file = $filesManager->getFile('Test/test.jpg');
+        $this->assertFalse($file);
+
         $filesManager->deleteFolder('Test');
 
 
@@ -97,7 +106,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
      * This test has no "real" assertions, but was necessary during development to check the right handling of
      * system files like .folder (which are not accessible through the FilesManager)
      */
-    public function testFolderDelete()
+    public function atestFolderDelete()
     {
         /** @var FilesManager $filesManager */
         $filesManager = $this->repository->getFilesManager();
@@ -118,7 +127,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testCreationOfEmptyFolder()
+    public function atestCreationOfEmptyFolder()
     {
         /** @var FilesManager $filesManager */
         $filesManager = $this->repository->getFilesManager();

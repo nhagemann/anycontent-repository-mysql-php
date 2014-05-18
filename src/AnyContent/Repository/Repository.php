@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository;
 
-use Silex\Application;
+use AnyContent\Repository\Application;
 
 use AnyContent\Repository\ContentManager;
 use AnyContent\Repository\FilesManager;
@@ -131,7 +131,7 @@ class Repository
         {
             return $this->filesManager;
         }
-        $manager            = new FilesManager($this, $this->app['repos']->getFilesAdapterConfig($this->getName()));
+        $manager            = new FilesManager($this->app, $this, $this->app['repos']->getFilesAdapterConfig($this->getName()));
         $this->filesManager = $manager;
 
         return $manager;

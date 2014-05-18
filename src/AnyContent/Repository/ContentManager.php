@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository;
 
-use Silex\Application;
+use AnyContent\Repository\Application;
 
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;

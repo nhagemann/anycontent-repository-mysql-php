@@ -4,7 +4,7 @@ namespace AnyContent\Repository\Service;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Silex\Application;
+use AnyContent\Repository\Application;
 
 use AnyContent\Repository\Repository;
 

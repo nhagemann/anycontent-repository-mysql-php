@@ -24,15 +24,12 @@ class FilesWebTest extends WebTestCase
     }
 
 
-
     public function testBasicOperations()
     {
         $client = $this->createClient();
 
         $client->request('DELETE','/1/example/files/Test');
         $response = $client->getResponse();
-        $result = json_decode($response->getContent(), true);
-        $this->assertTrue($result);
 
         $client->request('GET', '/1/example/file/Test/test.txt');
         $response = $client->getResponse();

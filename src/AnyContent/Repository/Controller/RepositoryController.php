@@ -5,7 +5,7 @@ namespace AnyContent\Repository\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Silex\Application;
+use AnyContent\Repository\Application;
 
 use AnyContent\Repository\Controller\BaseController;
 

@@ -5,7 +5,7 @@ namespace AnyContent\Repository\Middleware;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Silex\Application;
+use AnyContent\Repository\Application;
 
 
 class ExtractUserInfo

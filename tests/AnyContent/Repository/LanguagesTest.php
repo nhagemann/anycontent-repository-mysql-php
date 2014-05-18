@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository;
 
-use Silex\Application;
+use AnyContent\Repository\Application;
 use AnyContent\Repository\Service\Config;
 use AnyContent\Repository\Service\Database;
 use AnyContent\Repository\Service\RepositoryManager;

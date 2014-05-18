@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository\Service;
 
-use Silex\Application;
+use AnyContent\Repository\Application;
 
 use Symfony\Component\Finder\Finder;
 
