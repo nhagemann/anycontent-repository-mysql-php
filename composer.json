@@ -16,13 +16,12 @@
         "silex/silex": "~1.1",
         "nhagemann/cmdl-parser-php": "0.3.*@dev",
         "monolog/monolog": ">=1.0.0",
-        "knplabs/gaufrette": "0.2.*@dev",
-        "aws/aws-sdk-php": "2.6.3",
-        "dropbox-php/dropbox-php": "*",
         "symfony/yaml": "2.4.*@dev",
         "symfony/filesystem": "2.4.*",
-        "symfony/finder":  "2.4.*",
-        "doctrine/cache": "1.3.*"
+        "symfony/finder": "2.4.*",
+        "dflydev/apache-mime-types": "1.0.*",
+        "doctrine/cache": "1.3.*",
+        "aws/aws-sdk-php": "2.6.3"
     },
 
     "require-dev": {

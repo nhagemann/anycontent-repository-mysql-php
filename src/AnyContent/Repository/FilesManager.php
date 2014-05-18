@@ -40,9 +40,9 @@ class FilesManager
     }
 
 
-    public function getFiles($path, $info = true)
+    public function getFiles($path)
     {
-        return $this->adapter->getFiles($path, $info);
+        return $this->adapter->getFiles($path);
 
     }
 
