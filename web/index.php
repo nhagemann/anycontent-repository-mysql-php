@@ -6,7 +6,6 @@ if (!defined('APPLICATION_PATH'))
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-
 use AnyContent\Repository\Service\RepositoryManager;
 use AnyContent\Repository\Service\ContentManager;
 use AnyContent\Repository\Service\Config;
@@ -120,11 +119,11 @@ $app->get('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\F
 
 // list files
 $app->get('/1/{repositoryName}/files', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)
-    ->before($before2)->before($before3);
+    ->before($before2)->before($before3)->after($afterRead);
 $app->get('/1/{repositoryName}/files/', 'AnyContent\Repository\Controller\FilesController::scan')->before($before1)
-    ->before($before2)->before($before3);
+    ->before($before2)->before($before3)->after($afterRead);
 $app->get('/1/{repositoryName}/files/{path}', 'AnyContent\Repository\Controller\FilesController::scan')
-    ->before($before1)->before($before2)->assert('path', '.+');
+    ->before($before1)->before($before2)->before($before3)->after($afterRead)->assert('path', '.+');
 
 // save file (post body contains binary)
 $app->post('/1/{repositoryName}/file/{path}', 'AnyContent\Repository\Controller\FilesController::postFile')
@@ -179,12 +178,12 @@ $app['repos'] = $app->share(function ($app)
     return new RepositoryManager($app);
 });
 
-//if ($app['debug'])
-//{
-$app->register(new Silex\Provider\MonologServiceProvider(), array(
-    'monolog.logfile' => __DIR__ . '/../log/debug.log', 'monolog.level' => \Monolog\Logger::INFO
-));
-//}
+if ($app['debug'])
+{
+    $app->register(new Silex\Provider\MonologServiceProvider(), array(
+        'monolog.logfile' => __DIR__ . '/../log/debug.log', 'monolog.level' => \Monolog\Logger::INFO
+    ));
+}
 
 if (!function_exists('apc_exists'))
 {
@@ -196,10 +195,6 @@ if (!function_exists('apc_exists'))
         return $result;
     }
 }
-
-//$cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
-$cacheDriver  = new  \Doctrine\Common\Cache\ApcCache();
-$app['cache'] = $cacheDriver;
 
 $app->after($afterJson, Silex\Application::EARLY_EVENT);
 

@@ -1,0 +1,63 @@
+#
+# Provide your database credentials, tables will get created/modified on demand, make sure the user
+# does have sufficient rights.
+#
+
+database:
+  host:     localhost
+  name:     anycontent
+  user:     root
+  password: xxx
+
+#
+# Select storage adapter for storing and accessing files
+#
+
+#
+# Example 1: Storage of files within local "files" directory. Make sure the directory is accessible unter
+# the configured url. Otherwise delete the line with config option "url".
+#
+
+files:
+  default_adapter:
+    type:       directory
+    directory:  files
+    url:        http://files.example.org
+    imagesize:  true
+
+#
+# Example 2: Storage within Amazon S3 bucket. Config option "imagesize" is set to false. To provide the image width
+# and height during folder scans the binary must get loaded, which would cause a lot of traffic and slow down the api.
+#
+
+files:
+  default_adapter:
+      type:       s3pp
+      key:        xxxx
+      secret:     xxxx
+      bucketname: xxxx
+      region:     eu-west-1
+      url:        http://files.example.org
+      imagesize:  false
+
+#
+# Cache configuration. There are four drivers: none, apc, memcache, memcached.
+#
+# You can specify the number of minutes a result gets cached. Any write request invalidates all cache keys.
+#
+# data: Any request listing or getting records or record info will be served for x minutes without looking into the database
+# files: Any request listing files will be served for x minutes without using the storage adapter and scanning for file changes
+#
+# The third parameter is for productive use only.
+#
+# cmdl: CMDL definitions won't be read and parsed for x minutes. All requests serving records or cmdl data are relying
+# on the assumption the definitions won't change, ever! So don't use the cmdl caching, as long as you are
+# adding/editing/deleting content/config types definitions.
+#
+
+cache:
+  driver:   {type: apc}
+  prefix:   acs
+  data:     60
+  files:    0
+  cmdl:     0

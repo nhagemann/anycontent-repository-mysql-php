@@ -5,6 +5,7 @@ namespace AnyContent\Repository\Service;
 use AnyContent\Repository\Application;
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 use Symfony\Component\Yaml\Parser;
 
@@ -16,6 +17,12 @@ class Config
     protected $yml = null;
 
     protected $basepath = null;
+
+    protected $cacheData = 0;
+
+    protected $cacheFileListings = 0;
+
+    protected $cacheCMDL = 0;
 
 
     public function __construct(Application $app, $basepath = null)
@@ -85,51 +92,61 @@ class Config
     {
         $yml = $this->getYML();
 
-        //$config['default'] = null;
-        //$config['cache']   = null;
         if (isset($yml['files']['default_adapter']))
         {
             return $yml['files']['default_adapter'];
-
-            $config['default'] = $yml['files']['default_adapter'];
-
-            if ($config['default']['type'] == 'directory')
-            {
-                $directory = $config['default']['directory'];
-                if ($directory[0] != '/')
-                {
-                    $directory = APPLICATION_PATH . '/' . $directory;
-                }
-
-                $config['default']['directory'] = '/' . trim($directory, '/') . '/' . $repositoryName;
-            }
         }
-        /*
-        if (isset($yml['files']['cache_adapter']))
-        {
-            $config['cache'] = $yml['files']['cache_adapter'];
-            if ($config['default']['type'] == 'directory')
-            {
-                $directory = $config['default']['directory'];
-                if ($directory[0] != '/')
-                {
-                    $directory = APPLICATION_PATH . '/' . $directory;
-                }
-
-                $config['default']['directory'] = '/' . trim($directory, '/') . '/' . $repositoryName;
-            }
-        }  */
-
-        /*  if (isset($yml['repositories'][$repositoryName]['files']['default_adapter']))
-          {
-              $config['default'] = $yml['repositories'][$repositoryName]['files']['default_adapter'];
-          }
-          if (isset($yml['repositories'][$repositoryName]['files']['cache_adapter']))
-          {
-              $config['cache'] = $yml['repositories'][$repositoryName]['files']['cache_adapter'];
-          }*/
 
         return null;
+    }
+
+
+    public function getCacheConfiguration()
+    {
+        $yml = $this->getYML();
+
+        $cache = array( 'driver' => array( 'type' => 'none' ), 'data' => 60, 'files' => 0, 'cmdl' => 0 );
+
+        if (isset($yml['cache']))
+        {
+            $cache = array_merge($cache, $yml['cache']);
+
+            if ($cache['driver']['type'] == 'memcache' || $cache['driver']['type'] == 'memcached')
+            {
+                if (!isset($cache['driver']['host']))
+                {
+                    $cache['driver']['host'] = 'localhost';
+                }
+                if (!isset($cache['driver']['port']))
+                {
+                    $cache['driver']['port'] = '11211';
+                }
+            }
+        }
+
+        $this->cacheData         = $cache['data'];
+        $this->cacheFileListings = $cache['files'];
+        $this->cacheCMDL         = $cache['cmdl'];
+
+        return $cache;
+    }
+
+
+    public function getMinutesCachingData()
+    {
+        return $this->cacheData;
+    }
+
+
+    public function getMinutesCachingFileListings()
+    {
+        return $this->cacheFileListings;
+    }
+
+
+    public function getMinutesCachingCMDL()
+    {
+        return $this->cacheCMDL;
     }
 
 
@@ -150,24 +167,20 @@ class Config
     }
 
 
-    public function getLastCMDLConfigChangeTimestamp()
+    public function getCMDLConfigHash()
     {
+        echo microtime();
         $finder = new Finder();
         $finder->files()->in($this->getCMDLDirectory());
 
-        $t = 0;
+        $hash = '';
 
-        /* @var File file */
+        /* @var SplFileInfo $file */
         foreach ($finder as $file)
         {
-            if ($file->getMTime() > $t)
-            {
-                $t = $file->getMTime();
-
-            }
+            $hash .= $file->getFilename() . '.' . $file->getMTime() . '-';
         }
-
-        return $t;
+        return md5($hash);
     }
 
 }

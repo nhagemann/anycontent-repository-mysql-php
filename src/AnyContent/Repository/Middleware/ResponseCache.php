@@ -12,6 +12,14 @@ class ResponseCache
     public static function before(Request $request, Application $app)
     {
 
+        if ($app['config']->getMinutesCachingFileListings()==0)
+        {
+            if (self::isFileListingRequest($request))
+            {
+                return;
+            }
+        }
+
         $token = self::getCacheToken($request, $app);
 
         if ($app['cache']->contains($token))
@@ -19,7 +27,7 @@ class ResponseCache
             $response = new Response($app['cache']->fetch($token));
             $response->headers->set('Content-Type', 'application/json');
 
-            $request->setMethod('CACHE');
+            $request->setMethod('CACHE'); // This informs the JSON prettifier to not prettify the cached output (again)
 
             return $response;
         }
@@ -36,7 +44,15 @@ class ResponseCache
 
             if (!$app['cache']->contains($token))
             {
-                $app['cache']->save($token, $response->getContent(), 600);
+                if (self::isFileListRequest($request))
+                {
+                    $minutes = $app['config']->getMinutesCachingFileListings();
+                }
+                else
+                {
+                    $minutes = $app['config']->getMinutesCachingData();
+                }
+                $app['cache']->save($token, $response->getContent(), $minutes * 60);
             }
         }
     }
@@ -48,7 +64,7 @@ class ResponseCache
     }
 
 
-    protected function getCacheToken(Request $request, Application $app)
+    protected static function getCacheToken(Request $request, Application $app)
     {
         $pulse = self::getHeartbeat($app);
 
@@ -58,16 +74,16 @@ class ResponseCache
 
         $token .= serialize($request->get('_route_params'));
 
-        if ($app['debug'])
+        if ($app['config']->getMinutesCachingCMDL()==0 AND !self::isFileListRequest($request))
         {
-            $token .= $app['config']->getLastCMDLConfigChangeTimestamp();
+            $token .= $app['config']->getCMDLConfigHash();
         }
 
         return md5('acrs_response_' . $token);
     }
 
 
-    protected function getHeartbeat(Application $app)
+    protected static function getHeartbeat(Application $app)
     {
         if ($app['cache']->contains('acrs_heartbeat'))
         {
@@ -78,10 +94,21 @@ class ResponseCache
         else
         {
             $pulse = md5(microtime());
-            $app['cache']->save('acrs_heartbeat', $pulse, 600);
+            $app['cache']->save('acrs_heartbeat', $pulse);
         }
 
         return $pulse;
+    }
+
+
+    protected function isFileListRequest(Request $request)
+    {
+        if (in_array($request->get('_route'), array( 'GET_1_repositoryName_files', 'GET_1_repositoryName_files_', 'GET_1_repositoryName_files_path' )))
+        {
+            return true;
+        }
+
+        return false;
     }
 
 }

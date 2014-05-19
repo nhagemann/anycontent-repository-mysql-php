@@ -45,8 +45,50 @@ class Application extends SilexApplication
     }
 
 
+    public function setCacheDriver($cache)
+    {
+        $this['cache'] = $cache;
+    }
+
+
+    protected function initCache()
+    {
+        $cacheConfiguration = $this['config']->getCacheConfiguration();
+
+        switch ($cacheConfiguration['driver']['type'])
+        {
+            case 'apc':
+                $cacheDriver = new  \Doctrine\Common\Cache\ApcCache();
+                break;
+            case 'memcached':
+                $memcached = new \Memcached();
+                $memcached->addServer($cacheConfiguration['driver']['host'], $cacheConfiguration['driver']['port']);
+                $cacheDriver = new \Doctrine\Common\Cache\MemcachedCache();
+                $cacheDriver->setMemcached($memcached);
+                break;
+            case 'memcache':
+                $memcache = new \Memcache();
+                $memcache->connect($cacheConfiguration['driver']['host'], $cacheConfiguration['driver']['port']);
+                $cacheDriver = new \Doctrine\Common\Cache\MemcacheCache();
+                $cacheDriver->setMemcache($memcache);
+                break;
+            default:
+                $cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
+                break;
+        }
+
+        if (isset($cacheConfiguration['driver']['prefix']))
+        {
+            $cacheDriver->setNamespace($cacheConfiguration['driver']['prefix'] . '_');
+        }
+        $this->setCacheDriver($cacheDriver);
+    }
+
+
     public function run($request = null)
     {
+        $this->initCache();
+
         parent::run($request);
     }
 

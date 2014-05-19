@@ -27,7 +27,7 @@ class Installer
         $filesystem->mkdir($baseDir . '/log');
         $filesystem->mkdir($baseDir . '/files');
 
-        $filesystem->copy(__DIR__ . '/resources/config.example.yml', $baseDir . '/config/config.example.yml');
+        $filesystem->copy(__DIR__ . '/../../../../config/config.example.yml', $baseDir . '/config/config.example.yml');
         $filesystem->copy(__DIR__ . '/../../../../web/index.php', $baseDir . '/web/index.php');
         $filesystem->copy(__DIR__ . '/../../../../web/.htaccess', $baseDir . '/web/.htaccess');
 
