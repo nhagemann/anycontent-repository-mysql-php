@@ -169,7 +169,6 @@ class Config
 
     public function getCMDLConfigHash()
     {
-        echo microtime();
         $finder = new Finder();
         $finder->files()->in($this->getCMDLDirectory());
 
@@ -180,6 +179,7 @@ class Config
         {
             $hash .= $file->getFilename() . '.' . $file->getMTime() . '-';
         }
+
         return md5($hash);
     }
 

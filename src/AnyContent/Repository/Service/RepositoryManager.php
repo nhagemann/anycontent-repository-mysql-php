@@ -14,11 +14,6 @@ use AnyContent\Repository\Entity\ContentTypeInfo;
 use CMDL\Parser;
 use CMDL\ParserException;
 
-use Gaufrette\Filesystem;
-use Gaufrette\Adapter\Local as LocalAdapter;
-use Gaufrette\Adapter\Ftp as FTPAdapter;
-use Gaufrette\Adapter\Dropbox as DropboxAdapter;
-use Gaufrette\Adapter\Cache as CacheAdapter;
 
 class RepositoryManager
 {
@@ -41,7 +36,6 @@ class RepositoryManager
 
     protected $lastname = null;
 
-    protected $cache = null;
 
 
     /**
@@ -53,7 +47,6 @@ class RepositoryManager
     {
         $this->app = $app;
 
-        $this->cache = $app['cache'];
     }
 
 
@@ -132,12 +125,6 @@ class RepositoryManager
 
         if (!$this->repositories)
         {
-            $cacheToken = 'acrs_repositories';
-
-            if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
-            {
-                return $this->cache->fetch($cacheToken);
-            }
 
             $path = $this->app['config']->getCMDLDirectory();
 
@@ -162,10 +149,6 @@ class RepositoryManager
             }
             $this->repositories = $repositories;
 
-            if ($this->app['debug'] == false)
-            {
-                $this->cache->save($cacheToken, $this->repositories, 600);
-            }
         }
 
         return $this->repositories;
@@ -176,12 +159,6 @@ class RepositoryManager
     {
         $contentTypes = array();
 
-        $cacheToken = 'acrs_repository_' . $repositoryName . '_content_types';
-
-        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
-        {
-            return $this->cache->fetch($cacheToken);
-        }
 
         if ($this->hasRepository($repositoryName))
         {
@@ -223,10 +200,6 @@ class RepositoryManager
             }
         }
 
-        if ($this->app['debug'] == false)
-        {
-            $this->cache->save($cacheToken, $contentTypes, 600);
-        }
 
         return $contentTypes;
     }
@@ -236,12 +209,6 @@ class RepositoryManager
     {
         $configTypes = array();
 
-        $cacheToken = 'acrs_repository_' . $repositoryName . '_config_types';
-
-        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
-        {
-            return $this->cache->fetch($cacheToken);
-        }
 
         if ($this->hasRepository($repositoryName))
         {
@@ -286,10 +253,6 @@ class RepositoryManager
             }
         }
 
-        if ($this->app['debug'] == false)
-        {
-            $this->cache->save($cacheToken, $configTypes, 600);
-        }
 
         return $configTypes;
     }
@@ -300,16 +263,6 @@ class RepositoryManager
     {
         $token = $repositoryName . '$' . $contentTypeName;
 
-        $cacheToken = 'acrs_cmdl_' . md5($token);
-
-        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
-        {
-            $result                          = $this->cache->fetch($cacheToken);
-            $this->cmdl[$token]['cmdl']      = $result['cmdl'];
-            $this->cmdl[$token]['timestamp'] = $result['timestamp'];
-
-            return $result['cmdl'];
-        }
 
         if ($this->hasRepository($repositoryName))
         {
@@ -326,20 +279,10 @@ class RepositoryManager
                 $this->cmdl[$token]['cmdl']      = $cmdl;
                 $this->cmdl[$token]['timestamp'] = @$filestats['mtime'];
 
-                if ($this->app['debug'] == false)
-                {
-                    $result = array( 'cmdl' => $this->cmdl[$token]['cmdl'], 'timestamp' => $this->cmdl[$token]['timestamp'] );
-                    $this->cache->save($cacheToken, $result, 15);
-                }
-
                 return $cmdl;
             }
         }
 
-        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
-        {
-            $this->cache->save($cacheToken, false, 15);
-        }
 
         return false;
     }
@@ -411,15 +354,6 @@ class RepositoryManager
 
     public function getContentTypeDefinition($repositoryName, $contentTypeName)
     {
-        $cacheToken = 'acrs_definition_' . md5($repositoryName . $contentTypeName);
-
-        if ($this->app['debug'] == false && $this->cache->contains($cacheToken))
-        {
-
-            $result = $this->cache->fetch($cacheToken);
-            $this->contentTypeDefinitions[$repositoryName][$contentTypeName] = $result;
-            return $result;
-        }
 
         // check if definition already has been created
         if (array_key_exists($repositoryName, $this->contentTypeDefinitions))
@@ -471,10 +405,6 @@ class RepositoryManager
 
                 $this->contentTypeDefinitions[$repositoryName][$contentTypeName] = $contentTypeDefinition;
 
-                if ($this->app['debug'] == false)
-                {
-                    $this->cache->save($cacheToken, $contentTypeDefinition, 600);
-                }
 
                 return $contentTypeDefinition;
             }

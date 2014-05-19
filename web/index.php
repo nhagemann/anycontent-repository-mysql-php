@@ -12,7 +12,7 @@ use AnyContent\Repository\Service\Config;
 use AnyContent\Repository\Service\Database;
 
 $app          = new \AnyContent\Repository\Application;
-$app['debug'] = true;
+$app['debug'] = false;
 
 // Detect environment (default: prod) by checking for the existence of $app_env
 if (isset($app_env) && in_array($app_env, array( 'prod', 'dev', 'test' )))
@@ -184,6 +184,8 @@ if ($app['debug'])
         'monolog.logfile' => __DIR__ . '/../log/debug.log', 'monolog.level' => \Monolog\Logger::INFO
     ));
 }
+
+
 
 if (!function_exists('apc_exists'))
 {

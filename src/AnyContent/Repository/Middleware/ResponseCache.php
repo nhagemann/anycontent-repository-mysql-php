@@ -22,7 +22,7 @@ class ResponseCache
 
         $token = self::getCacheToken($request, $app);
 
-        if ($app['cache']->contains($token))
+        if ($app['cache']->contains($token) AND $app['config']->getMinutesCachingData()!=0)
         {
             $response = new Response($app['cache']->fetch($token));
             $response->headers->set('Content-Type', 'application/json');
@@ -60,7 +60,7 @@ class ResponseCache
 
     public static function afterWrite(Request $request, Response $response, Application $app)
     {
-        $app['cache']->delete('acrs_heartbeat');
+        $app['cache']->delete('acr_heartbeat');
     }
 
 
@@ -79,22 +79,22 @@ class ResponseCache
             $token .= $app['config']->getCMDLConfigHash();
         }
 
-        return md5('acrs_response_' . $token);
+        return 'acr_response_' . md5($token);
     }
 
 
     protected static function getHeartbeat(Application $app)
     {
-        if ($app['cache']->contains('acrs_heartbeat'))
+        if ($app['cache']->contains('acr_heartbeat'))
         {
 
-            $pulse = $app['cache']->fetch('acrs_heartbeat');
+            $pulse = $app['cache']->fetch('acr_heartbeat');
 
         }
         else
         {
             $pulse = md5(microtime());
-            $app['cache']->save('acrs_heartbeat', $pulse);
+            $app['cache']->save('acr_heartbeat', $pulse);
         }
 
         return $pulse;
