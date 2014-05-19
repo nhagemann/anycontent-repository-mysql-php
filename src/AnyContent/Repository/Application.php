@@ -85,9 +85,14 @@ class Application extends SilexApplication
     }
 
 
-    public function run($request = null)
+    public function init()
     {
         $this->initCache();
+    }
+
+
+    public function run($request = null)
+    {
 
         parent::run($request);
     }

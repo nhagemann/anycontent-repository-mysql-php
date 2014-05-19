@@ -12,9 +12,9 @@ class ResponseCache
     public static function before(Request $request, Application $app)
     {
 
-        if ($app['config']->getMinutesCachingFileListings()==0)
+        if ($app['config']->getMinutesCachingFileListings() == 0)
         {
-            if (self::isFileListingRequest($request))
+            if (self::isFileListRequest($request))
             {
                 return;
             }
@@ -22,7 +22,7 @@ class ResponseCache
 
         $token = self::getCacheToken($request, $app);
 
-        if ($app['cache']->contains($token) AND $app['config']->getMinutesCachingData()!=0)
+        if ($app['cache']->contains($token) AND $app['config']->getMinutesCachingData() != 0)
         {
             $response = new Response($app['cache']->fetch($token));
             $response->headers->set('Content-Type', 'application/json');
@@ -60,13 +60,26 @@ class ResponseCache
 
     public static function afterWrite(Request $request, Response $response, Application $app)
     {
-        $app['cache']->delete('acr_heartbeat');
+        $heartbeatToken = 'acr_heartbeat';
+        $pathTokens     = explode('/', trim($request->getPathInfo(), '/'));
+
+        if (isset($pathTokens[1]))
+        {
+            $heartbeatToken .= '_' . $pathTokens[1];
+        }
+
+        if (isset($pathTokens[3]) && $pathTokens[2] == 'content')
+        {
+            $heartbeatToken .= '_' . $pathTokens[3];
+        }
+
+        $app['cache']->delete($heartbeatToken);
     }
 
 
     protected static function getCacheToken(Request $request, Application $app)
     {
-        $pulse = self::getHeartbeat($app);
+        $pulse = self::getHeartbeat($app, $request);
 
         $token = $pulse . $request->getQueryString();
 
@@ -74,7 +87,7 @@ class ResponseCache
 
         $token .= serialize($request->get('_route_params'));
 
-        if ($app['config']->getMinutesCachingCMDL()==0 AND !self::isFileListRequest($request))
+        if ($app['config']->getMinutesCachingCMDL() == 0 AND !self::isFileListRequest($request))
         {
             $token .= $app['config']->getCMDLConfigHash();
         }
@@ -83,18 +96,31 @@ class ResponseCache
     }
 
 
-    protected static function getHeartbeat(Application $app)
+    protected static function getHeartbeat(Application $app, Request $request)
     {
-        if ($app['cache']->contains('acr_heartbeat'))
+        $heartbeatToken = 'acr_heartbeat';
+        $pathTokens     = explode('/', trim($request->getPathInfo(), '/'));
+
+        if (isset($pathTokens[1]))
+        {
+            $heartbeatToken .= '_' . $pathTokens[1];
+        }
+
+        if (isset($pathTokens[3]) && $pathTokens[2] == 'content')
+        {
+            $heartbeatToken .= '_' . $pathTokens[3];
+        }
+
+        if ($app['cache']->contains($heartbeatToken))
         {
 
-            $pulse = $app['cache']->fetch('acr_heartbeat');
+            $pulse = $app['cache']->fetch($heartbeatToken);
 
         }
         else
         {
             $pulse = md5(microtime());
-            $app['cache']->save('acr_heartbeat', $pulse);
+            $app['cache']->save($heartbeatToken, $pulse);
         }
 
         return $pulse;
