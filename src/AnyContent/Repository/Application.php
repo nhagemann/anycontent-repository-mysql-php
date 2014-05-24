@@ -21,8 +21,7 @@ class Application extends SilexApplication
     public function registerStorageAdapter($type, $class, $options = array())
     {
         $this->storageAdapter[$type] = array( 'class' => $class, 'options' => $options );
-
-    }
+      }
 
 
     public function getStorageAdapter($config, $baseFolder)

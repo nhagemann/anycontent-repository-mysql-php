@@ -2,6 +2,8 @@
 
 namespace AnyContent\Repository\Controller;
 
+use AnyContent\Repository\Modules\Events\ContentRecordEvent;
+use AnyContent\Repository\Modules\Events\RepositoryEvents;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;

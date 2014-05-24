@@ -97,7 +97,7 @@ class Repository
         if ($contentTypeDefinition)
         {
 
-            $manager = new ContentManager($this, $contentTypeDefinition);
+            $manager = new ContentManager($this->app, $this, $contentTypeDefinition);
 
             $this->contentManager[$contentTypeName] = $manager;
 

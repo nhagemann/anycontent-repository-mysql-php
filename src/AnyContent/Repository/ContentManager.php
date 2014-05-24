@@ -4,6 +4,7 @@ namespace AnyContent\Repository;
 
 use AnyContent\Repository\Application;
 
+use AnyContent\Repository\Modules\Events\ContentRecordEvent;
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;
 
@@ -17,6 +18,8 @@ use AnyContent\Repository\Util\AdjacentList2NestedSet;
 class ContentManager
 {
 
+    protected $app;
+
     /**
      * @var Repository
      */
@@ -26,8 +29,9 @@ class ContentManager
     protected $currentlySynchronizingProperties = false;
 
 
-    public function __construct($repository, ContentTypeDefinition $contentTypeDefinition)
+    public function __construct($app, $repository, ContentTypeDefinition $contentTypeDefinition)
     {
+        $this->app                   = $app;
         $this->repository            = $repository;
         $this->contentTypeDefinition = $contentTypeDefinition;
     }
@@ -401,6 +405,7 @@ class ContentManager
             {
                 $record['id'] = $result;
             }
+
         }
 
         $timestamp          = time();
@@ -422,14 +427,12 @@ class ContentManager
             $stmt->execute($params);
         }
 
-        $values         = array();
-        $values['id']   = $record['id'];
-        $values['hash'] = md5(serialize($record['properties']));
-        //$values['name']      = @$record['properties']['name'];
+        $values              = array();
+        $values['id']        = $record['id'];
+        $values['hash']      = md5(serialize($record['properties']));
         $values['workspace'] = $workspace;
         $values['language']  = $language;
-        //$values['subtype']   = @$record['properties']['subtype'];
-        //$values['status']    = @$record['properties']['status'];
+
         $values['revision'] = $record['revision'];
         $values['deleted']  = 0;
 
@@ -478,6 +481,17 @@ class ContentManager
 
         }
 
+        if ($mode == 'insert')
+        {
+            $event = new ContentRecordEvent($values);
+            $this->app['dispatcher']->dispatch('content.record.before.insert', $event);
+        }
+        else
+        {
+            $event = new ContentRecordEvent($values, $row);
+            $this->app['dispatcher']->dispatch('content.record.before.update', $event);
+        }
+
         $sql = 'INSERT INTO ' . $tableName;
         $sql .= ' (' . join(',', array_keys($values)) . ')';
         $sql .= ' VALUES ( ?';
@@ -487,6 +501,17 @@ class ContentManager
         $stmt = $dbh->prepare($sql);
 
         $stmt->execute(array_values($values));
+
+        if ($mode == 'insert')
+        {
+            $event = new ContentRecordEvent($values);
+            $this->app['dispatcher']->dispatch('content.record.after.insert', $event);
+        }
+        else
+        {
+            $event = new ContentRecordEvent($values, $row);
+            $this->app['dispatcher']->dispatch('content.record.after.update', $event);
+        }
 
         if ($this->contentTypeDefinition->hasSynchronizedProperties() AND $this->currentlySynchronizingProperties == false)
         {
@@ -657,6 +682,10 @@ class ContentManager
         $row['validfrom_timestamp']  = $timeshiftTimestamp;
         $row['validuntil_timestamp'] = $this->repository->getMaxTimestamp();
 
+        $void  = null;
+        $event = new ContentRecordEvent($void, $row);
+        $this->app['dispatcher']->dispatch('content.record.before.delete', $event);
+
         $sql = 'INSERT INTO ' . $tableName;
         $sql .= ' (' . join(',', array_keys($row)) . ')';
         $sql .= ' VALUES ( ?';
@@ -664,6 +693,8 @@ class ContentManager
         $sql .= ')';
         $stmt = $dbh->prepare($sql);
         $stmt->execute(array_values($row));
+
+        $this->app['dispatcher']->dispatch('content.record.after.delete', $event);
 
         return true;
         /*

@@ -12,7 +12,7 @@ use AnyContent\Repository\Service\Config;
 use AnyContent\Repository\Service\Database;
 
 $app          = new \AnyContent\Repository\Application;
-$app['debug'] = false;
+$app['debug'] = true;
 
 // Detect environment (default: prod) by checking for the existence of $app_env
 if (isset($app_env) && in_array($app_env, array( 'prod', 'dev', 'test' )))
@@ -203,6 +203,8 @@ $app->after($afterJson, Silex\Application::EARLY_EVENT);
 $app->registerStorageAdapter('directory', 'AnyContent\Repository\Modules\StorageAdapter\Directory\DirectoryStorageAdapter');
 $app->registerStorageAdapter('s3', 'AnyContent\Repository\Modules\StorageAdapter\S3\S3StorageAdapter');
 $app->registerStorageAdapter('s3pp', 'AnyContent\Repository\Modules\StorageAdapter\S3\S3PPStorageAdapter');
+
+require_once (APPLICATION_PATH .'/config/modules.php');
 
 $app->init();
 

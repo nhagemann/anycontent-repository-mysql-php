@@ -5,6 +5,7 @@ cmdl/*
 files/*
 
 config/config.yml
+config/modules.php
 
 # php storm files
 .idea/
