@@ -3,6 +3,7 @@
 namespace AnyContent\Repository\Modules\Events;
 
 use Symfony\Component\EventDispatcher\Event;
+use CMDL\ContentTypeDefinition;
 
 class ContentRecordEvent extends Event
 {
@@ -11,9 +12,13 @@ class ContentRecordEvent extends Event
 
     protected $newRecordTableValues = null;
 
+    /* @var ContentTypeDefinition */
+    protected $definition = null;
 
-    function __construct(&$newRecordTableValues, &$currentRecordTableValues = null)
+
+    function __construct(ContentTypeDefinition $definition, &$newRecordTableValues, &$currentRecordTableValues = null)
     {
+        $this->definition               = $definition;
         $this->currentRecordTableValues = $currentRecordTableValues;
         $this->newRecordTableValues     = $newRecordTableValues;
     }
@@ -34,6 +39,15 @@ class ContentRecordEvent extends Event
     public function getNewRecordTableValues()
     {
         return $this->newRecordTableValues;
+    }
+
+
+    /**
+     * @return \CMDL\ContentTypeDefinition
+     */
+    public function getDefinition()
+    {
+        return $this->definition;
     }
 
 }

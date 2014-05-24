@@ -483,12 +483,12 @@ class ContentManager
 
         if ($mode == 'insert')
         {
-            $event = new ContentRecordEvent($values);
+            $event = new ContentRecordEvent($this->contentTypeDefinition, $values);
             $this->app['dispatcher']->dispatch('content.record.before.insert', $event);
         }
         else
         {
-            $event = new ContentRecordEvent($values, $row);
+            $event = new ContentRecordEvent($this->contentTypeDefinition, $values, $row);
             $this->app['dispatcher']->dispatch('content.record.before.update', $event);
         }
 
@@ -504,12 +504,12 @@ class ContentManager
 
         if ($mode == 'insert')
         {
-            $event = new ContentRecordEvent($values);
+            $event = new ContentRecordEvent($this->contentTypeDefinition, $values);
             $this->app['dispatcher']->dispatch('content.record.after.insert', $event);
         }
         else
         {
-            $event = new ContentRecordEvent($values, $row);
+            $event = new ContentRecordEvent($this->contentTypeDefinition, $values, $row);
             $this->app['dispatcher']->dispatch('content.record.after.update', $event);
         }
 
@@ -683,7 +683,7 @@ class ContentManager
         $row['validuntil_timestamp'] = $this->repository->getMaxTimestamp();
 
         $void  = null;
-        $event = new ContentRecordEvent($void, $row);
+        $event = new ContentRecordEvent($this->contentTypeDefinition, $void, $row);
         $this->app['dispatcher']->dispatch('content.record.before.delete', $event);
 
         $sql = 'INSERT INTO ' . $tableName;
