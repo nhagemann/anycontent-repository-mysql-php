@@ -61,7 +61,7 @@ CREATE TABLE `_info_` (
   `last_content_change_timestamp` int(11) DEFAULT 0,
   `last_position_change_timestamp` int(11) DEFAULT 0,
   PRIMARY KEY (`repository`,`content_type`,`workspace`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 TEMPLATE_INFOTABLE;
 
             $stmt = $dbh->prepare($sql);
@@ -81,7 +81,7 @@ CREATE TABLE `_counter_` (
   `content_type` varchar(128) NOT NULL DEFAULT '',
   `counter` bigint(20) DEFAULT 0,
   PRIMARY KEY (`repository`,`content_type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 TEMPLATE_COUNTERTABLE;
 
             $stmt = $dbh->prepare($sql);
@@ -146,7 +146,7 @@ TEMPLATE_COUNTERTABLE;
           `validfrom_timestamp` varchar(16) DEFAULT NULL,
           `validuntil_timestamp` varchar(16) DEFAULT NULL
 
-         ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 TEMPLATE_CONTENTTABLE;
 
@@ -238,7 +238,7 @@ TEMPLATE_CONTENTTABLE;
           `validfrom_timestamp` varchar(16) DEFAULT NULL,
           `validuntil_timestamp` varchar(16) DEFAULT NULL
 
-         ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 TEMPLATE_CONFIGTABLE;
 
