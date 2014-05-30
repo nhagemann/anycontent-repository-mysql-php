@@ -16,12 +16,18 @@ class Application extends SilexApplication
 
     protected $storageAdapter = array();
 
+    protected $cmdlAccessAdapter = array();
+
 
     public function __construct(array $values = array())
     {
 
         parent::__construct($values);
 
+        $this['config'] = $this->share(function ($this)
+        {
+            return new ConfigService($this);
+        });
     }
 
 
@@ -29,6 +35,32 @@ class Application extends SilexApplication
     {
         $this->modules[$class] = array( 'class' => $class, 'options' => $options );
 
+    }
+
+
+    public function registerCMDLAccessAdapter($type, $class, $options = array())
+    {
+        $this->cmdlAccessAdapter[$type] = array( 'class' => $class, 'options' => $options );
+    }
+
+
+    public function getCMDLAccessAdapter($config)
+    {
+        if (array_key_exists($config['type'], $this->cmdlAccessAdapter))
+        {
+
+            $class   = $this->cmdlAccessAdapter[$config['type']]['class'];
+            $options = $this->cmdlAccessAdapter[$config['type']]['options'];
+            unset($config['type']);
+
+            $adapter = new $class($config, $options);
+        }
+        else
+        {
+            throw new \Exception ('Unknown CMDL storage adapter type ' . $config['type'] . '.');
+        }
+
+        return $adapter;
     }
 
 

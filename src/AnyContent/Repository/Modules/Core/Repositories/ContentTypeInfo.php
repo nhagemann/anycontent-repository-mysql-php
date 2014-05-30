@@ -1,8 +1,8 @@
 <?php
 
-namespace AnyContent\Repository\Entity;
+namespace AnyContent\Repository\Modules\Core\Repositories;
 
-class ConfigTypeInfo
+class ContentTypeInfo
 {
 
     protected $name;
@@ -10,7 +10,8 @@ class ConfigTypeInfo
     public $title = '';
     public $lastchange_content = 0;
     public $lastchange_cmdl = 0;
-    public $description = '';
+    public $count = null;
+    public $description ='';
 
 
     public function setName($name)
@@ -58,6 +59,18 @@ class ConfigTypeInfo
     public function getLastchangeContent()
     {
         return $this->lastchange_content;
+    }
+
+
+    public function setCount($count)
+    {
+        $this->count = $count;
+    }
+
+
+    public function getCount()
+    {
+        return $this->count;
     }
 
 

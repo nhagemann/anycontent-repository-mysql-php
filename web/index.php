@@ -12,10 +12,11 @@ $app['debug'] = true;
 // Detect environment (default: prod) by checking for the existence of $app_env
 if (isset($app_env) && in_array($app_env, array('prod','dev','test','console'))) { $app['env'] = $app_env; }else{$app['env'] = 'prod';}
 
-$app->registerModule('AnyContent\Repository\Modules\Core\Repositories');
+
 $app->registerModule('AnyContent\Repository\Modules\Core\ResponseCache');
 $app->registerModule('AnyContent\Repository\Modules\Core\ExtractUserInfo');
 
+$app->registerModule('AnyContent\Repository\Modules\Core\Repositories');
 $app->registerModule('AnyContent\Repository\Modules\Core\ContentRecords');
 $app->registerModule('AnyContent\Repository\Modules\Core\ConfigRecords');
 $app->registerModule('AnyContent\Repository\Modules\Core\Files');
@@ -31,14 +32,7 @@ $app->get('/1/admin/delete/{repositoryName}/{contentTypeName}', 'AnyContent\Repo
 
 
 
-use AnyContent\Repository\Service\Config;
 use AnyContent\Repository\Service\Database;
-
-
-$app['config'] = $app->share(function ($app)
-{
-    return new Config($app, __DIR__ . '/../');
-});
 
 $app['db'] = $app->share(function ($app)
 {

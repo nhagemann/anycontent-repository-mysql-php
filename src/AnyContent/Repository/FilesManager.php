@@ -7,7 +7,7 @@ use AnyContent\Repository\Modules\Core\Application\Application;
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;
 
-use AnyContent\Repository\Repository;
+use AnyContent\Repository\Modules\Core\Repositories\Repository;
 
 
 

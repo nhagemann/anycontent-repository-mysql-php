@@ -6,10 +6,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AnyContent\Repository\Modules\Core\Application\Application;
 
-use AnyContent\Repository\Repository;
+use AnyContent\Repository\Modules\Core\Repositories\Repository;
 
-use AnyContent\Repository\Entity\ConfigTypeInfo;
-use AnyContent\Repository\Entity\ContentTypeInfo;
+use AnyContent\Repository\Modules\Core\Repositories\ConfigTypeInfo;
+use AnyContent\Repository\Modules\Core\Repositories\ContentTypeInfo;
 
 use CMDL\Parser;
 use CMDL\ParserException;

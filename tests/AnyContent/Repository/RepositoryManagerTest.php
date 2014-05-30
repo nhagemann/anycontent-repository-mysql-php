@@ -31,7 +31,7 @@ class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetRepository()
     {
 
-        $this->assertInstanceOf('AnyContent\Repository\Repository', $this->app['repos']->get('example'));
+        $this->assertInstanceOf('AnyContent\Repository\Modules\Core\Repositories\Repository', $this->app['repos']->get('example'));
         $this->assertFalse($this->app['repos']->get('mostunlikelyrepositoryname457230495789'));
 
     }
@@ -44,7 +44,7 @@ class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
 
         $contentTypes = $repo->getContentTypesList();
 
-        $this->assertInstanceOf('AnyContent\Repository\Entity\ContentTypeInfo', $contentTypes['example01']);
+        $this->assertInstanceOf('AnyContent\Repository\Modules\Core\Repositories\ContentTypeInfo', $contentTypes['example01']);
 
         $this->assertCount(3, $contentTypes);
     }

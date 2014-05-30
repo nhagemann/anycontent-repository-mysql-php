@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Repository\Service;
+namespace AnyContent\Repository\Modules\Core\Application;
 
 use AnyContent\Repository\Modules\Core\Application\Application;
 
@@ -9,7 +9,7 @@ use Symfony\Component\Finder\SplFileInfo;
 
 use Symfony\Component\Yaml\Parser;
 
-class Config
+class ConfigService
 {
 
     protected $app;
@@ -25,16 +25,17 @@ class Config
     protected $cacheCMDL = 0;
 
 
-    public function __construct(Application $app, $basepath = null)
+    public function __construct(Application $app)
     {
+
         $this->app      = $app;
-        $this->basepath = $basepath;
+        $this->basepath = APPLICATION_PATH;
     }
 
 
     public function getCMDLDirectory()
     {
-        return $this->basepath . 'cmdl';
+        return $this->basepath . '/cmdl';
     }
 
 

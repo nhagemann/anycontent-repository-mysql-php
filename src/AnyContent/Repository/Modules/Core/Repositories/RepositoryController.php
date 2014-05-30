@@ -11,8 +11,6 @@ use AnyContent\Repository\Modules\Core\Application\Application;
 
 use AnyContent\Repository\Modules\Core\Application\BaseController;
 
-use AnyContent\Repository\Repository;
-use AnyContent\Repository\Entity\ContentTypeInfo;
 
 class RepositoryController extends BaseController
 {

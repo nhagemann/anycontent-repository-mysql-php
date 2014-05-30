@@ -10,6 +10,14 @@ database:
   password: xxx
 
 #
+# Select storage adapter for storing and accessing cmdl files
+#
+
+cmdl:
+  default_adapter:
+      type: directory
+
+#
 # Select storage adapter for storing and accessing files
 #
 

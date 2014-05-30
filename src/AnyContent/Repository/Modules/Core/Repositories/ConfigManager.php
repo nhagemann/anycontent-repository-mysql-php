@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository;
 
-use AnyContent\Repository\Modules\Core\Application\Application;
+namespace AnyContent\Repository\Modules\Core\Repositories;
 
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;

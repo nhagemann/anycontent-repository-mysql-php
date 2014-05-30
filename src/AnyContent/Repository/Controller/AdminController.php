@@ -8,7 +8,7 @@ use AnyContent\Repository\Modules\Core\Application\Application;
 
 use AnyContent\Repository\Modules\Core\Application\BaseController;
 
-use AnyContent\Repository\Repository;
+use AnyContent\Repository\Modules\Core\Repositories\Repository;
 use CMDL\Util;
 
 class AdminController extends BaseController
