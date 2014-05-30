@@ -1,4 +1,5 @@
 <?php
+$app->registerModule('AnyContent\Repository\Modules\Extend\PrettyJSON');
 
 #$app->registerStorageAdapter('directory', 'AnyContent\Repository\Modules\StorageAdapter\Directory\DirectoryStorageAdapter');
 #$app->registerStorageAdapter('s3', 'AnyContent\Repository\Modules\StorageAdapter\S3\S3StorageAdapter');
