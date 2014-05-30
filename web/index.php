@@ -35,12 +35,6 @@ $app->get('/1/admin/delete/{repositoryName}/{contentTypeName}', 'AnyContent\Repo
 
 
 
-use AnyContent\Repository\Service\Database;
-
-$app['db'] = $app->share(function ($app)
-{
-    return new Database($app);
-});
 
 if ($app['debug'])
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace AnyContent\Repository\Service;
+namespace AnyContent\Repository\Modules\Core\Application;
 
 use AnyContent\Repository\Modules\Core\Application\Application;
 
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;
 
-class Database
+class DatabaseService
 {
 
     protected $app;
@@ -27,7 +27,7 @@ class Database
         $this->db->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        $this->db->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array( 'AnyContent\Repository\Service\Statement', array() ));
+        $this->db->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array( 'AnyContent\Repository\Modules\Core\Application\Statement', array() ));
 
         $this->db->exec("SET NAMES utf8");
     }

@@ -28,6 +28,11 @@ class Application extends SilexApplication
         {
             return new ConfigService($this);
         });
+
+        $this['db'] = $this->share(function ($app)
+        {
+            return new DatabaseService($app);
+        });
     }
 
 
