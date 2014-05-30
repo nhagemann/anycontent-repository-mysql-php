@@ -125,30 +125,27 @@ class RepositoryManager
     }
 
 
-    // todo rename
-    public function getCMDL($repositoryName, $contentTypeName)
+
+    public function getContentTypeCMDL($repositoryName, $contentTypeName)
     {
         return $this->cmdlAccessAdapter->getContentTypeCMDL($repositoryName, $contentTypeName);
 
     }
 
 
-    // todo rename
-    public function getAgeCMDL($repositoryName, $contentTypeName)
+
+    public function getAgeContentTypeCMDL($repositoryName, $contentTypeName)
     {
         return $this->cmdlAccessAdapter->getAgeContentTypeCMDL($repositoryName, $contentTypeName);
     }
 
 
-    // todo rename
-    public function getConfigCMDL($repositoryName, $configTypeName)
+    public function getConfigTypeCMDL($repositoryName, $configTypeName)
     {
         return $this->cmdlAccessAdapter->getConfigTypeCMDL($repositoryName, $configTypeName);
 
     }
 
-
-    // todo rename
     public function getAgeConfigTypeCMDL($repositoryName, $configTypeName)
     {
         return $this->cmdlAccessAdapter->getAgeConfigTypeCMDL($repositoryName, $configTypeName);

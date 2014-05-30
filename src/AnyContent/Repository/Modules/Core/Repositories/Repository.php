@@ -46,13 +46,13 @@ class Repository
     // todo rename
     public function getCMDL($contentTypeName)
     {
-        return $this->app['repos']->getCMDL($this->name, $contentTypeName);
+        return $this->app['repos']->getContentTypeCMDL($this->name, $contentTypeName);
     }
 
 
     public function getConfigCMDL($configTypeName)
     {
-        return $this->app['repos']->getConfigCMDL($this->name, $configTypeName);
+        return $this->app['repos']->getConfigTypeCMDL($this->name, $configTypeName);
     }
 
 
