@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Repository\Controller;
+namespace AnyContent\Repository\Modules\Core\Repositories;
 
 use AnyContent\Repository\Modules\Events\ContentRecordEvent;
 use AnyContent\Repository\Modules\Events\RepositoryEvents;
@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use AnyContent\Repository\Modules\Core\Application\Application;
 
-use AnyContent\Repository\Controller\BaseController;
+use AnyContent\Repository\Modules\Core\Application\BaseController;
 
 use AnyContent\Repository\Repository;
 use AnyContent\Repository\Entity\ContentTypeInfo;

@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Repository\Controller;
+namespace AnyContent\Repository\Modules\Core\Application;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,20 +68,7 @@ class BaseController
         }
         $error = array( 'error' => array( 'code' => $code, 'message' => $message ) );
 
-        return $app->json($error, 404);
-    }
-
-    /*
-    protected function badRequest($app, $message)
-    {
-        if (!$message)
-        {
-            $message = 'Bad request';
-        }
-
-        $error = array( 'error' => array( 'code' => 400, 'message' => $message ) );
-
         return $app->json($error, 400);
     }
-    */
+
 }

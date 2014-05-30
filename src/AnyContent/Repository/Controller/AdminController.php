@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AnyContent\Repository\Modules\Core\Application\Application;
 
-use AnyContent\Repository\Controller\BaseController;
+use AnyContent\Repository\Modules\Core\Application\BaseController;
 
 use AnyContent\Repository\Repository;
 use CMDL\Util;
