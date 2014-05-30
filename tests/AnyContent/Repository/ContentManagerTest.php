@@ -23,15 +23,10 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
 
-        $app           = new Application();
-        $app['config'] = new Config($app);
-
-        $cacheDriver = new  \Doctrine\Common\Cache\ApcCache();
-        $app['cache'] = $cacheDriver;
-
-        $app['repos']  = new RepositoryManager($app);
-        $app['db']     = new Database($app);
-
+        $app_env      = 'test';
+        $app          = require __DIR__ . '/../../../web/index.php';
+        $app['debug'] = true;
+        $app['exception_handler']->disable();
         $this->app = $app;
 
         $this->repository = $this->app['repos']->get('example');

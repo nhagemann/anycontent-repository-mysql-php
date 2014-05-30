@@ -26,10 +26,6 @@ $before1 = 'AnyContent\Repository\Middleware\ExtractUserInfo::execute';
 $before2 = 'AnyContent\Repository\Middleware\RequestLogger::execute';
 
 
-
-$afterRead  = 'AnyContent\Repository\Middleware\ResponseCache::afterRead';
-$afterWrite = 'AnyContent\Repository\Middleware\ResponseCache::afterWrite';
-
 // json formatter to make json human readable
 $afterJson = 'AnyContent\Repository\Middleware\PrettyPrint::execute';
 
@@ -196,6 +192,7 @@ $app->registerStorageAdapter('s3pp', 'AnyContent\Repository\Modules\StorageAdapt
 require_once (APPLICATION_PATH .'/config/modules.php');
 
 $app->init();
+
 
 if ($app['env'] == 'test')
 {

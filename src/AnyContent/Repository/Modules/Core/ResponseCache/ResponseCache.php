@@ -11,7 +11,6 @@ class ResponseCache
 
     public static function before(Request $request, Application $app)
     {
-
         if ($app['config']->getMinutesCachingFileListings() == 0)
         {
             if (self::isFileListRequest($request))
@@ -24,12 +23,14 @@ class ResponseCache
 
         if ($app['cache']->contains($token) AND $app['config']->getMinutesCachingData() != 0)
         {
+
             $response = new Response($app['cache']->fetch($token));
             $response->headers->set('Content-Type', 'application/json');
+            $response->send();
 
-            $request->setMethod('CACHE'); // This informs the JSON prettifier to not prettify the cached output (again)
+            // To be as fast as possible when delivering cached results, exceptionally use the exit statement
 
-            return $response;
+            exit();
         }
 
     }

@@ -23,6 +23,17 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
 
+        $app_env      = 'test';
+        $app          = require __DIR__ . '/../../../web/index.php';
+        $app['debug'] = true;
+        $app['exception_handler']->disable();
+        $this->app = $app;
+
+        $this->repository = $this->app['repos']->get('example');
+
+        /*
+
+
         $app           = new Application();
         $app['config'] = new Config($app);
 
@@ -35,7 +46,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->app = $app;
 
         $this->repository = $this->app['repos']->get('example');
-
+          */
     }
 
 

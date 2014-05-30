@@ -22,20 +22,10 @@ class FilesTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
 
-        $app           = new Application();
-        $app['config'] = new Config($app);
-
-        $cacheDriver = new  \Doctrine\Common\Cache\ApcCache();
-        $app['cache'] = $cacheDriver;
-
-        $app['repos']  = new RepositoryManager($app);
-        $app['db']     = new Database($app);
-
-
-        $app->registerStorageAdapter('directory', 'AnyContent\Repository\Modules\StorageAdapter\Directory\DirectoryStorageAdapter');
-        $app->registerStorageAdapter('s3', 'AnyContent\Repository\Modules\StorageAdapter\S3\S3StorageAdapter');
-        $app->registerStorageAdapter('s3pp', 'AnyContent\Repository\Modules\StorageAdapter\S3\S3PPStorageAdapter');
-
+        $app_env      = 'test';
+        $app          = require __DIR__ . '/../../../web/index.php';
+        $app['debug'] = true;
+        $app['exception_handler']->disable();
         $this->app = $app;
 
         $this->repository = $this->app['repos']->get('example');

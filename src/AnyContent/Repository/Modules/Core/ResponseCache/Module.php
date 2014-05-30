@@ -3,6 +3,7 @@
 namespace AnyContent\Repository\Modules\Core\ResponseCache;
 
 use AnyContent\Repository\Modules\Core\Application\Application;
+use Symfony\Component\HttpFoundation\Response;
 
 class Module extends \AnyContent\Repository\Modules\Core\Application\Module
 {
@@ -13,6 +14,8 @@ class Module extends \AnyContent\Repository\Modules\Core\Application\Module
 
         $app->before('AnyContent\Repository\Modules\Core\ResponseCache\ResponseCache::before');
         $app->after('AnyContent\Repository\Modules\Core\ResponseCache\ResponseCache::after');
+
+
     }
 
 }
