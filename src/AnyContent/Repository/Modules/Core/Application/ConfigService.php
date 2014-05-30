@@ -151,6 +151,19 @@ class ConfigService
     }
 
 
+    public function getCMDLAccessAdapterConfig()
+    {
+        $yml = $this->getYML();
+
+        if (isset($yml['cmdl']['default_adapter']))
+        {
+            return $yml['cmdl']['default_adapter'];
+        }
+
+        return array( 'type' => 'directory' );
+    }
+
+
     protected function getYML()
     {
         if ($this->yml)
@@ -168,6 +181,11 @@ class ConfigService
     }
 
 
+    /**
+     *
+     * @deprecated
+     * @return string
+     */
     public function getCMDLConfigHash()
     {
         $finder = new Finder();

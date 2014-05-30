@@ -22,6 +22,9 @@ $app->registerModule('AnyContent\Repository\Modules\Core\ConfigRecords');
 $app->registerModule('AnyContent\Repository\Modules\Core\Files');
 
 
+$app->registerModule('AnyContent\Repository\Modules\Core\DirectoryCMDLAccessAdapter');
+
+
 
 
 

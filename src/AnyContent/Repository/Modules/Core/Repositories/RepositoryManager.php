@@ -14,19 +14,12 @@ use AnyContent\Repository\Modules\Core\Repositories\ContentTypeInfo;
 use CMDL\Parser;
 use CMDL\ParserException;
 
-
 class RepositoryManager
 {
 
     protected $app;
 
-    protected $repositories = null;
-
-    protected $contentTypeDefinitions = array();
-
-    protected $configTypeDefinitions = array();
-
-    protected $cmdl = array();
+    protected $cmdlAccessAdapter = null;
 
     protected $apiUser = null;
 
@@ -35,7 +28,6 @@ class RepositoryManager
     protected $firstname = null;
 
     protected $lastname = null;
-
 
 
     /**
@@ -47,6 +39,7 @@ class RepositoryManager
     {
         $this->app = $app;
 
+        $this->cmdlAccessAdapter = $app->getCMDLAccessAdapter($app['config']->getCMDLAccessAdapterConfig());
     }
 
 
@@ -97,7 +90,7 @@ class RepositoryManager
 
     public function get($repositoryName)
     {
-        if ($this->hasRepository($repositoryName))
+        if ($this->cmdlAccessAdapter->hasRepository($repositoryName))
         {
             $repository = new Repository($this->app, $repositoryName);
 
@@ -110,350 +103,67 @@ class RepositoryManager
 
     public function hasRepository($repositoryName)
     {
-        if (in_array($repositoryName, $this->getRepositories()))
-        {
-            return true;
-        }
-
-        return false;
-
+        return $this->cmdlAccessAdapter->hasRepository($repositoryName);
     }
 
 
     public function getRepositories()
     {
-
-        if (!$this->repositories)
-        {
-
-            $path = $this->app['config']->getCMDLDirectory();
-
-            $repositories = array();
-            $path         = realpath($path);
-            if (is_dir($path))
-            {
-                $results = scandir($path);
-
-                foreach ($results as $result)
-                {
-                    if ($result === '.' or $result === '..')
-                    {
-                        continue;
-                    }
-
-                    if (is_dir($path . '/' . $result))
-                    {
-                        $repositories[] = $result;
-                    }
-                }
-            }
-            $this->repositories = $repositories;
-
-        }
-
-        return $this->repositories;
+        return $this->cmdlAccessAdapter->getRepositories();
     }
 
 
     public function getContentTypesList($repositoryName)
     {
-        $contentTypes = array();
-
-
-        if ($this->hasRepository($repositoryName))
-        {
-
-            $path = $this->app['config']->getCMDLDirectory() . '/' . $repositoryName;
-            $path = realpath($path);
-            if (is_dir($path))
-            {
-                $results = scandir($path);
-
-                foreach ($results as $result)
-                {
-                    if ($result === '.' or $result === '..')
-                    {
-                        continue;
-                    }
-
-                    if (!is_dir($path . '/' . $result))
-                    {
-                        if (pathinfo($result, PATHINFO_EXTENSION) == 'cmdl')
-                        {
-                            $filestats       = stat($path . '/' . $result);
-                            $contentTypeName = pathinfo($result, PATHINFO_FILENAME);
-
-                            $contentTypeDefinition = $this->getContentTypeDefinition($repositoryName, $contentTypeName);
-
-                            if ($contentTypeDefinition)
-                            {
-                                $info = new ContentTypeInfo();
-                                $info->setName($contentTypeName);
-                                $info->setLastchangecmdl(@$filestats['mtime']);
-                                $info->setTitle((string)$contentTypeDefinition->getTitle());
-                                $info->setDescription((string)$contentTypeDefinition->getDescription());
-                                $contentTypes[$contentTypeName] = $info;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
-        return $contentTypes;
+        return $this->cmdlAccessAdapter->getContentTypesList($repositoryName);
     }
 
 
     public function getConfigTypesList($repositoryName)
     {
-        $configTypes = array();
-
-
-        if ($this->hasRepository($repositoryName))
-        {
-
-            $path = $this->app['config']->getCMDLDirectory() . '/' . $repositoryName . '/config';
-            $path = realpath($path);
-            if (is_dir($path))
-            {
-                $results = scandir($path);
-
-                foreach ($results as $result)
-                {
-                    if ($result === '.' or $result === '..')
-                    {
-                        continue;
-                    }
-
-                    if (!is_dir($path . '/' . $result))
-                    {
-                        if (pathinfo($result, PATHINFO_EXTENSION) == 'cmdl')
-                        {
-                            $filestats      = stat($path . '/' . $result);
-                            $configTypeName = pathinfo($result, PATHINFO_FILENAME);
-
-                            //$contentTypeDefinition = $this->getContentTypeDefinition($repositoryName, $contentTypeName);
-
-                            $info = new ConfigTypeInfo();
-                            $info->setName($configTypeName);
-                            $info->setLastchangecmdl(@$filestats['mtime']);
-                            //$info->setTitle((string)$contentTypeDefinition->getTitle());
-                            //$info->setDescription((string)$contentTypeDefinition->getDescription());
-                            $configTypes[$configTypeName] = $info;
-
-                            /*
-                            if ($contentTypeDefinition)
-                            {
-
-                            } */
-                        }
-                    }
-                }
-            }
-        }
-
-
-        return $configTypes;
+        return $this->cmdlAccessAdapter->getConfigTypesList($repositoryName);
     }
 
 
     // todo rename
     public function getCMDL($repositoryName, $contentTypeName)
     {
-        $token = $repositoryName . '$' . $contentTypeName;
+        return $this->cmdlAccessAdapter->getContentTypeCMDL($repositoryName, $contentTypeName);
 
-
-        if ($this->hasRepository($repositoryName))
-        {
-
-            if (array_key_exists($token, $this->cmdl))
-            {
-                return $this->cmdl[$token]['cmdl'];
-            }
-            $filename = $this->app['config']->getCMDLDirectory() . '/' . $repositoryName . '/' . $contentTypeName . '.cmdl';
-            $cmdl     = @file_get_contents($filename);
-            if ($cmdl)
-            {
-                $filestats                       = stat($filename);
-                $this->cmdl[$token]['cmdl']      = $cmdl;
-                $this->cmdl[$token]['timestamp'] = @$filestats['mtime'];
-
-                return $cmdl;
-            }
-        }
-
-
-        return false;
     }
 
 
     // todo rename
     public function getAgeCMDL($repositoryName, $contentTypeName)
     {
-        $token = $repositoryName . '$' . $contentTypeName;
-        if (array_key_exists($token, $this->cmdl))
-        {
-            return $this->cmdl[$token]['timestamp'];
-        }
-        else
-        {
-            if ($this->getCMDL($repositoryName, $contentTypeName))
-            {
-                return $this->cmdl[$token]['timestamp'];
-            }
-        }
-
-        return 0;
+        return $this->cmdlAccessAdapter->getAgeContentTypeCMDL($repositoryName, $contentTypeName);
     }
 
 
+    // todo rename
     public function getConfigCMDL($repositoryName, $configTypeName)
     {
-        if ($this->hasRepository($repositoryName))
-        {
-            $token = 'config$' . $repositoryName . '$' . $configTypeName;
-            if (array_key_exists($token, $this->cmdl))
-            {
-                return $this->cmdl[$token]['cmdl'];
-            }
-            $filename = $this->app['config']->getCMDLDirectory() . '/' . $repositoryName . '/config/' . $configTypeName . '.cmdl';
-            $cmdl     = @file_get_contents($filename);
-            if ($cmdl)
-            {
-                $filestats                       = stat($filename);
-                $this->cmdl[$token]['cmdl']      = $cmdl;
-                $this->cmdl[$token]['timestamp'] = @$filestats['mtime'];
+        return $this->cmdlAccessAdapter->getConfigTypeCMDL($repositoryName, $configTypeName);
 
-                return $cmdl;
-            }
-        }
-
-        return false;
     }
 
 
-    public function getAgeConfigCMDL($repositoryName, $configTypeName)
+    // todo rename
+    public function getAgeConfigTypeCMDL($repositoryName, $configTypeName)
     {
-        $token = 'config$' . $repositoryName . '$' . $configTypeName;
-        if (array_key_exists($token, $this->cmdl))
-        {
-            return $this->cmdl[$token]['timestamp'];
-        }
-        else
-        {
-            if ($this->getCMDL($repositoryName, $configTypeName))
-            {
-                return $this->cmdl[$token]['timestamp'];
-            }
-        }
-
-        return 0;
+        return $this->cmdlAccessAdapter->getAgeConfigTypeCMDL($repositoryName, $configTypeName);
     }
 
 
     public function getContentTypeDefinition($repositoryName, $contentTypeName)
     {
-
-        // check if definition already has been created
-        if (array_key_exists($repositoryName, $this->contentTypeDefinitions))
-        {
-            if (array_key_exists($contentTypeName, $this->contentTypeDefinitions[$repositoryName]))
-            {
-                return $this->contentTypeDefinitions[$repositoryName][$contentTypeName];
-            }
-        }
-
-        $cmdl = $this->getCMDL($repositoryName, $contentTypeName);
-        if ($cmdl)
-        {
-            try
-            {
-                $this->app['db']->refreshInfoTablesStructure();
-
-                $contentTypeDefinition = Parser::parseCMDLString($cmdl);
-                $contentTypeDefinition->setName($contentTypeName);
-
-                // after generating the definition, check if the database is up to date
-                $timestamp = $this->getAgeCMDL($repositoryName, $contentTypeName);
-                $dbh       = $this->getDatabaseConnection();
-                $sql       = 'SELECT last_cmdl_change_timestamp FROM _info_ WHERE repository = ? AND content_type = ?';
-
-                $params   = array();
-                $params[] = $repositoryName;
-                $params[] = $contentTypeName;
-                $stmt     = $dbh->prepare($sql);
-                $stmt->execute($params);
-                $result = (int)$stmt->fetchColumn(0);
-
-                if ($result < $timestamp)
-                {
-
-                    $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
-
-                    $sql = 'INSERT INTO _info_ (repository,content_type,last_cmdl_change_timestamp) VALUES (? , ? ,?) ON DUPLICATE KEY UPDATE last_cmdl_change_timestamp=?;';
-
-                    $params   = array();
-                    $params[] = $repositoryName;
-                    $params[] = $contentTypeName;
-                    $params[] = $timestamp;
-                    $params[] = $timestamp;
-                    $stmt     = $dbh->prepare($sql);
-                    $stmt->execute($params);
-
-                }
-
-                $this->contentTypeDefinitions[$repositoryName][$contentTypeName] = $contentTypeDefinition;
-
-
-                return $contentTypeDefinition;
-            }
-            catch (ParserException $e)
-            {
-
-            }
-        }
-
-        return false;
-
+        return $this->cmdlAccessAdapter->getContentTypeDefinition($repositoryName, $contentTypeName);
     }
 
 
     public function getConfigTypeDefinition($repositoryName, $configTypeName)
     {
-        // check if definition already has been created
-        if (array_key_exists($repositoryName, $this->configTypeDefinitions))
-        {
-            if (array_key_exists($configTypeName, $this->configTypeDefinitions[$repositoryName]))
-            {
-                return $this->configTypeDefinitions[$repositoryName][$configTypeName];
-            }
-        }
-
-        $cmdl = $this->getConfigCMDL($repositoryName, $configTypeName);
-        if ($cmdl)
-        {
-            try
-            {
-                $configTypeDefinition = Parser::parseCMDLString($cmdl, $configTypeName, $configTypeName, 'config');
-                $configTypeDefinition->setName($configTypeName);
-
-                // after generating the definition, check if the database is up to date
-
-                $this->app['db']->refreshConfigTypesTableStructure($repositoryName);
-
-                $this->configTypeDefinitions[$repositoryName][$configTypeName] = $configTypeDefinition;
-
-                return $configTypeDefinition;
-            }
-            catch (ParserException $e)
-            {
-
-            }
-        }
-
-        return false;
-
+        return $this->cmdlAccessAdapter->getConfigTypeDefinition($repositoryName, $configTypeName);
     }
 
 

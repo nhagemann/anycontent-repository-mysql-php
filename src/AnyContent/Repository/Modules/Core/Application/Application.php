@@ -53,11 +53,12 @@ class Application extends SilexApplication
             $options = $this->cmdlAccessAdapter[$config['type']]['options'];
             unset($config['type']);
 
-            $adapter = new $class($config, $options);
+            $adapter = new $class($this, $config, $options);
+
         }
         else
         {
-            throw new \Exception ('Unknown CMDL storage adapter type ' . $config['type'] . '.');
+            throw new \Exception ('Unknown CMDL access adapter type ' . $config['type'] . '.');
         }
 
         return $adapter;
