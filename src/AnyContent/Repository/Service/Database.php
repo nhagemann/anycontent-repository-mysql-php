@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository\Service;
 
-use AnyContent\Repository\Application;
+use AnyContent\Repository\Modules\Core\Application\Application;
 
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;
@@ -21,7 +21,8 @@ class Database
     {
         $this->app = $app;
 
-        $this->db = new \PDO($app['config']->getDSN(), $app['config']->getDBUser(), $app['config']->getDBPassword());
+        // http://stackoverflow.com/questions/18683471/pdo-setting-pdomysql-attr-found-rows-fails
+        $this->db = new \PDO($app['config']->getDSN(), $app['config']->getDBUser(), $app['config']->getDBPassword(), array( \PDO::MYSQL_ATTR_FOUND_ROWS => true ));
 
         $this->db->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
@@ -98,7 +99,7 @@ TEMPLATE_COUNTERTABLE;
 
         $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName).'$'.Util::generateValidIdentifier($contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
             throw new \Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
@@ -198,13 +199,14 @@ TEMPLATE_CONTENTTABLE;
         return true;
     }
 
+
     public function refreshConfigTypesTableStructure($repositoryName)
     {
         $this->refreshInfoTablesStructure();
 
         $tableName = $repositoryName . '$$config';
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName).'$$config')
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$$config')
         {
             throw new \Exception ('Invalid repository.', self::INVALID_NAMES);
         }
@@ -262,11 +264,12 @@ TEMPLATE_CONFIGTABLE;
         return true;
     }
 
+
     public function deleteRepository($repositoryName, $contentTypeName)
     {
         $tableName = $repositoryName . '$' . $contentTypeName;
 
-        if ($tableName != Util::generateValidIdentifier($repositoryName).'$'.Util::generateValidIdentifier($contentTypeName))
+        if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
             throw new \Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
@@ -348,7 +351,7 @@ class Statement extends \PDOStatement
             if ($debug)
             {
                 echo $e->getMessage() . "\n" . $this->sdebug();
-                syslog (LOG_ERR,$e->getMessage() . ' - ' . $this->sdebug());
+                syslog(LOG_ERR, $e->getMessage() . ' - ' . $this->sdebug());
                 die();
             }
 

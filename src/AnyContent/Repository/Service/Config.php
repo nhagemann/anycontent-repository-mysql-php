@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository\Service;
 
-use AnyContent\Repository\Application;
+use AnyContent\Repository\Modules\Core\Application\Application;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;

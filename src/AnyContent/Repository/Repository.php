@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository;
 
-use AnyContent\Repository\Application;
+use AnyContent\Repository\Modules\Core\Application\Application;
 
 use AnyContent\Repository\ContentManager;
 use AnyContent\Repository\FilesManager;

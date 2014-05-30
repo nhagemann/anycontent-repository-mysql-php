@@ -1,10 +1,10 @@
 <?php
 
-namespace AnyContent\Repository\Middleware;
+namespace AnyContent\Repository\Modules\Core\ResponseCache;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use AnyContent\Repository\Application;
+use AnyContent\Repository\Modules\Core\Application\Application;
 
 class ResponseCache
 {
@@ -32,6 +32,23 @@ class ResponseCache
             return $response;
         }
 
+    }
+
+
+    public static function after(Request $request, Response $response, Application $app)
+    {
+        switch ($request->getMethod())
+        {
+            case 'GET':
+                return self::afterRead($request, $response, $app);
+                break;
+            case 'POST';
+                return self::afterWrite($request, $response, $app);
+                break;
+            case'DELETE':
+                return self::afterWrite($request, $response, $app);
+                break;
+        }
     }
 
 

@@ -1,3 +1,5 @@
+## 0.6
+Routes for manipulating CMDL of content types
 ## 0.5
 Added events to be able to intercept important operations.
 ## 0.4

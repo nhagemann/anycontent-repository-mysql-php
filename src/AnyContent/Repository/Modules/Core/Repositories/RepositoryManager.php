@@ -1,10 +1,10 @@
 <?php
 
-namespace AnyContent\Repository\Service;
+namespace AnyContent\Repository\Modules\Core\Repositories;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use AnyContent\Repository\Application;
+use AnyContent\Repository\Modules\Core\Application\Application;
 
 use AnyContent\Repository\Repository;
 

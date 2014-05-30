@@ -7,7 +7,7 @@ use AnyContent\Repository\Modules\Events\RepositoryEvents;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use AnyContent\Repository\Application;
+use AnyContent\Repository\Modules\Core\Application\Application;
 
 use AnyContent\Repository\Controller\BaseController;
 
