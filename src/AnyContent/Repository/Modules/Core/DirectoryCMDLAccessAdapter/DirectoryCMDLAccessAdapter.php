@@ -290,8 +290,6 @@ class DirectoryCMDLAccessAdapter
         {
             try
             {
-                //$this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
-                //$this->app['db']->refreshInfoTablesStructure();
 
                 $contentTypeDefinition = Parser::parseCMDLString($cmdl);
                 $contentTypeDefinition->setName($contentTypeName);
@@ -300,35 +298,7 @@ class DirectoryCMDLAccessAdapter
 
                 $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
 
-                /*
-                $timestamp = $this->getAgeContentTypeCMDL($repositoryName, $contentTypeName);
-                $dbh       = $this->getDatabaseConnection();
-                $sql       = 'SELECT last_cmdl_change_timestamp FROM _info_ WHERE repository = ? AND content_type = ?';
 
-                $params   = array();
-                $params[] = $repositoryName;
-                $params[] = $contentTypeName;
-                $stmt     = $dbh->prepare($sql);
-                $stmt->execute($params);
-                $result = (int)$stmt->fetchColumn(0);
-
-                if ($result < $timestamp)
-                {
-
-                    $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
-
-                    $sql = 'INSERT INTO _info_ (repository,content_type,last_cmdl_change_timestamp) VALUES (? , ? ,?) ON DUPLICATE KEY UPDATE last_cmdl_change_timestamp=?;';
-
-                    $params   = array();
-                    $params[] = $repositoryName;
-                    $params[] = $contentTypeName;
-                    $params[] = $timestamp;
-                    $params[] = $timestamp;
-                    $stmt     = $dbh->prepare($sql);
-                    $stmt->execute($params);
-
-                }
-                */
 
                 $this->contentTypeDefinitions[$repositoryName][$contentTypeName] = $contentTypeDefinition;
 

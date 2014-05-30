@@ -45,30 +45,6 @@ class Database
         /** @var PDO $db */
         $dbh = $this->app['db']->getConnection();
 
-        $sql = "Show Tables Like '_info_'";
-
-        $stmt = $dbh->prepare($sql);
-        $stmt->execute();
-
-        if ($stmt->rowCount() == 0)
-        {
-            $sql = <<< TEMPLATE_INFOTABLE
-CREATE TABLE `_info_` (
-  `repository` varchar(128) NOT NULL DEFAULT '',
-  `content_type` varchar(128) NOT NULL DEFAULT '',
-  `workspace` varchar(64) NOT NULL DEFAULT '',
-  `records_count` bigint(20) DEFAULT 0,
-  `last_cmdl_change_timestamp` int(11) DEFAULT 0,
-  `last_content_change_timestamp` int(11) DEFAULT 0,
-  `last_position_change_timestamp` int(11) DEFAULT 0,
-  PRIMARY KEY (`repository`,`content_type`,`workspace`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-TEMPLATE_INFOTABLE;
-
-            $stmt = $dbh->prepare($sql);
-            $stmt->execute();
-        }
-
         $sql = "Show Tables Like '_counter_'";
 
         $stmt = $dbh->prepare($sql);
@@ -289,21 +265,6 @@ TEMPLATE_CONFIGTABLE;
             return false;
         }
 
-        $sql      = 'DELETE FROM _info_ WHERE repository = ? AND content_type = ?';
-        $stmt     = $dbh->prepare($sql);
-        $params   = array();
-        $params[] = $repositoryName;
-        $params[] = $contentTypeName;
-
-        try
-        {
-            $stmt->execute($params);
-
-        }
-        catch (\PDOException $e)
-        {
-            return false;
-        }
 
         $sql      = 'DELETE FROM _counter_ WHERE repository = ? AND content_type = ?';
         $stmt     = $dbh->prepare($sql);
