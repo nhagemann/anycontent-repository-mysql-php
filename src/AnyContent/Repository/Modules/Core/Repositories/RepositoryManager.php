@@ -107,6 +107,18 @@ class RepositoryManager
     }
 
 
+    public function createRepository($repositoryName)
+    {
+        return $this->cmdlAccessAdapter->createRepository($repositoryName);
+    }
+
+
+    public function discardRepository($repositoryName)
+    {
+        return $this->cmdlAccessAdapter->discardRepository($repositoryName);
+    }
+
+
     public function getRepositories()
     {
         return $this->cmdlAccessAdapter->getRepositories();
@@ -125,13 +137,17 @@ class RepositoryManager
     }
 
 
-
     public function getContentTypeCMDL($repositoryName, $contentTypeName)
     {
         return $this->cmdlAccessAdapter->getContentTypeCMDL($repositoryName, $contentTypeName);
 
     }
 
+
+    public function saveContentTypeCMDL($repositoryName, $contentTypeName, $cmdl, $locale = null)
+    {
+        return $this->cmdlAccessAdapter->saveContentTypeCMDL($repositoryName, $contentTypeName, $cmdl, $locale);
+    }
 
 
     public function getAgeContentTypeCMDL($repositoryName, $contentTypeName)
@@ -146,9 +162,16 @@ class RepositoryManager
 
     }
 
+
     public function getAgeConfigTypeCMDL($repositoryName, $configTypeName)
     {
         return $this->cmdlAccessAdapter->getAgeConfigTypeCMDL($repositoryName, $configTypeName);
+    }
+
+
+    public function saveConfigTypeCMDL($repositoryName, $contentTypeName, $cmdl, $locale = null)
+    {
+        return $this->cmdlAccessAdapter->saveConfigTypeCMDL($repositoryName, $contentTypeName, $cmdl, $locale);
     }
 
 
@@ -161,6 +184,18 @@ class RepositoryManager
     public function getConfigTypeDefinition($repositoryName, $configTypeName)
     {
         return $this->cmdlAccessAdapter->getConfigTypeDefinition($repositoryName, $configTypeName);
+    }
+
+
+    public function discardContentType($repositoryName, $contentTypeName)
+    {
+        return $this->cmdlAccessAdapter->discardContentType($repositoryName, $contentTypeName);
+    }
+
+
+    public function discardConfigType($repositoryName, $configTypeName)
+    {
+        return $this->cmdlAccessAdapter->discardConfigType($repositoryName, $configTypeName);
     }
 
 

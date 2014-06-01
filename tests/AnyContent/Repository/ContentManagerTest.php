@@ -37,9 +37,9 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
     public function testSaveRecords()
     {
 
-        $this->app['db']->deleteRepository('example', 'example01');
-        $this->app['db']->deleteRepository('example', 'example02');
-        $this->app['db']->deleteRepository('example', 'example03');
+        $this->app['db']->discardContentType('example', 'example01');
+        $this->app['db']->discardContentType('example', 'example02');
+        $this->app['db']->discardContentType('example', 'example03');
 
         /**
          * @var ContentManager
@@ -136,7 +136,7 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
 
         $manager->deleteRecord(1);
 
-        $this->setExpectedException('AnyContent\Repository\RepositoryException');
+        $this->setExpectedException('AnyContent\Repository\Modules\Core\Repositories\RepositoryException');
         $record = $manager->getRecord(1);
     }
 

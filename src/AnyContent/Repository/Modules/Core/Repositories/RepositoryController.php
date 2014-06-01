@@ -11,7 +11,6 @@ use AnyContent\Repository\Modules\Core\Application\Application;
 
 use AnyContent\Repository\Modules\Core\Application\BaseController;
 
-
 class RepositoryController extends BaseController
 {
 
@@ -77,6 +76,27 @@ class RepositoryController extends BaseController
     }
 
 
+    public static function postContentTypeCMDL(Application $app, Request $request, $repositoryName, $contentTypeName, $locale = null)
+    {
+        if ($request->request->has('cmdl'))
+        {
+            $cmdl = $request->request->get('cmdl');
+
+            /** @var $manager RepositoryManager */
+            $manager = $app['repos'];
+
+            if ($manager->saveContentTypeCMDL($repositoryName, $contentTypeName, $cmdl, $locale))
+            {
+                return $app->json(true);
+            }
+
+            return self::badRequest(self::BAD_REQUEST);
+        }
+
+        return self::badRequest($app, self::MISSING_MANDATORY_PARAMETER, 'cmdl');
+    }
+
+
     public static function getInfoShortCut(Application $app, Request $request, $repositoryName)
     {
         $url = '/1/' . $repositoryName . '/info';
@@ -87,9 +107,11 @@ class RepositoryController extends BaseController
 
     public static function welcome(Application $app)
     {
-        $result =   'Welcome to AnyContent Repository Server. Please specify desired repository.';
+        $result = 'Welcome to AnyContent Repository Server. Please specify desired repository.';
+
         return $app->json($result);
     }
+
 
     public static function welcomeShortCut(Application $app)
     {

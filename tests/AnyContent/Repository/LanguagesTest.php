@@ -37,9 +37,9 @@ class LanguagesTest extends \PHPUnit_Framework_TestCase
     public function testSaveRecords()
     {
 
-        $this->app['db']->deleteRepository('example', 'example01');
-        $this->app['db']->deleteRepository('example', 'example02');
-        $this->app['db']->deleteRepository('example', 'example03');
+        $this->app['db']->discardContentType('example', 'example01');
+        $this->app['db']->discardContentType('example', 'example02');
+        $this->app['db']->discardContentType('example', 'example03');
 
         /**
          * @var ContentManager

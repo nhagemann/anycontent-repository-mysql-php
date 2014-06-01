@@ -2,7 +2,7 @@
 
 namespace AnyContent\Repository\Entity;
 
-use AnyContent\Repository\RepositoryException;
+use AnyContent\Repository\Modules\Core\Repositories\RepositoryException;
 
 class Filter
 {

@@ -3,10 +3,10 @@
 namespace AnyContent\Repository;
 
 use AnyContent\Repository\Modules\Core\Application\Application;
-use AnyContent\Repository\Service\Config;
-use AnyContent\Repository\Service\Database;
-use AnyContent\Repository\Service\RepositoryManager;
-use AnyContent\Repository\Repository;
+use AnyContent\Repository\Modules\Core\Application\ConfigService;
+use AnyContent\Repository\Modules\Core\Application\Database;
+use AnyContent\Repository\Modules\Core\Repositories\RepositoryManager;
+use AnyContent\Repository\Modules\Core\Repositories\Repository;
 
 //use AnyContent\Client\Record;
 
@@ -75,6 +75,67 @@ class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public function testCreateAndDeleteContentType()
+    {
+        /** @var $manager RepositoryManager */
+        $manager = $this->app['repos'];
 
+        $manager->discardContentType('example', 'example99');
+
+        /** @var $repo Repository */
+        $repo = $this->app['repos']->get('example');
+
+        $contentTypeDefinition = $repo->getContentTypeDefinition('example99');
+        $this->assertFalse($contentTypeDefinition);
+
+        $manager->saveContentTypeCMDL('example', 'example99', 'test');
+
+        $contentTypeDefinition = $repo->getContentTypeDefinition('example99');
+        $this->assertTrue((boolean)$contentTypeDefinition);
+
+        $manager->discardContentType('example', 'example99');
+
+    }
+
+
+    public function testCreateAndDeleteConfigType()
+    {
+        /** @var $manager RepositoryManager */
+        $manager = $this->app['repos'];
+
+        $manager->discardConfigType('example', 'config99');
+
+        /** @var $repo Repository */
+        $repo = $this->app['repos']->get('example');
+
+        $configTypeDefinition = $repo->getConfigTypeDefinition('config99');
+        $this->assertFalse($configTypeDefinition);
+
+        $manager->saveConfigTypeCMDL('example', 'config99', 'test');
+
+        $configTypeDefinition = $repo->getConfigTypeDefinition('config99');
+        $this->assertTrue((boolean)$configTypeDefinition);
+
+        $manager->discardConfigType('example', 'config99');
+
+    }
+
+
+    public function testCreateAndDeleteRepository()
+    {
+        /** @var $manager RepositoryManager */
+        $manager = $this->app['repos'];
+
+        $this->assertFalse($manager->hasRepository('example99'));
+
+        $manager->createRepository('example99');
+
+        $this->assertTrue($manager->hasRepository('example99'));
+
+        $manager->discardRepository('example99');
+
+        $this->assertFalse($manager->hasRepository('example99'));
+
+    }
 
 }

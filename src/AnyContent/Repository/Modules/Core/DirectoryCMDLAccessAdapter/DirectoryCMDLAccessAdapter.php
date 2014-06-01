@@ -9,9 +9,13 @@ use AnyContent\Repository\Modules\Core\Repositories\ContentTypeInfo;
 
 use CMDL\Parser;
 use CMDL\ParserException;
+use CMDL\Util;
+
+use AnyContent\Repository\Modules\Core\Repositories\RepositoryException;
 
 class DirectoryCMDLAccessAdapter
 {
+
     protected $app;
 
     protected $repositories = null;
@@ -23,10 +27,11 @@ class DirectoryCMDLAccessAdapter
     protected $cmdl = array();
 
 
-    public function __construct($app,$config,$options)
+    public function __construct($app, $config, $options)
     {
         $this->app = $app;
     }
+
 
     protected function getCMDLDirectory()
     {
@@ -36,6 +41,11 @@ class DirectoryCMDLAccessAdapter
 
     public function hasRepository($repositoryName)
     {
+        if (!$this->repositories)
+        {
+            $this->getRepositories();
+        }
+
         if (in_array($repositoryName, $this->getRepositories()))
         {
             return true;
@@ -180,7 +190,6 @@ class DirectoryCMDLAccessAdapter
     }
 
 
-
     public function getContentTypeCMDL($repositoryName, $contentTypeName)
     {
         $token = $repositoryName . '$' . $contentTypeName;
@@ -271,8 +280,6 @@ class DirectoryCMDLAccessAdapter
     }
 
 
-
-
     public function getContentTypeDefinition($repositoryName, $contentTypeName)
     {
 
@@ -297,8 +304,6 @@ class DirectoryCMDLAccessAdapter
                 // after generating the definition, check if the database is up to date
 
                 $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
-
-
 
                 $this->contentTypeDefinitions[$repositoryName][$contentTypeName] = $contentTypeDefinition;
 
@@ -352,4 +357,202 @@ class DirectoryCMDLAccessAdapter
 
     }
 
+
+    public function saveContentTypeCMDL($repositoryName, $contentTypeName, $cmdl, $locale = null, $createRepository = true)
+    {
+
+        if ($contentTypeName != Util::generateValidIdentifier($contentTypeName) || $repositoryName != Util::generateValidIdentifier($repositoryName))
+        {
+            throw new RepositoryException ('Invalid repository and/or content type name(s).');
+        }
+
+        try
+        {
+
+            $contentTypeDefinition = Parser::parseCMDLString($cmdl);
+            $contentTypeDefinition->setName($contentTypeName);
+
+        }
+        catch (ParserException $e)
+        {
+            throw new RepositoryException ('Could not parse definition for content type ' . $contentTypeName);
+        }
+
+        if ($this->hasRepository($repositoryName) || $createRepository == true)
+        {
+            $filename = $this->getCMDLDirectory();
+            if (file_exists($filename))
+            {
+                $filename .= '/' . $repositoryName;
+
+                if (!file_exists($filename))
+                {
+                    mkdir($filename);
+                }
+
+                $filename .= '/' . $contentTypeName . '.cmdl';
+
+                if (@file_put_contents($filename, $cmdl))
+                {
+
+                    $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
+
+                    $this->contentTypeDefinitions=array();
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+
+    public function discardContentType($repositoryName, $contentTypeName)
+    {
+        if ($contentTypeName != Util::generateValidIdentifier($contentTypeName) || $repositoryName != Util::generateValidIdentifier($repositoryName))
+        {
+            throw new RepositoryException ('Invalid repository and/or content type name(s).');
+        }
+
+        if ($this->hasRepository($repositoryName))
+        {
+            $filename = $this->getCMDLDirectory() . '/' . $repositoryName . '/' . $contentTypeName . '.cmdl';
+            if (file_exists($filename))
+            {
+                @unlink($filename);
+
+                $this->app['db']->discardContentType($repositoryName, $contentTypeName);
+                $this->contentTypeDefinitions=array();
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+
+    public function saveConfigTypeCMDL($repositoryName, $configTypeName, $cmdl, $locale = null, $createRepository = true)
+    {
+
+        if ($configTypeName != Util::generateValidIdentifier($configTypeName) || $repositoryName != Util::generateValidIdentifier($repositoryName))
+        {
+            throw new RepositoryException ('Invalid repository and/or config type name(s).');
+        }
+
+        try
+        {
+
+            $configTypeDefinition = Parser::parseCMDLString($cmdl);
+            $configTypeDefinition->setName($configTypeName);
+
+        }
+        catch (ParserException $e)
+        {
+            throw new RepositoryException ('Could not parse definition for config type ' . $configTypeName);
+        }
+
+        if ($this->hasRepository($repositoryName) || $createRepository == true)
+        {
+            $filename = $this->getCMDLDirectory();
+            if (file_exists($filename))
+            {
+                $filename .= '/' . $repositoryName;
+
+                if (!file_exists($filename))
+                {
+                    mkdir($filename);
+                }
+
+                $filename .= '/config';
+
+                if (!file_exists($filename))
+                {
+                    mkdir($filename);
+                }
+
+                $filename .= '/' . $configTypeName . '.cmdl';
+
+                if (@file_put_contents($filename, $cmdl))
+                {
+
+                    $this->app['db']->refreshConfigTypesTableStructure($repositoryName, $configTypeDefinition);
+                    $this->configTypeDefinitions=array();
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+
+    public function discardConfigType($repositoryName, $configTypeName)
+    {
+        if ($configTypeName != Util::generateValidIdentifier($configTypeName) || $repositoryName != Util::generateValidIdentifier($repositoryName))
+        {
+            throw new RepositoryException ('Invalid repository and/or config type name(s).');
+        }
+
+        if ($this->hasRepository($repositoryName))
+        {
+            $filename = $this->getCMDLDirectory() . '/' . $repositoryName . '/config/' . $configTypeName . '.cmdl';
+
+            if (file_exists($filename))
+            {
+                @unlink($filename);
+
+                $this->app['db']->discardConfigType($repositoryName, $configTypeName);
+                $this->configTypeDefinitions=array();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    public function createRepository($repositoryName)
+    {
+        if ($repositoryName != Util::generateValidIdentifier($repositoryName))
+        {
+            throw new RepositoryException ('Invalid repository name.');
+        }
+
+        $filename = $this->getCMDLDirectory();
+
+        mkdir($filename . '/' . $repositoryName);
+
+        $this->repositories = null;
+
+        return true;
+
+    }
+
+
+    public function discardRepository($repositoryName)
+    {
+        if ($this->hasRepository($repositoryName))
+        {
+            foreach ($this->getContentTypesList($repositoryName) as $contentTypeName => $contentTypeInfo)
+            {
+                $this->discardContentType($repositoryName, $contentTypeName);
+            }
+            foreach ($this->getConfigTypesList($repositoryName) as $configTypeName => $configTypeInfo)
+            {
+                $this->discardContentType($repositoryName, $configTypeName);
+            }
+            $filename = $this->getCMDLDirectory();
+
+            @rmdir($filename . '/' . $repositoryName . '/config');
+            @rmdir($filename . '/' . $repositoryName);
+
+            $this->repositories = null;
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -11,7 +11,7 @@ use CMDL\Util;
 use AnyContent\Repository\Entity\Filter;
 
 use AnyContent\Repository\Helper;
-use AnyContent\Repository\RepositoryException;
+use AnyContent\Repository\Modules\Core\Repositories\RepositoryException;
 
 use AnyContent\Repository\Util\AdjacentList2NestedSet;
 

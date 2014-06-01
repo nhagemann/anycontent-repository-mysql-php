@@ -241,7 +241,7 @@ TEMPLATE_CONFIGTABLE;
     }
 
 
-    public function deleteRepository($repositoryName, $contentTypeName)
+    public function discardContentType($repositoryName, $contentTypeName)
     {
         $tableName = $repositoryName . '$' . $contentTypeName;
 
@@ -265,12 +265,41 @@ TEMPLATE_CONFIGTABLE;
             return false;
         }
 
-
         $sql      = 'DELETE FROM _counter_ WHERE repository = ? AND content_type = ?';
         $stmt     = $dbh->prepare($sql);
         $params   = array();
         $params[] = $repositoryName;
         $params[] = $contentTypeName;
+
+        try
+        {
+            $stmt->execute($params);
+
+        }
+        catch (\PDOException $e)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public function discardConfigType($repositoryName, $configTypeName)
+    {
+        $tableName = $repositoryName . '$$config';
+
+        if ($configTypeName != Util::generateValidIdentifier($configTypeName) || $repositoryName != Util::generateValidIdentifier($repositoryName))
+        {
+            throw new \Exception ('Invalid repository and/or config type name(s).', self::INVALID_NAMES);
+        }
+
+        $dbh = $this->getConnection();
+
+        $sql      = 'DELETE FROM ' . $tableName . ' WHERE id = ?';
+        $stmt     = $dbh->prepare($sql);
+        $params   = array();
+        $params[] = $configTypeName;
 
         try
         {

@@ -8,7 +8,7 @@ use CMDL\ContentTypeDefinition;
 use CMDL\Util;
 
 use AnyContent\Repository\Helper;
-use AnyContent\Repository\RepositoryException;
+use AnyContent\Repository\Modules\Core\Repositories\RepositoryException;
 
 class ConfigManager
 {

@@ -37,7 +37,7 @@ class AdminController extends BaseController
     public static function delete(Application $app, Request $request, $repositoryName, $contentTypeName)
     {
 
-        return $app->json($app['db']->deleteRepository($repositoryName, $contentTypeName));
+        return $app->json($app['db']->discardContentType($repositoryName, $contentTypeName));
 
     }
 }

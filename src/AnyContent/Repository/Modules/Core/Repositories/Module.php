@@ -25,17 +25,14 @@ class Module extends \AnyContent\Repository\Modules\Core\Application\Module
         $app->get('/1/{repositoryName}/content/{contentTypeName}/cmdl/{locale}', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::cmdl');
 
         // update cmdl for a content type / create content type
-        $app->post('/1/{repositoryName}/content/{contentTypeName}/cmdl', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::post');
-        $app->post('/1/{repositoryName}/content/{contentTypeName}/cmdl/{locale}', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::post');
+        $app->post('/1/{repositoryName}/content/{contentTypeName}/cmdl', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::postContentTypeCMDL');
+        $app->post('/1/{repositoryName}/content/{contentTypeName}/cmdl/{locale}', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::postContentTypeCMDL');
 
         // simplification routes, solely for human interaction with the api
         $app->get('/', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::welcomeShortCut');
         $app->get('/1', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::welcome');
         $app->get('/1/', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::welcome');
         $app->get('/1/{repositoryName}', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::getInfoShortCut');
-
-        $app->registerCMDLAccessAdapter('directory', 'AnyContent\Repository\Modules\Core\Repositories\DirectoryCMDLAccessAdapter');
-        $app->registerCMDLAccessAdapter('database', 'AnyContent\Repository\Modules\Core\Repositories\DatabaseCMDLAccessAdapter');
 
     }
 

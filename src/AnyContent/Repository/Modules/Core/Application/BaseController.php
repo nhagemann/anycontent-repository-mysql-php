@@ -9,15 +9,16 @@ use AnyContent\Repository\Modules\Core\Application\Application;
 class BaseController
 {
 
-    const BAD_REQUEST         = 1;
-    const UNKNOWN_REPOSITORY  = 2;
-    const UNKNOWN_CONTENTTYPE = 3;
-    const RECORD_NOT_FOUND    = 4;
-    const UNKNOWN_CONFIGTYPE  = 5;
-    const CONFIG_NOT_FOUND    = 6;
-    const FILE_NOT_FOUND      = 7;
-    const UNKNOWN_PROPERTY    = 8;
-    const UNKNOWN_ERROR       = 9;
+    const BAD_REQUEST                 = 1;
+    const UNKNOWN_REPOSITORY          = 2;
+    const UNKNOWN_CONTENTTYPE         = 3;
+    const RECORD_NOT_FOUND            = 4;
+    const UNKNOWN_CONFIGTYPE          = 5;
+    const CONFIG_NOT_FOUND            = 6;
+    const FILE_NOT_FOUND              = 7;
+    const UNKNOWN_PROPERTY            = 8;
+    const UNKNOWN_ERROR               = 9;
+    const MISSING_MANDATORY_PARAMETER = 10;
 
 
     protected function notFoundError($app, $code = self::UNKNOWN_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
