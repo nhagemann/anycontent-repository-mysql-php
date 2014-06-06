@@ -28,6 +28,12 @@ class Module extends \AnyContent\Repository\Modules\Core\Application\Module
         $app->post('/1/{repositoryName}/content/{contentTypeName}/cmdl', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::postContentTypeCMDL');
         $app->post('/1/{repositoryName}/content/{contentTypeName}/cmdl/{locale}', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::postContentTypeCMDL');
 
+        // delete content type
+        $app->delete('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::deleteContentType');
+
+
+
+
         // simplification routes, solely for human interaction with the api
         $app->get('/', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::welcomeShortCut');
         $app->get('/1', 'AnyContent\Repository\Modules\Core\Repositories\RepositoryController::welcome');

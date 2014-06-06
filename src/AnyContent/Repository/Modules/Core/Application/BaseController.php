@@ -19,6 +19,7 @@ class BaseController
     const UNKNOWN_PROPERTY            = 8;
     const UNKNOWN_ERROR               = 9;
     const MISSING_MANDATORY_PARAMETER = 10;
+    const SERVER_ERROR                = 11;
 
 
     protected function notFoundError($app, $code = self::UNKNOWN_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
@@ -72,4 +73,18 @@ class BaseController
         return $app->json($error, 400);
     }
 
+
+    protected function serverError($app, $code = self::SERVER_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
+    {
+
+        switch ($code)
+        {
+            default:
+                $message = 'Internal Server Error';
+                break;
+        }
+        $error = array( 'error' => array( 'code' => $code, 'message' => $message ) );
+
+        return $app->json($error, 500);
+    }
 }

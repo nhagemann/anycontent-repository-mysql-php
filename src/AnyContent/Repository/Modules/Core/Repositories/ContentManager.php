@@ -358,16 +358,18 @@ class ContentManager
 
                 $mode = 'update';
 
-                // transfer all properties, which are not set int the record to be saved
+                // transfer all properties, which are not set in the record to be saved
                 foreach ($row as $key => $value)
                 {
 
                     if (Helper::startsWith($key, 'property_'))
                     {
+
                         $property = substr($key, 9);
 
                         if (!array_key_exists($property, $record['properties']))
                         {
+
                             $record['properties'][$property] = $value;
 
                         }

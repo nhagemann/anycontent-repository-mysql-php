@@ -392,6 +392,7 @@ class DirectoryCMDLAccessAdapter
 
                 $filename .= '/' . $contentTypeName . '.cmdl';
 
+                sleep(2); // We must make sure, that the timestamp of the cmdl file changes!
                 if (@file_put_contents($filename, $cmdl))
                 {
 

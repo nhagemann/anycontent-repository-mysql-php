@@ -5,7 +5,7 @@ Added events to be able to intercept important operations.
 ## 0.4
 Refactoring File Access
 ## 0.3
-* Adding a cache layer
+*dding a cache layer
 ## 0.2
 * Refactoring usage of terms clipping and view
 ## 0.1

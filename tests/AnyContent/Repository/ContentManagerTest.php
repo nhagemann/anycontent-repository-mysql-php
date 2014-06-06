@@ -34,6 +34,7 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
     }
 
 
+
     public function testSaveRecords()
     {
 
@@ -100,7 +101,9 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testTimesShift()
+
+
+    public function testTimeShift()
     {
         // skip this test, since timeshifting unwanted delays test execution, remove if necessary
         return;
@@ -122,6 +125,8 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $record = $manager->getRecord($id);
         $this->assertEquals(2, $record['info']['revision']);
     }
+
+
 
 
     public function testDeleteRecord()
@@ -151,4 +156,31 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $records = $manager->getRecords();
         $this->assertCount(4, $records['records']);
     }
+
+
+
+    public function testOmittedProperties()
+    {
+        /**
+         * @var ContentManager
+         */
+        $manager              = $this->repository->getContentManager('example01');
+        $record               = array();
+        $record['properties'] = array( 'name' => 'name', 'article'=>'article' );
+        $id                   = $manager->saveRecord($record);
+        $result               = $manager->getRecord($id);
+
+        $this->assertEquals('name',$result['record']['properties']['name']);
+        $this->assertEquals('article',$result['record']['properties']['article']);
+
+        $record               = array();
+        $record['properties'] = array( 'name' => 'name2' );
+        $record['id']         = $id;
+        $id                   = $manager->saveRecord($record);
+        $result               = $manager->getRecord($id);
+
+        $this->assertEquals('name2',$result['record']['properties']['name']);
+        $this->assertEquals('article',$result['record']['properties']['article']);
+    }
+
 }

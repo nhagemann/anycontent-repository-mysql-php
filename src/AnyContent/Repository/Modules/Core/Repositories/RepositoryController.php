@@ -46,7 +46,7 @@ class RepositoryController extends BaseController
                 }
             }
 
-            $result = array( 'content' => $contentTypesList, 'config' => $repository->getConfigTypesList(), 'files' => true, 'servertime' => time() );
+            $result = array( 'content' => $contentTypesList, 'config' => $repository->getConfigTypesList(), 'files' => true );
 
             return $app->json($result);
         }
@@ -95,6 +95,19 @@ class RepositoryController extends BaseController
 
         return self::badRequest($app, self::MISSING_MANDATORY_PARAMETER, 'cmdl');
     }
+
+    public static function deleteContentType(Application $app, Request $request, $repositoryName, $contentTypeName)
+    {
+        /** @var $manager RepositoryManager */
+        $manager = $app['repos'];
+
+        if ($manager->discardContentType($repositoryName, $contentTypeName))
+        {
+            return $app->json(true);
+        }
+        return $app->json(false);
+    }
+
 
 
     public static function getInfoShortCut(Application $app, Request $request, $repositoryName)
