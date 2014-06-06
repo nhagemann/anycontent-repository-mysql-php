@@ -96,6 +96,7 @@ class RepositoryController extends BaseController
         return self::badRequest($app, self::MISSING_MANDATORY_PARAMETER, 'cmdl');
     }
 
+
     public static function deleteContentType(Application $app, Request $request, $repositoryName, $contentTypeName)
     {
         /** @var $manager RepositoryManager */
@@ -105,9 +106,44 @@ class RepositoryController extends BaseController
         {
             return $app->json(true);
         }
+
         return $app->json(false);
     }
 
+
+    public static function postConfigTypeCMDL(Application $app, Request $request, $repositoryName, $configTypeName, $locale = null)
+    {
+        if ($request->request->has('cmdl'))
+        {
+            $cmdl = $request->request->get('cmdl');
+
+            /** @var $manager RepositoryManager */
+            $manager = $app['repos'];
+
+            if ($manager->saveConfigTypeCMDL($repositoryName, $configTypeName, $cmdl, $locale))
+            {
+                return $app->json(true);
+            }
+
+            return self::badRequest(self::BAD_REQUEST);
+        }
+
+        return self::badRequest($app, self::MISSING_MANDATORY_PARAMETER, 'cmdl');
+    }
+
+
+    public static function deleteConfigType(Application $app, Request $request, $repositoryName, $configTypeName)
+    {
+        /** @var $manager RepositoryManager */
+        $manager = $app['repos'];
+
+        if ($manager->discardConfigType($repositoryName, $configTypeName))
+        {
+            return $app->json(true);
+        }
+
+        return $app->json(false);
+    }
 
 
     public static function getInfoShortCut(Application $app, Request $request, $repositoryName)
