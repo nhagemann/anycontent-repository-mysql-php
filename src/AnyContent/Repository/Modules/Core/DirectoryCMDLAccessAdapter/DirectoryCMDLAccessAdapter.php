@@ -524,7 +524,7 @@ class DirectoryCMDLAccessAdapter
 
         $filename = $this->getCMDLDirectory();
 
-        mkdir($filename . '/' . $repositoryName);
+        @mkdir($filename . '/' . $repositoryName);
 
         $this->repositories = null;
 
