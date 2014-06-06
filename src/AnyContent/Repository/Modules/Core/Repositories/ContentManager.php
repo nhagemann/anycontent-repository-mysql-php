@@ -487,11 +487,13 @@ class ContentManager
         {
             $event = new ContentRecordEvent($this->contentTypeDefinition, $values);
             $this->app['dispatcher']->dispatch('content.record.before.insert', $event);
+            $values = $event->getValues();
         }
         else
         {
             $event = new ContentRecordEvent($this->contentTypeDefinition, $values, $row);
             $this->app['dispatcher']->dispatch('content.record.before.update', $event);
+            $values = $event->getValues();
         }
 
         $sql = 'INSERT INTO ' . $tableName;

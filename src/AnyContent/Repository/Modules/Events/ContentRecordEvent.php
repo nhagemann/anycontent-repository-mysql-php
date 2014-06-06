@@ -16,11 +16,18 @@ class ContentRecordEvent extends Event
     protected $definition = null;
 
 
-    function __construct(ContentTypeDefinition $definition, &$newRecordTableValues, &$currentRecordTableValues = null)
+    function __construct(ContentTypeDefinition $definition, $newRecordTableValues, $currentRecordTableValues = null)
     {
         $this->definition               = $definition;
         $this->currentRecordTableValues = $currentRecordTableValues;
         $this->newRecordTableValues     = $newRecordTableValues;
+
+    }
+
+
+    public function getValues()
+    {
+        return $this->newRecordTableValues;
     }
 
 
@@ -38,6 +45,8 @@ class ContentRecordEvent extends Event
      */
     public function getNewRecordTableValues()
     {
+        $this->newRecordTableValues['property_cxioid'] = microtime();
+
         return $this->newRecordTableValues;
     }
 
@@ -50,4 +59,48 @@ class ContentRecordEvent extends Event
         return $this->definition;
     }
 
+
+    public function getCurrentRecordTableValue($key, $property = true)
+    {
+        if ($property)
+        {
+            $key = 'property_' . $key;
+        }
+
+        if (array_key_exists($key, $this->currentRecordTableValues))
+        {
+            return $this->currentRecordTableValues[$key];
+        }
+
+        return false;
+    }
+
+
+    public function getNewRecordTableValue($key, $property = true)
+    {
+
+        if ($property)
+        {
+            $key = 'property_' . $key;
+        }
+
+        if (array_key_exists($key, $this->newRecordTableValues))
+        {
+            return $this->newRecordTableValues[$key];
+        }
+
+        return false;
+    }
+
+
+    public function setRecordTableValue($key, $value, $property = true)
+    {
+        if ($property)
+        {
+            $key = 'property_' . $key;
+        }
+
+        $this->newRecordTableValues[$key] = $value;
+
+    }
 }
