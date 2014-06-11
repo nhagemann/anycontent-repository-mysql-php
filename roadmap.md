@@ -1,11 +1,12 @@
 ## 0.6
-Routes for manipulating CMDL of content types
+* Routes for manipulating CMDL of content types
+* Additional database adapter for storing and retrieving cmdl configurations
 ## 0.5
-Added events to be able to intercept important operations.
+* Added events to be able to intercept important operations.
 ## 0.4
-Refactoring File Access
+* Refactoring File Access
 ## 0.3
-*dding a cache layer
+* Adding a cache layer
 ## 0.2
 * Refactoring usage of terms clipping and view
 ## 0.1
