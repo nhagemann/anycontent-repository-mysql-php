@@ -81,12 +81,14 @@ class ResponseCache
         $heartbeatToken = 'acr_heartbeat';
         $pathTokens     = explode('/', trim($request->getPathInfo(), '/'));
 
-        if (isset($pathTokens[1]))
+        if (isset($pathTokens[1])) // repository
         {
             $heartbeatToken .= '_' . $pathTokens[1];
         }
 
-        if (isset($pathTokens[3]) && $pathTokens[2] == 'content')
+        $app['cache']->delete($heartbeatToken); // always delete base heartbeat, which is used for info requests
+
+        if (isset($pathTokens[3]) && $pathTokens[2] == 'content') // contentTypeName
         {
             $heartbeatToken .= '_' . $pathTokens[3];
         }
