@@ -211,14 +211,14 @@ class RepositoryManager
     }
 
 
-    public static function getMaxTimestamp()
+    public function getMaxTimestamp()
     {
         //19.01.2038
         return number_format(2147483647, 4, '.', '');
     }
 
 
-    public static function getMaxTimeshift()
+    public function getMaxTimeshift()
     {
         // roundabout 10 years, equals to 1.1.1980
 
@@ -226,7 +226,7 @@ class RepositoryManager
     }
 
 
-    public static function getTimeshiftTimestamp($timeshift = 0)
+    public function getTimeshiftTimestamp($timeshift = 0)
     {
         if ($timeshift < self::getMaxTimeshift())
         {
@@ -236,4 +236,8 @@ class RepositoryManager
         return $timeshift;
     }
 
+    public function getCMDLAccessAdapter()
+    {
+        return $this->cmdlAccessAdapter;
+    }
 }

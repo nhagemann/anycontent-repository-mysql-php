@@ -4,8 +4,7 @@ namespace AnyContent\Repository\Modules\Core\Application;
 
 use AnyContent\Repository\Modules\Core\Application\Application;
 
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
+
 
 use Symfony\Component\Yaml\Parser;
 
@@ -181,25 +180,5 @@ class ConfigService
     }
 
 
-    /**
-     *
-     * @deprecated
-     * @return string
-     */
-    public function getCMDLConfigHash()
-    {
-        $finder = new Finder();
-        $finder->files()->in($this->getCMDLDirectory());
-
-        $hash = '';
-
-        /* @var SplFileInfo $file */
-        foreach ($finder as $file)
-        {
-            $hash .= $file->getFilename() . '.' . $file->getMTime() . '-';
-        }
-
-        return md5($hash);
-    }
 
 }

@@ -97,6 +97,7 @@ class ResponseCache
 
     protected static function getCacheToken(Request $request, Application $app)
     {
+
         $pulse = self::getHeartbeat($app, $request);
 
         $token = $pulse . $request->getQueryString();
@@ -105,9 +106,24 @@ class ResponseCache
 
         $token .= serialize($request->get('_route_params'));
 
-        if ($app['config']->getMinutesCachingCMDL() == 0 AND !self::isFileListRequest($request))
+        if ($app['config']->getMinutesCachingCMDL() == 0)
         {
-            $token .= $app['config']->getCMDLConfigHash();
+            if (!self::isFileListRequest($request))
+            {
+                $routeParams    = $request->get('_route_params');
+                $repositoryName = '';
+
+                if (array_key_exists('repositoryName', $routeParams))
+                {
+                    $repositoryName = $routeParams['repositoryName'];
+                }
+
+                $token .= $app['repos']->getCMDLAccessAdapter()->getCMDLConfigHash($repositoryName);
+            }
+        }
+        else
+        {
+            $token .= '_' . floor((date('t') * 3600 + date('G') * 60 + date('i') + 1) / $app['config']->getMinutesCachingCMDL());
         }
 
         return 'acr_response_' . md5($token);

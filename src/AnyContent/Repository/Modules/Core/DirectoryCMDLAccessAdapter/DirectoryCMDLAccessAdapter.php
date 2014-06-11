@@ -11,6 +11,9 @@ use CMDL\Parser;
 use CMDL\ParserException;
 use CMDL\Util;
 
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+
 use AnyContent\Repository\Modules\Core\Repositories\RepositoryException;
 
 class DirectoryCMDLAccessAdapter
@@ -398,7 +401,8 @@ class DirectoryCMDLAccessAdapter
 
                     $this->app['db']->refreshContentTypeTableStructure($repositoryName, $contentTypeDefinition);
 
-                    $this->contentTypeDefinitions=array();
+                    $this->contentTypeDefinitions = array();
+
                     return true;
                 }
             }
@@ -424,7 +428,8 @@ class DirectoryCMDLAccessAdapter
                 @unlink($filename);
 
                 $this->app['db']->discardContentType($repositoryName, $contentTypeName);
-                $this->contentTypeDefinitions=array();
+                $this->contentTypeDefinitions = array();
+
                 return true;
             }
         }
@@ -479,7 +484,8 @@ class DirectoryCMDLAccessAdapter
                 {
 
                     $this->app['db']->refreshConfigTypesTableStructure($repositoryName, $configTypeDefinition);
-                    $this->configTypeDefinitions=array();
+                    $this->configTypeDefinitions = array();
+
                     return true;
                 }
             }
@@ -506,7 +512,8 @@ class DirectoryCMDLAccessAdapter
                 @unlink($filename);
 
                 $this->app['db']->discardConfigType($repositoryName, $configTypeName);
-                $this->configTypeDefinitions=array();
+                $this->configTypeDefinitions = array();
+
                 return true;
             }
         }
@@ -551,9 +558,32 @@ class DirectoryCMDLAccessAdapter
             @rmdir($filename . '/' . $repositoryName);
 
             $this->repositories = null;
+
             return true;
         }
 
         return false;
+    }
+
+
+    public function getCMDLConfigHash($repositoryName = null)
+    {
+        $finder    = new Finder();
+        $directory = $this->getCMDLDirectory();
+        if ($repositoryName != null)
+        {
+            $directory .= '/' . $repositoryName;
+        }
+        $finder->files()->in($directory);
+
+        $hash = '';
+
+        /* @var SplFileInfo $file */
+        foreach ($finder as $file)
+        {
+            $hash .= $file->getFilename() . '.' . $file->getMTime() . '-';
+        }
+
+        return md5($hash);
     }
 }

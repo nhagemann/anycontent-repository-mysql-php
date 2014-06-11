@@ -688,4 +688,37 @@ TEMPLATE_CMDLTABLE;
         return false;
     }
 
+    public function getCMDLConfigHash($repositoryName = null)
+    {
+        // Attention: There's not much sense for this calculations, since the value of the column lastchange_timestamp
+        // is very important for the calculation and it's very unlikely, that someone manually editing the database
+        // content will adjust this value, if he/she changes the cmdl. If the cmdl gets changed via an API call, the
+        // heartbeat will be reseted anyway.
+
+        $hash = '';
+
+        /** @var PDO $db */
+        $dbh = $this->app['db']->getConnection();
+
+        $sql = 'SELECT name, lastchange_timestamp FROM _cmdl_ WHERE repository = ?';
+        $stmt = $dbh->prepare($sql);
+
+        try
+        {
+            $stmt->execute(array( $repositoryName ));
+            $rows = $stmt->fetchAll();
+            foreach ($rows as $row)
+            {
+               $hash .= $row['name'].'.'.$row['lastchange_timestamp'].'-';
+            }
+        }
+        catch (\PDOException $e)
+        {
+
+        }
+
+
+        return md5($hash);
+    }
+
 }
