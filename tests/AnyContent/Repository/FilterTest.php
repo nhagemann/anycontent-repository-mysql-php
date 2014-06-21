@@ -35,9 +35,9 @@ class FilterTest extends \PHPUnit_Framework_TestCase
 
     public function testFilters()
     {
-        $this->app['db']->discardContentType('example', 'example01');
-        $this->app['db']->discardContentType('example', 'example02');
-        $this->app['db']->discardContentType('example', 'example03');
+        $this->app['db']->truncateContentType('example', 'example01');
+        $this->app['db']->truncateContentType('example', 'example02');
+        $this->app['db']->truncateContentType('example', 'example03');
 
         /**
          * @var ContentManager

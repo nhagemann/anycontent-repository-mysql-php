@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Repository\Controller;
+namespace AnyContent\Repository\Modules\Core\ContentRecords;
 
 use AnyContent\Repository\Entity\Filter;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -324,6 +324,20 @@ class ContentController extends BaseController
         }
 
         return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
+    }
+
+
+    public static function truncate(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default')
+    {
+        return $app->json($app['db']->truncateContentType($repositoryName, $contentTypeName));
+        if ($request->request->has('global') AND $request->query->get('global') == 1)
+        {
+            return $app->json($app['db']->truncateContentType($repositoryName, $contentTypeName));
+        }
+
+        // TODO! Currently only for global truncate!!
+
+        return true;
     }
 
 

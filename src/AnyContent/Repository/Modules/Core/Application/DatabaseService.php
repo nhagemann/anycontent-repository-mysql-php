@@ -241,7 +241,7 @@ TEMPLATE_CONFIGTABLE;
     }
 
 
-    public function discardContentType($repositoryName, $contentTypeName)
+    public function truncateContentType($repositoryName, $contentTypeName)
     {
         $tableName = $repositoryName . '$' . $contentTypeName;
 
@@ -285,7 +285,7 @@ TEMPLATE_CONFIGTABLE;
     }
 
 
-    public function discardConfigType($repositoryName, $configTypeName)
+    public function truncateConfigType($repositoryName, $configTypeName)
     {
         $tableName = $repositoryName . '$$config';
 

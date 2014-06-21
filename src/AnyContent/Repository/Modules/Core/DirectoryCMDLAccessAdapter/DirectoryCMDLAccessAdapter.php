@@ -427,7 +427,7 @@ class DirectoryCMDLAccessAdapter
             {
                 @unlink($filename);
 
-                $this->app['db']->discardContentType($repositoryName, $contentTypeName);
+                $this->app['db']->truncateContentType($repositoryName, $contentTypeName);
                 $this->contentTypeDefinitions = array();
 
                 return true;
@@ -511,7 +511,7 @@ class DirectoryCMDLAccessAdapter
             {
                 @unlink($filename);
 
-                $this->app['db']->discardConfigType($repositoryName, $configTypeName);
+                $this->app['db']->truncateConfigType($repositoryName, $configTypeName);
                 $this->configTypeDefinitions = array();
 
                 return true;
@@ -546,11 +546,11 @@ class DirectoryCMDLAccessAdapter
         {
             foreach ($this->getContentTypesList($repositoryName) as $contentTypeName => $contentTypeInfo)
             {
-                $this->discardContentType($repositoryName, $contentTypeName);
+                $this->truncateContentType($repositoryName, $contentTypeName);
             }
             foreach ($this->getConfigTypesList($repositoryName) as $configTypeName => $configTypeInfo)
             {
-                $this->discardContentType($repositoryName, $configTypeName);
+                $this->truncateConfigType($repositoryName, $configTypeName);
             }
             $filename = $this->getCMDLDirectory();
 

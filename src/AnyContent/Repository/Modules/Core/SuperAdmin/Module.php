@@ -11,8 +11,8 @@ class Module extends \AnyContent\Repository\Modules\Core\Application\Module
     {
         parent::init($app, $options);
 
-        $app->post('/1/{repositoryName}', 'AnyContent\Repository\Modules\Core\SuperAdmin\RepositoryController::post');
-        $app->delete('/1/{repositoryName}', 'AnyContent\Repository\Modules\Core\SuperAdmin\RepositoryController::delete');
+        $app->post('/1/{repositoryName}', 'AnyContent\Repository\Modules\Core\SuperAdmin\RepositoryController::createRepository');
+        $app->delete('/1/{repositoryName}', 'AnyContent\Repository\Modules\Core\SuperAdmin\RepositoryController::discardRepository');
 
     }
 

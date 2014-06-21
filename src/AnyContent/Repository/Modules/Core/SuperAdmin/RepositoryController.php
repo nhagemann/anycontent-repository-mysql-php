@@ -16,7 +16,7 @@ use AnyContent\Repository\Modules\Core\Application\BaseController;
 class RepositoryController extends BaseController
 {
 
-    public static function post(Application $app, Request $request, $repositoryName)
+    public static function createRepository(Application $app, Request $request, $repositoryName)
     {
         /** @var $manager RepositoryManager */
         $manager = $app['repos'];
@@ -27,7 +27,7 @@ class RepositoryController extends BaseController
     }
 
 
-    public static function delete(Application $app, Request $request, $repositoryName)
+    public static function discardRepository(Application $app, Request $request, $repositoryName)
     {
         /** @var $manager RepositoryManager */
         $manager = $app['repos'];
@@ -36,5 +36,6 @@ class RepositoryController extends BaseController
 
         return $app->json(true);
     }
+
 
 }
