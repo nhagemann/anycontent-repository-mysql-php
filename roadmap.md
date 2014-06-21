@@ -1,5 +1,5 @@
 ## 0.7
-* realignment of version numbers between repository, parser and client - too many version dependencies
+* realignment of version numbers between repository, CMCK, parser and client - too many version dependencies
 * caching bugfixes
 ## 0.6
 * Routes for manipulating CMDL of content types
