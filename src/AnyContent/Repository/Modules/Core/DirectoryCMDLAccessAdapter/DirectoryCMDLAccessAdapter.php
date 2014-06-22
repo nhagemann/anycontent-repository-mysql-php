@@ -169,20 +169,16 @@ class DirectoryCMDLAccessAdapter
                             $filestats      = stat($path . '/' . $result);
                             $configTypeName = pathinfo($result, PATHINFO_FILENAME);
 
-                            //$contentTypeDefinition = $this->getContentTypeDefinition($repositoryName, $contentTypeName);
-
-                            $info = new ConfigTypeInfo();
-                            $info->setName($configTypeName);
-                            $info->setLastchangecmdl(@$filestats['mtime']);
-                            //$info->setTitle((string)$contentTypeDefinition->getTitle());
-                            //$info->setDescription((string)$contentTypeDefinition->getDescription());
-                            $configTypes[$configTypeName] = $info;
-
-                            /*
-                            if ($contentTypeDefinition)
+                            $configTypeDefinition = $this->getConfigTypeDefinition($repositoryName, $configTypeName);
+                            if ($configTypeDefinition)
                             {
-
-                            } */
+                                $info = new ConfigTypeInfo();
+                                $info->setName($configTypeName);
+                                $info->setLastchangecmdl(@$filestats['mtime']);
+                                $info->setTitle((string)$configTypeDefinition->getTitle());
+                                $info->setDescription((string)$configTypeDefinition->getDescription());
+                                $configTypes[$configTypeName] = $info;
+                            }
                         }
                     }
                 }

@@ -46,6 +46,7 @@ class ConfigManager
      */
     public function getConfig($configTypeName, $workspace = 'default', $language = 'default', $timeshift = 0)
     {
+
         $configTypeDefinition = $this->repository->getConfigTypeDefinition($configTypeName);
 
         if ($configTypeDefinition)
@@ -108,15 +109,13 @@ class ConfigManager
                 }
                 else
                 {
-
-                    throw new RepositoryException('Record not found.', RepositoryException::REPOSITORY_RECORD_NOT_FOUND);
-
+                    return false;
                 }
 
             }
             catch (\PDOException $e)
             {
-                return false;
+               return false;
             }
 
         }

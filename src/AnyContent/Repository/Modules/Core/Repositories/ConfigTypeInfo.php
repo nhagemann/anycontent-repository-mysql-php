@@ -8,7 +8,7 @@ class ConfigTypeInfo
     protected $name;
 
     public $title = '';
-    public $lastchange_content = 0;
+    public $lastchange_config = 0;
     public $lastchange_cmdl = 0;
     public $description = '';
 
@@ -49,15 +49,15 @@ class ConfigTypeInfo
     }
 
 
-    public function setLastchangeContent($age_content)
+    public function setLastchangeConfig($age_config)
     {
-        $this->lastchange_content = $age_content;
+        $this->lastchange_config = $age_config;
     }
 
 
-    public function getLastchangeContent()
+    public function getLastchangeConfig()
     {
-        return $this->lastchange_content;
+        return $this->lastchange_config;
     }
 
 

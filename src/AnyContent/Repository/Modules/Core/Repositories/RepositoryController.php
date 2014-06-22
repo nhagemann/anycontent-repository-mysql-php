@@ -42,11 +42,24 @@ class RepositoryController extends BaseController
                 {
                     $info = $manager->countRecords($workspace, null, $language, $timeshift);
                     $contentTypeInfo->setCount($info['count']);
-                    $contentTypeInfo->setLastchangeContent($info['lastchange']);
+                    $contentTypeInfo->setLastChangeContent($info['lastchange']);
                 }
             }
 
-            $result = array( 'content' => $contentTypesList, 'config' => $repository->getConfigTypesList(), 'files' => true );
+            $configTypesList = $repository->getConfigTypesList();
+            $manager         = $repository->getConfigManager();
+
+            /** @var ConfigTypeInfo $configTypeInfo */
+            foreach ($configTypesList as $configTypeName => $configTypeInfo)
+            {
+                $result = $manager->getConfig($configTypeName, $workspace, $language, $timeshift);
+                if ($result)
+                {
+                    $configTypeInfo->setLastchangeConfig($result['record']['info']['revision_timestamp']);
+                }
+            }
+
+            $result = array( 'content' => $contentTypesList, 'config' => $configTypesList, 'files' => true, 'admin' => false );
 
             return $app->json($result);
         }
