@@ -172,7 +172,7 @@ class DirectoryStorageAdapter
 
         if ($fileName != '') // No writing of .xxx-files
         {
-            $this->filesystem->dumpFile($this->directory . '/' . $id, $binary, null);
+            $this->filesystem->dumpFile($this->directory . '/' . $id, $binary);
 
             return true;
         }
