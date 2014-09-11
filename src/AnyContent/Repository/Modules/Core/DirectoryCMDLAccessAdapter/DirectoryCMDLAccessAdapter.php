@@ -564,22 +564,28 @@ class DirectoryCMDLAccessAdapter
 
     public function getCMDLConfigHash($repositoryName = null)
     {
-        $finder    = new Finder();
-        $directory = $this->getCMDLDirectory();
-        if ($repositoryName != null)
+        if ($this->hasRepository($repositoryName))
         {
-            $directory .= '/' . $repositoryName;
+
+            $finder    = new Finder();
+            $directory = $this->getCMDLDirectory();
+            if ($repositoryName != null)
+            {
+                $directory .= '/' . $repositoryName;
+            }
+            $finder->files()->in($directory);
+
+            $hash = '';
+
+            /* @var SplFileInfo $file */
+            foreach ($finder as $file)
+            {
+                $hash .= $file->getFilename() . '.' . $file->getMTime() . '-';
+            }
+
+            return md5($hash);
         }
-        $finder->files()->in($directory);
 
-        $hash = '';
-
-        /* @var SplFileInfo $file */
-        foreach ($finder as $file)
-        {
-            $hash .= $file->getFilename() . '.' . $file->getMTime() . '-';
-        }
-
-        return md5($hash);
+        return false;
     }
 }
