@@ -163,7 +163,7 @@ class ResponseCache
     }
 
 
-    protected function isFileListRequest(Request $request)
+    protected static function isFileListRequest(Request $request)
     {
         if (in_array($request->get('_route'), array( 'GET_1_repositoryName_files', 'GET_1_repositoryName_files_', 'GET_1_repositoryName_files_path' )))
         {
