@@ -14,9 +14,9 @@
     "require": {
         "php": ">=5.3",
         "silex/silex": "~1.1",
-        "nhagemann/cmdl-parser-php": "0.7.*@dev",
+        "nhagemann/cmdl-parser-php": "0.8.*",
         "monolog/monolog": ">=1.0.0",
-        "symfony/yaml": "2.4.*@dev",
+        "symfony/yaml": "2.4.*",
         "symfony/filesystem": "2.4.*",
         "symfony/finder": "2.4.*",
         "dflydev/apache-mime-types": "1.0.*",
