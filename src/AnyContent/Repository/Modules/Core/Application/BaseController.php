@@ -22,7 +22,7 @@ class BaseController
     const SERVER_ERROR                = 11;
 
 
-    protected function notFoundError($app, $code = self::UNKNOWN_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
+    protected static function notFoundError($app, $code = self::UNKNOWN_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
     {
 
         switch ($code)
@@ -55,7 +55,7 @@ class BaseController
     }
 
 
-    protected function badRequest($app, $code = self::BAD_REQUEST, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
+    protected static function badRequest($app, $code = self::BAD_REQUEST, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
     {
 
         switch ($code)
@@ -74,7 +74,7 @@ class BaseController
     }
 
 
-    protected function serverError($app, $code = self::SERVER_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
+    protected static function serverError($app, $code = self::SERVER_ERROR, $s1 = null, $s2 = null, $s3 = null, $s4 = null, $s5 = null)
     {
 
         switch ($code)

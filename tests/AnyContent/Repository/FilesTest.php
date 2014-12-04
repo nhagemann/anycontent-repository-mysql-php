@@ -49,7 +49,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $result);
 
         $result = $filesManager->getFolders('Music/');
-        $this->assertCount(3, $result);
+        $this->assertCount(2, $result);
 
         $result = $filesManager->getFolders('Music/Alternative');
         $this->assertCount(0, $result);
