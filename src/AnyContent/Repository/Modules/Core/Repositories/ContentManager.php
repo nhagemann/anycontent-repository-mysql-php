@@ -642,7 +642,7 @@ class ContentManager
 
         if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
-            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+            throw new \Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
 
         // get row of current revision
@@ -765,7 +765,7 @@ class ContentManager
         $params[] = $timestamp;
         $params[] = $timestamp;
 
-        if ($filter AND $sqlFilter)
+        if ($filter && $sqlFilter)
         {
             $params = array_merge($params, $sqlFilter['params']);
         }
