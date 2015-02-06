@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "74f9773c013364e45c260a6ed3e80be2",
+    "hash": "ff80baccdc889c336143da59d79bfc9d",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -691,17 +691,17 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.4.10",
+            "version": "v2.5.10",
             "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "97ffa3ddee844d6da12a29970edcac06dc742692"
+                "reference": "d3c24d7d6e9c342008d8421b2fade460311647ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/97ffa3ddee844d6da12a29970edcac06dc742692",
-                "reference": "97ffa3ddee844d6da12a29970edcac06dc742692",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/d3c24d7d6e9c342008d8421b2fade460311647ea",
+                "reference": "d3c24d7d6e9c342008d8421b2fade460311647ea",
                 "shasum": ""
             },
             "require": {
@@ -710,7 +710,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -734,21 +734,21 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "http://symfony.com",
-            "time": "2014-09-22 08:51:05"
+            "time": "2015-01-03 21:04:44"
         },
         {
             "name": "symfony/finder",
-            "version": "v2.4.10",
+            "version": "v2.5.10",
             "target-dir": "Symfony/Component/Finder",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "cd03920154bc6669f64fbabb803d24cc8629964c"
+                "reference": "e527ebf47ff912a45e148b7d0b107b80ec0b3cc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/cd03920154bc6669f64fbabb803d24cc8629964c",
-                "reference": "cd03920154bc6669f64fbabb803d24cc8629964c",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/e527ebf47ff912a45e148b7d0b107b80ec0b3cc2",
+                "reference": "e527ebf47ff912a45e148b7d0b107b80ec0b3cc2",
                 "shasum": ""
             },
             "require": {
@@ -757,7 +757,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -781,7 +781,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-            "time": "2014-09-27 08:35:25"
+            "time": "2015-01-03 08:01:13"
         },
         {
             "name": "symfony/http-foundation",
@@ -983,17 +983,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.4.10",
+            "version": "v2.5.10",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "297fd84aa9377e54268e9ff74cb81377350e230f"
+                "reference": "6eb40abc613d80828d55a40811c7a3ca491bc926"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/297fd84aa9377e54268e9ff74cb81377350e230f",
-                "reference": "297fd84aa9377e54268e9ff74cb81377350e230f",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/6eb40abc613d80828d55a40811c7a3ca491bc926",
+                "reference": "6eb40abc613d80828d55a40811c7a3ca491bc926",
                 "shasum": ""
             },
             "require": {
@@ -1002,7 +1002,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -1026,7 +1026,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-09-22 08:51:05"
+            "time": "2015-01-25 04:37:39"
         }
     ],
     "packages-dev": [
@@ -1506,7 +1506,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
