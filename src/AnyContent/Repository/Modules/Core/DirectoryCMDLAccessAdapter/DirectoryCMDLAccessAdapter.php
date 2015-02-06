@@ -11,7 +11,6 @@ use CMDL\CMDLParserException;
 use CMDL\Parser;
 use CMDL\Util;
 
-use Guzzle\Tests\Batch\ExceptionBufferingBatchTest;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -458,7 +457,7 @@ class DirectoryCMDLAccessAdapter
             $configTypeDefinition->setName($configTypeName);
 
         }
-        catch (ParserException $e)
+        catch (CMDLParserException $e)
         {
             throw new RepositoryException ('Could not parse definition for config type ' . $configTypeName);
         }
