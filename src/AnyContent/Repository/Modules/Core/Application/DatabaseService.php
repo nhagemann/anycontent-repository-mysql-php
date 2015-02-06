@@ -161,7 +161,7 @@ TEMPLATE_CONTENTTABLE;
         $newfields = array();
         foreach (array_diff($properties, $fields) as $field)
         {
-            $newfields[] = 'ADD COLUMN `' . $field . '` TEXT';
+            $newfields[] = 'ADD COLUMN `' . $field . '` LONGTEXT';
         }
 
         if (count($newfields) != 0)
@@ -206,7 +206,7 @@ TEMPLATE_CONTENTTABLE;
           `workspace` varchar(255) NOT NULL DEFAULT 'default',
           `language` varchar(255) NOT NULL DEFAULT 'default',
           `revision` int(11) DEFAULT NULL,
-          `properties` TEXT,
+          `properties` LONGTEXT,
           `lastchange_timestamp` int(11) DEFAULT NULL,
           `lastchange_apiuser` varchar(255) DEFAULT NULL,
           `lastchange_clientip` varchar(255) DEFAULT NULL,
