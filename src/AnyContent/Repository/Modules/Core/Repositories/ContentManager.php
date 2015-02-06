@@ -119,7 +119,7 @@ class ContentManager
 
         if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
-            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+            throw new \Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
 
         $dbh = $this->repository->getDatabaseConnection();
