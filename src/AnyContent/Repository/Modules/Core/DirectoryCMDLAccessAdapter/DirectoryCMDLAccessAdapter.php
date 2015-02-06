@@ -7,10 +7,11 @@ use AnyContent\Repository\Modules\Core\Application\Application;
 use AnyContent\Repository\Modules\Core\Repositories\ConfigTypeInfo;
 use AnyContent\Repository\Modules\Core\Repositories\ContentTypeInfo;
 
+use CMDL\CMDLParserException;
 use CMDL\Parser;
-use CMDL\ParserException;
 use CMDL\Util;
 
+use Guzzle\Tests\Batch\ExceptionBufferingBatchTest;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -120,17 +121,24 @@ class DirectoryCMDLAccessAdapter
                             $filestats       = stat($path . '/' . $result);
                             $contentTypeName = pathinfo($result, PATHINFO_FILENAME);
 
-                            $contentTypeDefinition = $this->getContentTypeDefinition($repositoryName, $contentTypeName);
-
-                            if ($contentTypeDefinition)
+                            try
                             {
-                                $info = new ContentTypeInfo();
-                                $info->setName($contentTypeName);
-                                $info->setLastchangecmdl(@$filestats['mtime']);
-                                $info->setTitle((string)$contentTypeDefinition->getTitle());
-                                $info->setDescription((string)$contentTypeDefinition->getDescription());
-                                $contentTypes[$contentTypeName] = $info;
+                                $contentTypeDefinition = $this->getContentTypeDefinition($repositoryName, $contentTypeName);
+
+                                if ($contentTypeDefinition)
+                                {
+                                    $info = new ContentTypeInfo();
+                                    $info->setName($contentTypeName);
+                                    $info->setLastchangecmdl(@$filestats['mtime']);
+                                    $info->setTitle((string)$contentTypeDefinition->getTitle());
+                                    $info->setDescription((string)$contentTypeDefinition->getDescription());
+                                    $contentTypes[$contentTypeName] = $info;
+                                }
                             }
+                            catch (\Exception $e)
+                            {
+                            }
+
                         }
                     }
                 }
@@ -308,7 +316,7 @@ class DirectoryCMDLAccessAdapter
 
                 return $contentTypeDefinition;
             }
-            catch (ParserException $e)
+            catch (CMDLParserException $e)
             {
 
             }
@@ -346,7 +354,7 @@ class DirectoryCMDLAccessAdapter
 
                 return $configTypeDefinition;
             }
-            catch (ParserException $e)
+            catch (CMDLParserException $e)
             {
 
             }
