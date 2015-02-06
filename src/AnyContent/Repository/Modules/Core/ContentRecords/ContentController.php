@@ -278,7 +278,7 @@ class ContentController extends BaseController
                 }
                 catch (RepositoryException $e)
                 {
-                    return self::badRequest($app, 'Bad Request - ' . $e->getMessage());
+                  return self::badRequest($app, 'Bad Request - ' . $e->getMessage());
                 }
 
                 return $app->json($id);
