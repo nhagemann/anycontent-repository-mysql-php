@@ -21,7 +21,7 @@ class ResponseCache
 
         $token = self::getCacheToken($request, $app);
 
-        if ($app['cache']->contains($token) AND $app['config']->getMinutesCachingData() != 0)
+        if ($app['cache']->contains($token) && $app['config']->getMinutesCachingData() != 0)
         {
 
             $response = new Response($app['cache']->fetch($token));

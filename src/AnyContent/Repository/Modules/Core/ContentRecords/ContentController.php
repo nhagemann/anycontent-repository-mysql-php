@@ -330,7 +330,7 @@ class ContentController extends BaseController
     public static function truncate(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default')
     {
         return $app->json($app['db']->truncateContentType($repositoryName, $contentTypeName));
-        if ($request->request->has('global') AND $request->query->get('global') == 1)
+        if ($request->request->has('global') && $request->query->get('global') == 1)
         {
             return $app->json($app['db']->truncateContentType($repositoryName, $contentTypeName));
         }

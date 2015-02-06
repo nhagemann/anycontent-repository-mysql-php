@@ -192,7 +192,7 @@ class ContentManager
                 $maxlevel  = $depth + 1;
                 $sqlSubset = ' AND NOT position IS NULL';
             }
-            if ($depth != null AND $depth > 0)
+            if ($depth != null && $depth > 0)
             {
                 $sqlSubset .= ' AND position_level <' . $maxlevel;
             }
@@ -212,7 +212,7 @@ class ContentManager
 
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE workspace = ? AND language = ? AND deleted = 0 AND validfrom_timestamp <= ? AND validuntil_timestamp > ? ' . $sqlSubset . ' ORDER BY ' . $orderBy;
 
-        if ($limit != null AND $subset == null)
+        if ($limit != null && $subset == null)
         {
             $sql .= ' LIMIT ' . (((int)$page - 1) * (int)$limit) . ',' . (int)$limit;
         }
@@ -224,7 +224,7 @@ class ContentManager
         $params[] = $timestamp;
         $params[] = $timestamp;
 
-        if ($filter AND $sqlFilter)
+        if ($filter && $sqlFilter)
         {
             $params = array_merge($params, $sqlFilter['params']);
         }
@@ -240,7 +240,7 @@ class ContentManager
                 $records[$row['id']] = $this->getRecordDataStructureFromRow($row, $repositoryName, $contentTypeName, $viewName);
             }
 
-            if ($subset AND $depth < 0) // climb upwards
+            if ($subset && $depth < 0) // climb upwards
             {
 
                 $records = array_slice($records, $depth);
@@ -517,7 +517,7 @@ class ContentManager
             $this->app['dispatcher']->dispatch('content.record.after.update', $event);
         }
 
-        if ($this->contentTypeDefinition->hasSynchronizedProperties() AND $this->currentlySynchronizingProperties == false)
+        if ($this->contentTypeDefinition->hasSynchronizedProperties() && $this->currentlySynchronizingProperties === false)
         {
             $this->synchronizeProperties($record, $viewName, $workspace, $language);
         }
@@ -738,7 +738,7 @@ class ContentManager
 
         if ($tableName != Util::generateValidIdentifier($repositoryName) . '$' . Util::generateValidIdentifier($contentTypeName))
         {
-            throw new Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
+            throw new \Exception ('Invalid repository and/or content type name(s).', self::INVALID_NAMES);
         }
 
         $dbh = $this->repository->getDatabaseConnection();

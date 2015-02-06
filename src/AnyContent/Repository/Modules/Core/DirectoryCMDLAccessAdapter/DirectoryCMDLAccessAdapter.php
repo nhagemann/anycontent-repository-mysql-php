@@ -75,7 +75,7 @@ class DirectoryCMDLAccessAdapter
 
                 foreach ($results as $result)
                 {
-                    if ($result === '.' or $result === '..')
+                    if ($result === '.' || $result === '..')
                     {
                         continue;
                     }
@@ -108,7 +108,7 @@ class DirectoryCMDLAccessAdapter
 
                 foreach ($results as $result)
                 {
-                    if ($result === '.' or $result === '..')
+                    if ($result === '.' || $result === '..')
                     {
                         continue;
                     }
@@ -164,7 +164,7 @@ class DirectoryCMDLAccessAdapter
 
                 foreach ($results as $result)
                 {
-                    if ($result === '.' or $result === '..')
+                    if ($result === '.' || $result === '..')
                     {
                         continue;
                     }
@@ -379,7 +379,7 @@ class DirectoryCMDLAccessAdapter
             $contentTypeDefinition->setName($contentTypeName);
 
         }
-        catch (ParserException $e)
+        catch (CMDLParserException $e)
         {
             throw new RepositoryException ('Could not parse definition for content type ' . $contentTypeName);
         }
