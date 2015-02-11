@@ -280,6 +280,7 @@ class ContentManager
      */
     public function saveRecord($record, $viewName = 'default', $workspace = 'default', $language = 'default')
     {
+
         $repositoryName  = $this->repository->getName();
         $contentTypeName = $this->contentTypeDefinition->getName();
 
@@ -309,10 +310,7 @@ class ContentManager
         // remove protected properties
         foreach ($this->contentTypeDefinition->getProtectedProperties($viewName) as $property)
         {
-            if (isset($record['properties'][$property]))
-            {
-                unset ($record['properties'][$property]);
-            }
+             unset ($record['properties'][$property]);
         }
 
         $possibleProperties = $this->contentTypeDefinition->getProperties($viewName);
@@ -359,6 +357,7 @@ class ContentManager
 
         }
 
+
         if ($record['id'] != 0)
         {
             try
@@ -379,6 +378,7 @@ class ContentManager
                         if (!array_key_exists($property, $record['properties']))
                         {
 
+
                             $record['properties'][$property] = $value;
 
                         }
@@ -394,6 +394,7 @@ class ContentManager
 
             }
         }
+
 
         if ($mode == 'insert' AND $record['id'] == 0)
         {

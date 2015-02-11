@@ -222,6 +222,18 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test', $record['properties']['protected']);
         $this->assertEquals('not', $record['properties']['not']);
 
+        // skip protected property
+        $record['properties'] = array( 'name' => 'name', 'not' => 'not' );
+        $id                   = $manager->saveRecord($record);
+        $this->assertEquals(1, $id);
+        $result = $manager->getRecord(1);
+        $record = $result['record'];
+        $this->assertEquals(1, $record['id']);
+
+        $this->assertEquals('name', $record['properties']['name']);
+        $this->assertEquals('test', $record['properties']['protected']);
+        $this->assertEquals('not', $record['properties']['not']);
+
     }
 
 }

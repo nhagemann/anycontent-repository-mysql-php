@@ -11,6 +11,7 @@ class ResponseCache
 
     public static function before(Request $request, Application $app)
     {
+
         if ($app['config']->getMinutesCachingFileListings() == 0)
         {
             if (self::isFileListRequest($request))
@@ -20,6 +21,7 @@ class ResponseCache
         }
 
         $token = self::getCacheToken($request, $app);
+
 
         if ($app['cache']->contains($token) && $app['config']->getMinutesCachingData() != 0)
         {
@@ -70,6 +72,7 @@ class ResponseCache
                 {
                     $minutes = $app['config']->getMinutesCachingData();
                 }
+
                 $app['cache']->save($token, $response->getContent(), $minutes * 60);
             }
         }
