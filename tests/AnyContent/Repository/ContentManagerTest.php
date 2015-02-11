@@ -34,13 +34,13 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
     }
 
 
-
     public function testSaveRecords()
     {
 
         $this->app['db']->truncateContentType('example', 'example01');
         $this->app['db']->truncateContentType('example', 'example02');
         $this->app['db']->truncateContentType('example', 'example03');
+        $this->app['db']->truncateContentType('example', 'example04');
 
         /**
          * @var ContentManager
@@ -101,8 +101,6 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
     }
 
 
-
-
     public function testTimeShift()
     {
         // skip this test, since timeshifting unwanted delays test execution, remove if necessary
@@ -125,8 +123,6 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $record = $manager->getRecord($id);
         $this->assertEquals(2, $record['info']['revision']);
     }
-
-
 
 
     public function testDeleteRecord()
@@ -158,7 +154,6 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
     }
 
 
-
     public function testOmittedProperties()
     {
         /**
@@ -166,12 +161,12 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
          */
         $manager              = $this->repository->getContentManager('example01');
         $record               = array();
-        $record['properties'] = array( 'name' => 'name', 'article'=>'article' );
+        $record['properties'] = array( 'name' => 'name', 'article' => 'article' );
         $id                   = $manager->saveRecord($record);
         $result               = $manager->getRecord($id);
 
-        $this->assertEquals('name',$result['record']['properties']['name']);
-        $this->assertEquals('article',$result['record']['properties']['article']);
+        $this->assertEquals('name', $result['record']['properties']['name']);
+        $this->assertEquals('article', $result['record']['properties']['article']);
 
         $record               = array();
         $record['properties'] = array( 'name' => 'name2' );
@@ -179,8 +174,54 @@ class ContentManagerTest extends \PHPUnit_Framework_TestCase
         $id                   = $manager->saveRecord($record);
         $result               = $manager->getRecord($id);
 
-        $this->assertEquals('name2',$result['record']['properties']['name']);
-        $this->assertEquals('article',$result['record']['properties']['article']);
+        $this->assertEquals('name2', $result['record']['properties']['name']);
+        $this->assertEquals('article', $result['record']['properties']['article']);
+    }
+
+
+    public function testProtectedProperties()
+    {
+        /**
+         * @var ContentManager
+         */
+        $manager              = $this->repository->getContentManager('example04');
+        $record               = array();
+        $record['properties'] = array( 'name' => 'name', 'protected' => 'protected', 'not' => 'not' );
+        $id                   = $manager->saveRecord($record);
+
+        $this->assertEquals(1, $id);
+        $result = $manager->getRecord(1);
+        $record = $result['record'];
+        $this->assertEquals(1, $record['id']);
+
+        $this->assertEquals('name', $record['properties']['name']);
+        $this->assertEquals(null, $record['properties']['protected']);
+        $this->assertEquals('not', $record['properties']['not']);
+
+        $record['properties'] = array( 'name' => 'name', 'protected' => 'test', 'not' => 'not' );
+        $id                   = $manager->saveRecord($record,'unprotected');
+
+        $this->assertEquals(1, $id);
+        $result = $manager->getRecord(1);
+        $record = $result['record'];
+        $this->assertEquals(1, $record['id']);
+
+        $this->assertEquals('name', $record['properties']['name']);
+        $this->assertEquals('test', $record['properties']['protected']);
+        $this->assertEquals('not', $record['properties']['not']);
+
+        // try to change the protected property
+        $record['properties'] = array( 'name' => 'name', 'protected' => 'protected', 'not' => 'not' );
+        $id                   = $manager->saveRecord($record);
+        $this->assertEquals(1, $id);
+        $result = $manager->getRecord(1);
+        $record = $result['record'];
+        $this->assertEquals(1, $record['id']);
+
+        $this->assertEquals('name', $record['properties']['name']);
+        $this->assertEquals('test', $record['properties']['protected']);
+        $this->assertEquals('not', $record['properties']['not']);
+
     }
 
 }

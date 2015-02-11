@@ -306,6 +306,15 @@ class ContentManager
             }
         }
 
+        // remove protected properties
+        foreach ($this->contentTypeDefinition->getProtectedProperties($viewName) as $property)
+        {
+            if (isset($record['properties'][$property]))
+            {
+                unset ($record['properties'][$property]);
+            }
+        }
+
         $possibleProperties = $this->contentTypeDefinition->getProperties($viewName);
 
         $notallowed = array_diff(array_keys($record['properties']), $possibleProperties);
@@ -466,6 +475,9 @@ class ContentManager
 
         $values['validfrom_timestamp']  = $timeshiftTimestamp;
         $values['validuntil_timestamp'] = $this->repository->getMaxTimestamp();
+
+
+
 
         foreach ($record['properties'] AS $property => $value)
         {
