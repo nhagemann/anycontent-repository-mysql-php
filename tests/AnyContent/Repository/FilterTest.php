@@ -3,10 +3,10 @@
 namespace AnyContent\Repository;
 
 use AnyContent\Repository\Modules\Core\Application\Application;
-use AnyContent\Repository\Service\Config;
-use AnyContent\Repository\Service\Database;
-use AnyContent\Repository\Service\RepositoryManager;
-use AnyContent\Repository\Service\ContentManager;
+use AnyContent\Repository\Config;
+use AnyContent\Repository\Database;
+use AnyContent\Repository\Modules\Core\Repositories\ContentManager;
+use AnyContent\Repository\RepositoryManager;
 use AnyContent\Repository\Repository;
 use AnyContent\Repository\Entity\Filter;
 
@@ -40,7 +40,7 @@ class FilterTest extends \PHPUnit_Framework_TestCase
         $this->app['db']->truncateContentType('example', 'example03');
 
         /**
-         * @var ContentManager
+         * @var $manager ContentManager
          */
         $manager = $this->repository->getContentManager('example01');
 
@@ -89,5 +89,18 @@ class FilterTest extends \PHPUnit_Framework_TestCase
         $filter->addCondition('source', '={}', 'article');
         $records = $manager->getRecords('default', 'default', 'property_name DESC, id ASC',null,1,null,$filter);
         $this->assertCount(1, $records['records']);
+
+        $filter = new Filter();
+        $filter->addCondition('name', '=', 'New Record 2');
+        $filter->addCondition('source', '=', 'c');
+        $records = $manager->getRecords('default', 'default', 'property_name DESC, id ASC',null,1,null,$filter);
+        $this->assertCount(1, $records['records']);
+
+        $filter = new Filter();
+        $filter->addCondition('name', '=', 'New Record 2');
+        $filter->nextConditionsBlock();
+        $filter->addCondition('source', '=', 'a');
+        $records = $manager->getRecords('default', 'default', 'property_name DESC, id ASC',null,1,null,$filter);
+        $this->assertCount(0, $records['records']);
     }
 }
