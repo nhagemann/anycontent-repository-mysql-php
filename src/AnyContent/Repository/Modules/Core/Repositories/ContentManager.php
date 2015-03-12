@@ -413,11 +413,29 @@ class ContentManager
             $stmt->execute($params);
             $result = $stmt->fetchColumn(0);
 
-            if ($record['id'] == null)
-            {
-                $record['id'] = $result;
-            }
+            $record['id'] = $result;
 
+            // make sure counter is always at least greater than the largest id, e.g. if the counter row got deleted
+
+            $sql = 'SELECT MAX(id)+1 FROM '. $tableName;
+            $stmt = $dbh->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetchColumn(0);
+
+            if ($result>$record['id'])
+            {
+                $record['id']=$result;
+
+                $sql = 'INSERT INTO _counter_ (repository,content_type,counter) VALUES (? , ? ,?) ON DUPLICATE KEY UPDATE counter=?;';
+
+                $params   = array();
+                $params[] = $repositoryName;
+                $params[] = $contentTypeName;
+                $params[] = $result;
+                $params[] = $result;
+                $stmt     = $dbh->prepare($sql);
+                $stmt->execute($params);
+            }
         }
 
         $timestamp          = time();
