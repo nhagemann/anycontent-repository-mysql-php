@@ -500,6 +500,7 @@ class ContentManager
 
         foreach ($record['properties'] AS $property => $value)
         {
+            $property = Util::generateValidIdentifier($property);
             $values['property_' . $property] = $value;
         }
 
