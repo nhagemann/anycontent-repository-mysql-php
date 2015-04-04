@@ -46,7 +46,7 @@ class RepositoryManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('AnyContent\Repository\Modules\Core\Repositories\ContentTypeInfo', $contentTypes['example01']);
 
-        $this->assertCount(4, $contentTypes);
+        $this->assertCount(5, $contentTypes);
     }
 
 

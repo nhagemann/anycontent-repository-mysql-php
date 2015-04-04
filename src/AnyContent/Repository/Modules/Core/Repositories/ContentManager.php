@@ -307,6 +307,12 @@ class ContentManager
             }
         }
 
+        // Apply @name annotation
+        if ($this->contentTypeDefinition->hasNamingPattern())
+        {
+            $record['properties']['name']=Util::applyNamingPattern($record['properties'],$this->contentTypeDefinition->getNamingPattern());
+        }
+
         // remove protected properties
         foreach ($this->contentTypeDefinition->getProtectedProperties($viewName) as $property)
         {
