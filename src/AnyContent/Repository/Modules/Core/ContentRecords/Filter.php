@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Repository\Entity;
+namespace AnyContent\Repository\Modules\Core\ContentRecords;
 
 use AnyContent\Repository\Modules\Core\Repositories\RepositoryException;
 

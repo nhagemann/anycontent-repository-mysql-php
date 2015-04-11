@@ -2,7 +2,6 @@
 
 namespace AnyContent\Repository\Modules\Core\ContentRecords;
 
-use AnyContent\Repository\Entity\Filter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -220,15 +219,13 @@ class ContentController extends BaseController
 
                 if ($request->query->has('filter'))
                 {
-                    $jsonFilter = $request->query->get('filter');
-                    $filter     = new Filter();
-                    foreach ($jsonFilter AS $block)
+                    if (is_array($request->query->get('filter')))
                     {
-                        $filter->nextConditionsBlock();
-                        foreach ($block as $condition)
-                        {
-                            $filter->addCondition($condition[0], $condition[1], $condition[2]);
-                        }
+                        $filter = FilterFactory::createFromArray($request->query->get('filter'));
+                    }
+                    else
+                    {
+                        $filter = FilterFactory::createFromQuery($request->query->get('filter'));
                     }
                 }
 
@@ -278,7 +275,7 @@ class ContentController extends BaseController
                 }
                 catch (RepositoryException $e)
                 {
-                  return self::badRequest($app, 'Bad Request - ' . $e->getMessage());
+                    return self::badRequest($app, 'Bad Request - ' . $e->getMessage());
                 }
 
                 return $app->json($id);

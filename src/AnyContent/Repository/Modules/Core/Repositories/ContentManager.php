@@ -8,7 +8,7 @@ use AnyContent\Repository\Modules\Events\ContentRecordEvent;
 use CMDL\ContentTypeDefinition;
 use CMDL\Util;
 
-use AnyContent\Repository\Entity\Filter;
+use AnyContent\Repository\Modules\Core\ContentRecords\Filter;
 
 use AnyContent\Repository\Helper;
 use AnyContent\Repository\Modules\Core\Repositories\RepositoryException;

@@ -8,7 +8,7 @@ use AnyContent\Repository\Database;
 use AnyContent\Repository\Modules\Core\Repositories\ContentManager;
 use AnyContent\Repository\RepositoryManager;
 use AnyContent\Repository\Repository;
-use AnyContent\Repository\Entity\Filter;
+use AnyContent\Repository\Modules\Core\ContentRecords\Filter;
 
 class FilterTest extends \PHPUnit_Framework_TestCase
 {
