@@ -23,6 +23,7 @@ class Installer
 
         $filesystem->mkdir($baseDir . '/cmdl');
         $filesystem->mkdir($baseDir . '/config');
+        $filesystem->mkdir($baseDir . '/doctrine-cache');
         $filesystem->mkdir($baseDir . '/web');
         $filesystem->mkdir($baseDir . '/log');
         $filesystem->mkdir($baseDir . '/files');

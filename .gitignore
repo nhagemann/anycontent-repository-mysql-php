@@ -1,6 +1,7 @@
 !cmdl/examples
 !cmdl/compendium
 cmdl/*
+doctrine-cache/*
 
 !files/examples
 files/*

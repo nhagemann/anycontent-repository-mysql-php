@@ -146,6 +146,10 @@ class Application extends SilexApplication
                 $cacheDriver = new \Doctrine\Common\Cache\MemcacheCache();
                 $cacheDriver->setMemcache($memcache);
                 break;
+            case 'file':
+                $cacheDriver = new PhPFileCache(APPLICATION_PATH . '/doctrine-cache', 'txt');
+                $this->setCacheDriver($cacheDriver);
+                break;
             default:
                 $cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
                 break;
