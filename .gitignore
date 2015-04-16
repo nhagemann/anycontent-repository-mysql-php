@@ -1,6 +1,6 @@
-!cmdl/examples
-!cmdl/compendium
 cmdl/*
+!cmdl/example
+!cmdl/compendium
 doctrine-cache/*
 
 !files/examples
