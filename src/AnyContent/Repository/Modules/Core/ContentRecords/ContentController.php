@@ -247,6 +247,7 @@ class ContentController extends BaseController
     public static function post(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $clippingName = 'default', $language = 'default')
     {
         $record = false;
+        $records = false;
 
         if ($request->request->has('record'))
         {
@@ -254,21 +255,25 @@ class ContentController extends BaseController
             $record = json_decode($record, true);
         }
 
+        if ($request->request->has('records'))
+        {
+            $records = $request->get('records');
+            $records = json_decode($records, true);
+        }
+
         if ($request->request->has('language'))
         {
             $language = $request->get('language');
         }
 
-        if ($record)
+        /** @var $repository Repository */
+        $repository = $app['repos']->get($repositoryName);
+        if ($repository)
         {
+            $manager = $repository->getContentManager($contentTypeName);
 
-            /** @var $repository Repository */
-            $repository = $app['repos']->get($repositoryName);
-            if ($repository)
+            if ($record)
             {
-
-                $manager = $repository->getContentManager($contentTypeName);
-
                 try
                 {
                     $id = $manager->saveRecord($record, $clippingName, $workspace, $language);
@@ -279,8 +284,32 @@ class ContentController extends BaseController
                 }
 
                 return $app->json($id);
+
+            }
+            elseif ($records)
+            {
+                $ids = array();
+                $i=0;
+                foreach ($records as $record)
+                {
+                    $i++;
+                    try
+                    {
+                        $id = $manager->saveRecord($record, $clippingName, $workspace, $language);
+                        $ids[$i]=$id;
+                    }
+                    catch (RepositoryException $e)
+                    {
+                      $ids[$i]=false;
+                    }
+                }
+
+                return $app->json($ids);
             }
 
+        }
+        else
+        {
             return self::notFoundError($app, self::UNKNOWN_REPOSITORY, $repositoryName);
         }
 
@@ -326,15 +355,34 @@ class ContentController extends BaseController
 
     public static function truncate(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default')
     {
-        return $app->json($app['db']->truncateContentType($repositoryName, $contentTypeName));
+        // deprecated, shortcut for reseting a content tye
         if ($request->request->has('global') && $request->query->get('global') == 1)
         {
             return $app->json($app['db']->truncateContentType($repositoryName, $contentTypeName));
         }
 
-        // TODO! Currently only for global truncate!!
+        $language = 'default';
 
-        return true;
+        if ($request->query->has('language'))
+        {
+            $language = $request->get('language');
+        }
+
+        /** @var $repository Repository */
+        $repository = $app['repos']->get($repositoryName);
+        if ($repository) {
+            $manager = $repository->getContentManager($contentTypeName);
+            if ($manager) {
+                $result = $manager->getRecords('default', $workspace, 'id', null, 1, null, null, $language);
+                foreach ($result['records'] as $record)
+                {
+                    $manager->deleteRecord($record['id'],$workspace,$language);
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
 

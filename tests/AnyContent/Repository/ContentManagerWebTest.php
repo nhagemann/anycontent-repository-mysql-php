@@ -21,8 +21,7 @@ class ContentManagerWebTest extends WebTestCase
         return $app;
     }
 
-
-    public function testProtectedPropertiese()
+    public function testProtectedProperties()
     {
 
         $client = $this->createClient();
@@ -40,7 +39,7 @@ class ContentManagerWebTest extends WebTestCase
         $record['properties']['protected'] = 'update';
 
         $json = json_encode($record);
-        $client->request('POST', '/1/example/content/example04/records', array( 'record' => $json ));
+        $client->request('POST', '/1/example/content/example04/records', array('record' => $json));
         $response = $client->getResponse();
         $this->assertTrue($response->isOk());
 
@@ -59,7 +58,7 @@ class ContentManagerWebTest extends WebTestCase
         unset($record['properties']['protected']);
 
         $json = json_encode($record);
-        $client->request('POST', '/1/example/content/example04/records', array( 'record' => $json ));
+        $client->request('POST', '/1/example/content/example04/records', array('record' => $json));
         $response = $client->getResponse();
         $this->assertTrue($response->isOk());
 
@@ -79,5 +78,121 @@ class ContentManagerWebTest extends WebTestCase
 
         return;
     }
+
+    public function testSaveRecords1()
+    {
+        $client = $this->createClient();
+
+        $this->app['db']->truncateContentType('example', 'example01');
+
+        for ($i = 1; $i <= 5; $i++) {
+            $record                       = array();
+            $record['properties']['name'] = 'Record ' . $i;
+            $json                         = json_encode($record);
+            $client->request('POST', '/1/example/content/example01/records', array('record' => $json));
+            $response = $client->getResponse();
+            $this->assertTrue($response->isOk());
+        }
+
+        $client->request('GET', '/1/example/content/example01/records');
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+        $result  = json_decode($response->getContent(), true);
+        $records = $result['records'];
+        $this->assertCount(5, $records);
+
+        for ($i = 1; $i <= 5; $i++) {
+            $record = $records[$i];
+            $this->assertEquals($i, $record['id']);
+            $this->assertEquals('Record ' . $i, $record['properties']['name']);
+        }
+    }
+
+    // Now the same with one request
+
+    public function testSaveRecords2()
+    {
+        $client = $this->createClient();
+
+        $this->app['db']->truncateContentType('example', 'example01');
+
+        $records = array();
+
+        for ($i = 1; $i <= 5; $i++) {
+            $record                       = array();
+            $record['properties']['name'] = 'Record ' . $i;
+
+            $records[] = $record;
+        }
+
+        $json = json_encode($records);
+
+        $client->request('POST', '/1/example/content/example01/records', array('records' => $json));
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+        $client->request('GET', '/1/example/content/example01/records');
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+        $result  = json_decode($response->getContent(), true);
+        $records = $result['records'];
+        $this->assertCount(5, $records);
+
+        for ($i = 1; $i <= 5; $i++) {
+            $record = $records[$i];
+            $this->assertEquals($i, $record['id']);
+            $this->assertEquals('Record ' . $i, $record['properties']['name']);
+        }
+    }
+
+    public function testDeleteRecords()
+    {
+        $client = $this->createClient();
+
+        $record                       = array();
+        $record['properties']['name'] = 'Record Other Workspace';
+        $json = json_encode($record);
+
+        $client->request('POST', '/1/example/content/example01/records/live', array('record' => $json));
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+
+        $record                       = array();
+        $record['properties']['name'] = 'Record Other Workspace';
+        $json = json_encode($record);
+
+        $client->request('POST', '/1/example/content/example01/records', array('record' => $json,'language'=>'en'));
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+
+        $client->request('DELETE', '/1/example/content/example01/record/1');
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+        $client->request('GET', '/1/example/content/example01/records');
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+        $result  = json_decode($response->getContent(), true);
+        $records = $result['records'];
+        $this->assertCount(4, $records);
+
+        $client->request('DELETE', '/1/example/content/example01/records');
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+        $client->request('GET', '/1/example/content/example01/records');
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk());
+
+        $result  = json_decode($response->getContent(), true);
+        $records = $result['records'];
+        $this->assertCount(0, $records);
+    }
+
 }
 
