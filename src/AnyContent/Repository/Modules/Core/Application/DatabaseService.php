@@ -121,7 +121,10 @@ TEMPLATE_COUNTERTABLE;
           `lastchange_firstname` varchar(255) DEFAULT NULL,
           `lastchange_lastname` varchar(255) DEFAULT NULL,
           `validfrom_timestamp` varchar(16) DEFAULT NULL,
-          `validuntil_timestamp` varchar(16) DEFAULT NULL
+          `validuntil_timestamp` varchar(16) DEFAULT NULL,
+          KEY `id` (`id`),
+          KEY `workspace` (`workspace`,`language`),
+          KEY `validfrom_timestamp` (`validfrom_timestamp`,`validuntil_timestamp`,`id`,`deleted`)
 
          ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -214,8 +217,10 @@ TEMPLATE_CONTENTTABLE;
           `lastchange_firstname` varchar(255) DEFAULT NULL,
           `lastchange_lastname` varchar(255) DEFAULT NULL,
           `validfrom_timestamp` varchar(16) DEFAULT NULL,
-          `validuntil_timestamp` varchar(16) DEFAULT NULL
-
+          `validuntil_timestamp` varchar(16) DEFAULT NULL,
+          KEY `id` (`id`),
+          KEY `workspace` (`workspace`,`language`),
+          KEY `validfrom_timestamp` (`validfrom_timestamp`,`validuntil_timestamp`,`id`)
          ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 TEMPLATE_CONFIGTABLE;
