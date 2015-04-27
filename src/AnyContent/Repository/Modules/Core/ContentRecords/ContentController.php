@@ -355,8 +355,8 @@ class ContentController extends BaseController
 
     public static function truncate(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default')
     {
-        // deprecated, shortcut for reseting a content tye
-        if ($request->request->has('global') && $request->query->get('global') == 1)
+        // deprecated, shortcut for reseting a content type
+        if ($request->query->has('global') && $request->query->get('global')==1)
         {
             return $app->json($app['db']->truncateContentType($repositoryName, $contentTypeName));
         }
