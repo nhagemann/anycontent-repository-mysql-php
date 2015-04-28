@@ -4,33 +4,32 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "61100034d1b458cf9749e339403e3bd3",
+    "hash": "6382e68a6e6f69881abf85937d95e428",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "2.6.3",
+            "version": "2.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d2479a3f7dae629be60cb513ad88cefa6c8c2090"
+                "reference": "4237e97388d2906d2aa88f727736968fc2df9cb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d2479a3f7dae629be60cb513ad88cefa6c8c2090",
-                "reference": "d2479a3f7dae629be60cb513ad88cefa6c8c2090",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4237e97388d2906d2aa88f727736968fc2df9cb6",
+                "reference": "4237e97388d2906d2aa88f727736968fc2df9cb6",
                 "shasum": ""
             },
             "require": {
-                "guzzle/guzzle": ">=3.7.0,<=3.9.9",
+                "guzzle/guzzle": "~3.7",
                 "php": ">=5.3.3"
             },
             "require-dev": {
                 "doctrine/cache": "~1.0",
                 "ext-openssl": "*",
-                "monolog/monolog": "1.4.*",
-                "phpunit/phpunit": "3.7.*",
-                "symfony/class-loader": "2.*",
-                "symfony/yaml": "2.*"
+                "monolog/monolog": "~1.4",
+                "phpunit/phpunit": "~4.0",
+                "symfony/yaml": "~2.1"
             },
             "suggest": {
                 "doctrine/cache": "Adds support for caching of credentials and responses",
@@ -42,7 +41,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6.x-dev"
+                    "dev-master": "2.7-dev"
                 }
             },
             "autoload": {
@@ -72,7 +71,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2014-05-14 19:29:32"
+            "time": "2015-04-23 20:14:25"
         },
         {
             "name": "dflydev/apache-mime-types",

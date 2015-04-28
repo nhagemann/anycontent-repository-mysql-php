@@ -59,7 +59,7 @@ class S3StorageAdapter
         }
         else
         {
-            throw new \Exception ('Files base folder ' . $this->baseFolder . ' missing.');
+            throw new \Exception ('Bucket ' . $this->bucketname . ' missing.');
         }
 
         if (isset($config['url']))
