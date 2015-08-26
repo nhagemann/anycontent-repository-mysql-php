@@ -134,7 +134,7 @@ class DirectoryCMDLAccessAdapter
                                     $contentTypes[$contentTypeName] = $info;
                                 }
                             }
-                            catch (\Exception $e)
+                            catch (\CMDLParserException $e)
                             {
                             }
 
