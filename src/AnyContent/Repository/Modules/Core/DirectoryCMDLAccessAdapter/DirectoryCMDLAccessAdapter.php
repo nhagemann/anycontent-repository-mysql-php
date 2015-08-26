@@ -342,7 +342,7 @@ class DirectoryCMDLAccessAdapter
         {
             try
             {
-                $configTypeDefinition = Parser::parseCMDLString($cmdl, $configTypeName, $configTypeName, 'config');
+                $configTypeDefinition = Parser::parseCMDLString($cmdl, $configTypeName, null, 'config');
                 $configTypeDefinition->setName($configTypeName);
 
                 // after generating the definition, check if the database is up to date
