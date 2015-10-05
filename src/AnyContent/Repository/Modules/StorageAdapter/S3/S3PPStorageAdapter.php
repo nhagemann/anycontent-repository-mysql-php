@@ -184,7 +184,7 @@ class S3PPStorageAdapter extends S3StorageAdapter
 
     public function createFolder($path)
     {
-        if (!$this->isValidPath($id))
+        if (!$this->isValidPath($path))
         {
             return false;
         }
