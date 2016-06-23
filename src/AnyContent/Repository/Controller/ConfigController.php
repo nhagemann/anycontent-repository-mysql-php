@@ -141,6 +141,10 @@ class ConfigController extends BaseController
                         {
                             $language = $request->request->get('language');
                         }
+                        if ($request->query->has('language'))
+                        {
+                            $language = $request->query->get('language');
+                        }
                         try
                         {
                             $manager->saveConfig($configTypeDefinition, $properties, $workspace, $language);
