@@ -3,6 +3,7 @@
 namespace AnyContent\Repository\Controller;
 
 use AnyContent\Repository\Entity\Filter;
+use KVMLogger\KVMLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,8 +55,6 @@ class ConfigController extends BaseController
     }
 
 
-
-
     public static function getConfig(Application $app, Request $request, $repositoryName, $configTypeName, $workspace = 'default', $language = 'default', $timeshift = 0)
     {
 
@@ -89,12 +88,12 @@ class ConfigController extends BaseController
                             return $app->json($record);
                         }
 
-
                     }
                     catch (RepositoryException $e)
                     {
 
                     }
+
                     return self::notFoundError($app, self::CONFIG_NOT_FOUND, $repositoryName, $configTypeName);
                 }
                 else
@@ -112,8 +111,11 @@ class ConfigController extends BaseController
     public static function post(Application $app, Request $request, $repositoryName, $configTypeName, $workspace = 'default', $language = 'default')
     {
 
+        $kvm = KVMLogger::instance('debug');
+
         if ($request->request->has('record'))
         {
+
             $record     = $request->get('record');
             $record     = json_decode($record, true);
             $properties = array();
@@ -145,7 +147,10 @@ class ConfigController extends BaseController
                         }
                         catch (RepositoryException $e)
                         {
+                            $kvm->debug('Bad Request - ' . $e->getMessage());
+
                             return self::badRequest($app, 'Bad Request - ' . $e->getMessage());
+
                         }
 
                         return $app->json(true);

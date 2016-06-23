@@ -139,7 +139,7 @@ class ConfigManager
             throw new RepositoryException ('Invalid repository and/or config type name(s).');
         }
 
-        $possibleProperties = $configTypeDefinition->getProperties('default');
+        $possibleProperties = $configTypeDefinition->getProperties();
 
         $notallowed = array_diff(array_keys($properties), $possibleProperties);
 
