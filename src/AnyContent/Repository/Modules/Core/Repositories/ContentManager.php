@@ -555,10 +555,10 @@ class ContentManager
             $this->app['dispatcher']->dispatch('content.record.after.update', $event);
         }
 
-        if ($this->contentTypeDefinition->hasSynchronizedProperties() && $this->currentlySynchronizingProperties === false)
-        {
-            $this->synchronizeProperties($record, $viewName, $workspace, $language);
-        }
+//        if ($this->contentTypeDefinition->hasSynchronizedProperties() && $this->currentlySynchronizingProperties === false)
+//        {
+//            $this->synchronizeProperties($record, $viewName, $workspace, $language);
+//        }
 
         return $record['id'];
 
