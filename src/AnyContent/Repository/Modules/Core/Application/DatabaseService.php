@@ -100,7 +100,7 @@ TEMPLATE_COUNTERTABLE;
           `workspace` varchar(255) NOT NULL DEFAULT 'default',
           `language` varchar(255) NOT NULL DEFAULT 'default',
           `property_subtype` varchar(255) DEFAULT NULL,
-          `property_status` varchar(255) DEFAULT '1',
+          `property_status` varchar(255) DEFAULT NULL,
           `parent_id` int(11) DEFAULT NULL,
           `position` int(11) DEFAULT NULL,
           `position_left` int(11) DEFAULT NULL,
