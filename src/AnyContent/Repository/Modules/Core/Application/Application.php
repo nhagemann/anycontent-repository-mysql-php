@@ -26,7 +26,7 @@ class Application extends SilexApplication
 
         parent::__construct($values);
 
-        $this['config'] = $this->share(function ($this)
+        $this['config'] = $this->share(function ()
         {
             return new ConfigService($this);
         });
