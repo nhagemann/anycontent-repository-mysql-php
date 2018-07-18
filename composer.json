@@ -14,13 +14,13 @@
     "require": {
         "php": ">=5.3",
         "silex/silex": "1.2.*",
-        "nhagemann/cmdl-parser-php": "0.12.*",
-        "monolog/monolog": "1.12.0",
+        "nhagemann/cmdl-parser-php": "^3",
+        "monolog/monolog": "^1",
         "symfony/yaml": "2.5.*",
         "symfony/filesystem": "2.5.*",
         "symfony/finder": "2.5.*",
         "dflydev/apache-mime-types": "1.0.*",
-        "doctrine/cache": "1.3.*",
+        "doctrine/cache": "1.*",
         "aws/aws-sdk-php": "2.8.*"
     },
 
